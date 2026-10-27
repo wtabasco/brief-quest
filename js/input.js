@@ -81,3 +81,6 @@ function setInfo(open){
 }
 (() => { let open = false; try { open = localStorage.getItem('briefquest.keys') === '1'; } catch(e){} setInfo(open); })();
 padToggle.addEventListener('click', () => { setInfo(!ctrlInfo.classList.contains('open')); padToggle.blur(); });
+/* en el celular, el pie del título habla de la cruceta y los botones, no del teclado */
+try { if (matchMedia('(pointer: coarse)').matches){ const f = document.querySelector('.tFoot'); if (f) f.textContent = 'Cruceta para moverte · A: aceptar · B: volver'; } } catch(e){}
+

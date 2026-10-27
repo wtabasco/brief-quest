@@ -110,6 +110,34 @@ body{font-family:var(--f-ui);padding-left:max(16px, env(safe-area-inset-left, 0p
   .ab button{width:46px;height:46px}.ab .b{margin-top:24px}
   .sh{width:36px}
 }
+/* ===== Celular en vertical: la pantalla de borde a borde arriba y los controles grandes abajo, al alcance del pulgar ===== */
+@media (max-width:560px) and (orientation:portrait){
+  body{padding:0}
+  .wrap{gap:0;max-width:none}
+  .gba{min-height:100svh}
+  .shell,.gba.padOpen .shell{width:100%;min-width:0;border-radius:0 0 22px 22px;padding:max(6px, env(safe-area-inset-top, 0px)) 6px 8px}
+  .bezel{padding:4px;border-radius:4px 4px 12px 12px}
+  .bezel-top{display:none}
+  .shellBar{padding:8px 8px 0}
+  .drawer,.drawer.open{flex:1;display:flex;flex-direction:column;width:100%;margin-top:-14px}
+  .drawerIn{flex:1;display:flex;flex-direction:column;overflow:visible}
+  .pad{flex:1;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr;grid-template-areas:"mid mid" "dpad ab";gap:10px 6px;
+    border-radius:0 0 54px 54px / 0 0 40px 40px;padding:30px 16px calc(34px + env(safe-area-inset-bottom, 0px)) 16px}
+  .pad .mid{grid-area:mid;flex-direction:row;justify-content:space-between;width:100%;align-self:start}
+  .pad .dpad{grid-area:dpad;align-self:end;justify-self:start}
+  .pad .ab{grid-area:ab;align-self:end;justify-self:end;margin-bottom:18px}
+  .dpad{width:156px;height:156px}
+  .cross i{border-width:9px}.cross .u,.cross .d{margin-left:-9px}.cross .l,.cross .r{margin-top:-9px}
+  .shoulders{gap:10px}.sh{width:58px;height:34px;font-size:13px}
+  .sys{gap:8px}.pill{font-size:10px}.pill::before{width:38px;height:13px}
+  .ab{gap:12px}
+  .ab button{width:78px;height:78px;font-size:17px}.ab .b{margin-top:44px}
+}
+@media (max-width:380px) and (orientation:portrait){
+  .dpad{width:132px;height:132px}
+  .ab button{width:66px;height:66px;font-size:15px}.ab .b{margin-top:36px}
+  .sh{width:44px}
+}
 /* ======= Interfaz dentro de la pantalla (colores fijos del juego) =======
    Mismo lenguaje que la ficha de personajes: papel crema, tinta índigo, tipografía pixel y sombras duras. */
 .screen{--ink:#2b2540;--paper:#fbf8ef;--paper2:#f1ead9;--rule:#ddd2bb;--g-plum:#7d4c7b;--g-lime:#9bc23c;--g-orange:#ea8a35;--g-lav:#cbc2ef}
