@@ -41,7 +41,8 @@ function drawMini(){
   const R = G.mini; if (!R) return;
   R.tick();
   ctx.setTransform(RES, 0, 0, RES, 0, 0);
-  ctx.fillStyle = 'rgba(16,14,24,.62)'; ctx.fillRect(0, 0, 512, 384);
+  ctx.fillStyle = 'rgba(16,14,24,.62)'; ctx.fillRect(0, 0, 512, VH*2);
+  ctx.setTransform(RES, 0, 0, RES, 0, Math.round((VH*2 - 384) / 2) * RES);
   const cx = 256, top = 46, bot = 322, tw = 156, ny = Math.round((top + bot) / 2);
   // mesa azul con líneas blancas
   ctx.fillStyle = '#16294f'; ctx.fillRect(cx - tw/2 - 4, top - 4, tw + 8, bot - top + 12);

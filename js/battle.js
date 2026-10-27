@@ -483,7 +483,7 @@ function sparPoster(p, X, Y, k){
 }
 function battleBackdrop(kind){
   if (BG_CACHE[kind]) return BG_CACHE[kind];
-  const th = BG[kind] || BG.boss, c = document.createElement('canvas'); c.width = VW; c.height = VH;
+  const th = BG[kind] || BG.boss, c = document.createElement('canvas'); c.width = VW; c.height = 192;
   const x = c.getContext('2d'), p = Pen(x), Wd = c.width;
   if (kind === 'final'){
     p.R(0, 0, Wd, WALL_Y, '#2a1e3e');
@@ -549,9 +549,22 @@ function battleBackdrop(kind){
   platformPx(x, PPLAT.x, PPLAT.y, 74, 17, th.plat);
   return BG_CACHE[kind] = c;
 }
+/* el color que más se repite en la pared del fondo (para seguirla hacia arriba en la pantalla alta) */
+function wallTone(bg){
+  if (bg._tone) return bg._tone;
+  const d = bg.getContext('2d').getImageData(0, 8, bg.width, WALL_Y - 26).data, n = {};
+  let best = '#3a3450', bn = 0;
+  for (let i = 0; i < d.length; i += 4){ const k = (d[i] << 16 | d[i+1] << 8 | d[i+2]); n[k] = (n[k] || 0) + 1; if (n[k] > bn){ bn = n[k]; best = k; } }
+  return bg._tone = typeof best === 'number' ? '#' + best.toString(16).padStart(6, '0') : best;
+}
 function drawBattleBG(kind, t){
-  ctx.setTransform(2*RES, 0, 0, 2*RES, 0, 0);
-  ctx.drawImage(battleBackdrop(kind), 0, 0);
+  const bg = battleBackdrop(kind), oy = VH - 192;
+  if (oy > 0){ // pantalla alta: la escena va abajo y la pared sigue para arriba
+    ctx.setTransform(2*RES, 0, 0, 2*RES, 0, 0);
+    ctx.fillStyle = wallTone(bg); ctx.fillRect(0, 0, VW, oy + 8); ctx.drawImage(bg, 0, 0, VW, 7, 0, 0, VW, 7);
+  }
+  ctx.setTransform(2*RES, 0, 0, 2*RES, 0, Math.max(0, oy) * 2*RES);
+  if (oy > 0) ctx.drawImage(bg, 0, 7, VW, 185, 0, 7, VW, 185); else ctx.drawImage(bg, 0, 0);
   if (kind === 'final'){
     for (const sx of [70, 190]){ const o = Math.round(Math.sin(t/1400 + sx) * 10); ctx.fillStyle = 'rgba(255,240,200,.08)';
       for (let y = 0; y < 150; y++){ const w = 6 + y*.45; ctx.fillRect(Math.round(sx + o*y/150 - w/2), y, Math.round(w), 1); } }
@@ -560,7 +573,6 @@ function drawBattleBG(kind, t){
 const EPLAT = {x:190, y:82}, PPLAT = {x:72, y:176};
 function drawBattle(){
   const t = G.t, th = BG[B.kind] || BG.boss;
-  ctx.setTransform(2*RES, 0, 0, 2*RES, 0, 0);
   drawBattleBG(B.kind, t);
   const fx = B.fx && (t - B.fx.t0 < B.fx.ms) ? B.fx : null;
   const fk = fx ? (t - fx.t0) / fx.ms : 0;
@@ -588,5 +600,5 @@ function drawBattle(){
     const cx = fx.who === 'p' ? PPLAT.x : EPLAT.x, cy = fx.who === 'p' ? PPLAT.y - 50 : EPLAT.y - 30;
     for (let i = 0; i < 12; i++){ const a = i * .53, r = 18 + (i % 3) * 9, yy = cy + 30 - fk * 60 - (i % 4) * 6; ctx.fillStyle = i % 2 ? '#b6f03a' : '#ffffff'; ctx.fillRect(Math.round(cx + Math.cos(a) * r), Math.round(yy), 2, 2); }
   }
-  if (fx && fx.kind === 'hit' && fk < .3){ ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(0, 0, VW, VH); }
+  if (fx && fx.kind === 'hit' && fk < .3){ ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(0, 192 - VH, VW, VH); }
 }

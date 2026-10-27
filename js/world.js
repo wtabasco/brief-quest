@@ -299,14 +299,16 @@ function onStep(silentWarp){
 function camera(){
   let px = G.x*TS, py = G.y*TS;
   if (G.move){ const k = G.move.t / G.move.dur; px = (G.move.fx + (G.move.tx-G.move.fx)*k)*TS; py = (G.move.fy + (G.move.ty-G.move.fy)*k)*TS; }
-  const cx = clamp(px + 8 - VW/2, 0, MW*TS - VW), cy = clamp(py + 8 - VH/2, 0, MH*TS - VH);
+  // si el mapa es más chico que la pantalla (la pantalla alta del celular), queda centrado
+  const cx = MW*TS < VW ? (MW*TS - VW) / 2 : clamp(px + 8 - VW/2, 0, MW*TS - VW), cy = MH*TS < VH ? (MH*TS - VH) / 2 : clamp(py + 8 - VH/2, 0, MH*TS - VH);
   return {px, py, cx: Math.round(cx*2)/2, cy: Math.round(cy*2)/2};
 }
 function drawScene(cx, cy, withPlayer, px, py){
   ctx.setTransform(RES, 0, 0, RES, 0, 0);
   const M = CURMAP;
   ctx.fillStyle = '#0d1410'; ctx.fillRect(0, 0, VW*2, VH*2);
-  ctx.drawImage(M.canvas, cx*2, cy*2, VW*2, VH*2, 0, 0, VW*2, VH*2);
+  { const sx = Math.max(0, cx*2), sy = Math.max(0, cy*2), sw = Math.min(M.canvas.width - sx, VW*2 - (sx - cx*2)), sh = Math.min(M.canvas.height - sy, VH*2 - (sy - cy*2));
+    if (sw > 0 && sh > 0) ctx.drawImage(M.canvas, sx, sy, sw, sh, sx - cx*2, sy - cy*2, sw, sh); }
   drawWindowsWeather(M, cx, cy);
   for (const l of M.leds){ const X = l.x - cx*2, Y = l.y - cy*2;
     const a = .55 + .25 * Math.sin(G.t / 500 + l.k); ctx.fillStyle = `rgba(255,232,160,${(a * .35).toFixed(2)})`; ctx.fillRect(X - 3, Y - 2, 8, 8); ctx.fillStyle = '#ffe8a0'; ctx.fillRect(X - 1, Y, 4, 4); ctx.fillStyle = '#fff8d8'; ctx.fillRect(X, Y, 1, 1); }
@@ -346,7 +348,7 @@ function drawWorld(){
 }
 function drawTitleBG(){
   const k = (Math.sin(G.t / 9000) + 1) / 2, k2 = (Math.sin(G.t / 13000 + 1) + 1) / 2;
-  drawScene(Math.round(k * (MW*TS - VW)), Math.round(k2 * (MH*TS - VH)), false);
+  drawScene(Math.round(k * Math.max(0, MW*TS - VW)), MH*TS < VH ? (MH*TS - VH) / 2 : Math.round(k2 * (MH*TS - VH)), false);
 }
 async function fade(on, white=false, ms=360){ const f = $('fade'); f.classList.toggle('white', white); f.style.opacity = on ? 1 : 0; await sleepMs(ms); }
 function transition(ms=650){ G.trans = {t0: G.t, ms}; return sleepMs(ms + 30); }
