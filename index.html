@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Brief Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;600;700&family=Silkscreen:wght@400;700&family=DotGothic16&family=Jersey+10&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="gba">
+    <div class="shell">
+      <div class="bezel">
+        <div class="bezel-top"><span class="led"></span>ENERGÍA<span class="grow"></span></div>
+        <div class="screen" id="screen">
+          <canvas id="cv" width="1024" height="768"></canvas>
+          <div id="zone" class="ui box zone" hidden></div>
+          <div id="clock" class="ui box clock" hidden></div>
+            <div id="toast" class="ui box toast" hidden></div>
+            <div id="ebox" class="ui hpbox enemy" hidden>
+              <div class="hprow"><span id="eName"></span><span class="lv" id="eLv"></span></div>
+              <div><span class="chip" id="eType"></span></div>
+              <div class="bar"><b>EN</b><div class="track"><div class="fill" id="eFill"></div></div></div>
+            </div>
+            <div id="pbox" class="ui hpbox player" hidden>
+              <div class="rolrow" id="pRol"></div>
+              <div class="hprow"><span id="pName"></span><span class="lv" id="pLv"></span></div>
+              <div class="bar"><b>EN</b><div class="track"><div class="fill" id="pFill"></div></div></div>
+              <div class="hpnum" id="pNum"></div>
+              <div class="xp"><i id="pXp"></i></div>
+            </div>
+            <div id="dlg" class="ui box dlg" hidden>
+              <img id="dlgPic" alt="" hidden>
+              <div class="dlgBody"><div class="dlgName" id="dlgName"></div><div class="dlgText" id="dlgText"></div></div>
+              <span class="more" id="dlgMore" hidden>▼</span>
+            </div>
+            <div id="grid" class="ui grid" hidden></div>
+            <div id="panel" class="ui box panel" hidden>
+              <div class="panelHead"><span id="panelTitle"></span><span id="panelExtra"></span></div>
+              <div class="panelBody" id="panelBody"><ul class="plist" id="panelList"></ul><div class="pdetail" id="panelDetail"></div></div>
+              <div class="panelHint" id="panelHint">A: elegir · B: volver</div>
+            </div>
+            <div id="choice" class="ui box choice" hidden></div>
+            <div id="title" class="title">
+              <div class="tLogo">BRIEF<br>QUEST</div>
+              <div class="tSub">Una aventura de agencia</div>
+              <div class="tMenu" id="tMenu"></div>
+              <div class="tName" id="tName" hidden>
+                <label for="nameIn">¿Cómo te llamás?</label>
+                <input id="nameIn" maxlength="10" autocomplete="off" spellcheck="false">
+                <button id="nameOk" type="button">LISTO</button>
+              </div>
+              <div class="tFoot">Flechas para moverte · Z/Enter: A · X/Esc: B</div>
+            </div>
+            <div id="fade" class="fade"></div>
+        </div>
+      </div>
+      <div class="shellBar">
+        <div class="brand">BRIEF <span>QUEST</span><em>ADVANCE</em></div>
+        <div class="bar-r"><button class="toggle snd" id="sndToggle" type="button" aria-pressed="true" aria-label="Sonido encendido"><span class="ico" aria-hidden="true"></span><b>SONIDO</b></button>
+        <button class="toggle" id="padToggle" type="button" aria-expanded="false" aria-controls="ctrlInfo">CONTROLES <i></i></button></div>
+      </div>
+    </div>
+    <div class="drawer" id="drawer">
+      <div class="drawerIn">
+        <div class="pad">
+          <div class="dpad" id="dpad" role="group" aria-label="Cruceta" data-dir=""><div class="cross"><i class="u"></i><i class="d"></i><i class="l"></i><i class="r"></i><b></b></div></div>
+          <div class="mid">
+            <div class="shoulders"><button class="sh l" data-btn="l" type="button" aria-label="Botón L: bitácora">L</button><button class="sh r" data-btn="r" type="button" aria-label="Botón R: habilidades">R</button></div>
+            <div class="sys"><button class="pill" data-btn="select" type="button">SELECT</button><button class="pill" data-btn="start" type="button">START</button></div>
+          </div>
+          <div class="ab">
+            <button class="b" data-btn="b" type="button" aria-label="Botón B">B</button>
+            <button class="a" data-btn="a" type="button" aria-label="Botón A">A</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ctrlInfo" id="ctrlInfo"><div class="ctrlIn">
+  <div class="keys"><span><kbd>←↑→↓</kbd>moverte</span><span><kbd>Z</kbd>A: hablar, aceptar</span><span><kbd>X</kbd>B: volver · mantener para correr</span><span><kbd>M</kbd>START: menú</span><span><kbd>N</kbd>SELECT: sonido</span><span><kbd>Q</kbd><kbd>E</kbd>L/R: bitácora y habilidades</span></div>
+  <p class="help"><b>Cómo se juega.</b> Tocá o clickeá la cruceta y los botones de la consola, o usá el teclado. En La Base hay pilas de pendientes: ahí saltan los problemas. El juego se trata de aprender: cada problema que resolvés dos veces te enseña una habilidad nueva, y el equipo te enseña las suyas. En el celular podés deslizar el dedo por la cruceta sin levantarlo. El progreso se guarda en este navegador.</p>
+  </div></div>
+</div>
+<script src="js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="js/core.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/music.js"></script>
+<script src="js/maps.js"></script>
+<script src="js/zones.js"></script>
+<script src="js/color.js"></script>
+<script src="js/pixel.js"></script>
+<script src="js/painter.js"></script>
+<script src="js/art.js"></script>
+<script src="js/looks.js"></script>
+<script src="js/office.js"></script>
+<script src="js/rooms.js"></script>
+<script src="js/barbacoa.js"></script>
+<script src="js/outside.js"></script>
+<script src="js/terrace.js"></script>
+<script src="js/data.js"></script>
+<script src="js/input.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/quests.js"></script>
+<script src="js/cloud.js"></script>
+<script src="js/dialogs.js"></script>
+<script src="js/culture.js"></script>
+<script src="js/battle.js"></script>
+<script src="js/menus.js"></script>
+<script src="js/world.js"></script>
+<script src="js/clock.js"></script>
+<script src="js/pingpong.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

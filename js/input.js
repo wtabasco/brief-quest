@@ -1,0 +1,83 @@
+/* Teclado, cruceta táctil y panel de controles */
+"use strict";
+/* ================= ENTRADA ================= */
+const H = [];
+const pushH = fn => H.push(fn);
+const popH = fn => { const i = H.lastIndexOf(fn); if (i >= 0) H.splice(i, 1); };
+const dirStack = [];
+const held = {b:false};
+const KEYMAP = {ArrowUp:'up',KeyW:'up',ArrowDown:'down',KeyS:'down',ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',
+  Enter:'a',Space:'a',KeyZ:'a',KeyX:'b',Escape:'b',Backspace:'b',KeyM:'start',KeyN:'select',KeyQ:'l',KeyE:'r'};
+const isDir = b => b==='up'||b==='down'||b==='left'||b==='right';
+function syncSnd(){ const b = $('sndToggle'); if (b){ b.setAttribute('aria-pressed', String(!muted)); b.setAttribute('aria-label', muted ? 'Sonido apagado' : 'Sonido encendido'); } }
+function toggleMute(){ muted = !muted; try { localStorage.setItem('briefquest.muted', muted ? '1' : '0'); } catch(e){} syncSnd(); toast(muted ? 'Sonido apagado' : 'Sonido encendido'); }
+try { muted = localStorage.getItem('briefquest.muted') === '1'; } catch(e){}
+syncSnd();
+$('sndToggle') && $('sndToggle').addEventListener('click', e => { e.preventDefault(); unlockAudio(); toggleMute(); });
+function press(btn){
+  unlockAudio();
+  if (btn === 'select'){ toggleMute(); return; }
+  if (H.length){ H[H.length-1](btn); return; }
+  if (G.mode === 'world') worldPress(btn);
+}
+function holdDir(b, on){ const i = dirStack.indexOf(b); if (i >= 0) dirStack.splice(i, 1); if (on) dirStack.push(b); }
+function releaseAll(){ dirStack.length = 0; held.b = false; setPad(null); document.querySelectorAll('.on').forEach(e => e.classList.remove('on')); }
+addEventListener('keydown', e => {
+  if (e.target && e.target.tagName === 'INPUT') return;
+  const b = KEYMAP[e.code]; if (!b) return;
+  e.preventDefault();
+  if (b === 'b') held.b = true;
+  if (isDir(b)){ if (!e.repeat) holdDir(b, true); press(b); }
+  else if (!e.repeat) press(b);
+});
+addEventListener('keyup', e => { const b = KEYMAP[e.code]; if (!b) return; if (isDir(b)) holdDir(b, false); if (b === 'b') held.b = false; });
+addEventListener('blur', releaseAll);
+document.addEventListener('visibilitychange', () => { if (document.hidden) releaseAll(); });
+
+/* Cruceta: un solo control que sigue el dedo, así se puede deslizar entre direcciones */
+const pad = document.getElementById('dpad');
+let padDir = null, padId = null, padT1 = null, padT2 = null;
+function setPad(d){
+  if (d === padDir) return;
+  if (padDir) holdDir(padDir, false);
+  clearTimeout(padT1); clearInterval(padT2);
+  padDir = d; pad.dataset.dir = d || '';
+  if (d){
+    holdDir(d, true); press(d);
+    padT1 = setTimeout(() => { padT2 = setInterval(() => { if (H.length && padDir) press(padDir); }, 130); }, 340);
+  }
+}
+function padFrom(e){
+  const r = pad.getBoundingClientRect(), x = e.clientX - r.left - r.width/2, y = e.clientY - r.top - r.height/2;
+  if (Math.hypot(x, y) < r.width * .1) return padDir;
+  return Math.abs(x) > Math.abs(y) ? (x > 0 ? 'right' : 'left') : (y > 0 ? 'down' : 'up');
+}
+pad.addEventListener('pointerdown', e => { e.preventDefault(); unlockAudio(); padId = e.pointerId; try { pad.setPointerCapture(e.pointerId); } catch(_){} setPad(padFrom(e)); });
+pad.addEventListener('pointermove', e => { if (e.pointerId === padId) setPad(padFrom(e)); });
+const padUp = e => { if (e.pointerId !== padId) return; padId = null; setPad(null); };
+pad.addEventListener('pointerup', padUp); pad.addEventListener('pointercancel', padUp); pad.addEventListener('lostpointercapture', padUp);
+pad.addEventListener('contextmenu', e => e.preventDefault());
+
+document.querySelectorAll('[data-btn]').forEach(el => {
+  const b = el.dataset.btn;
+  el.addEventListener('pointerdown', e => { e.preventDefault(); try { el.setPointerCapture(e.pointerId); } catch(_){} el.classList.add('on'); if (b === 'b') held.b = true; press(b); });
+  const up = () => { el.classList.remove('on'); if (b === 'b') held.b = false; };
+  el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); el.addEventListener('lostpointercapture', up);
+  el.addEventListener('contextmenu', e => e.preventDefault());
+  el.addEventListener('click', e => e.preventDefault());
+});
+
+/* La cruceta y los botones están siempre a la vista (se tocan o se clickean; el teclado también anda).
+   El botón CONTROLES despliega abajo la lista de teclas y cómo se juega. */
+const drawer = $('drawer'), padToggle = $('padToggle'), ctrlInfo = $('ctrlInfo');
+function setDrawer(open){
+  drawer.classList.toggle('open', open); drawer.parentElement.classList.toggle('padOpen', open);
+  if (!open) releaseAll();
+}
+setDrawer(true);
+function setInfo(open){
+  ctrlInfo.classList.toggle('open', open); padToggle.setAttribute('aria-expanded', String(open));
+  try { localStorage.setItem('briefquest.keys', open ? '1' : '0'); } catch(e){}
+}
+(() => { let open = false; try { open = localStorage.getItem('briefquest.keys') === '1'; } catch(e){} setInfo(open); })();
+padToggle.addEventListener('click', () => { setInfo(!ctrlInfo.classList.contains('open')); padToggle.blur(); });
