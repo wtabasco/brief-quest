@@ -11,12 +11,13 @@ function fitCanvas(){
   const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
   const w = clamp(Math.round((r.width || 512) * dpr), 512, 2048);
   // en el celular parado la pantalla es más alta que 4:3: se ve más mundo para arriba y para abajo
-  const ratio = (r.width && r.height) ? clamp(r.height / r.width, .75, 1.7) : .75;
+  const ratio = (r.width && r.height) ? clamp(r.height / r.width, .75, 1.25) : .75;
   const h = Math.round(w * ratio);
   if (cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; }
   RES = cv.width / 512; VH = Math.round(256 * ratio); ctx.imageSmoothingEnabled = false;
   // el combate se dibuja en 256x192 apoyado abajo; los recuadros de energía siguen a la escena
-  const scr = cv.parentElement; if (scr) scr.style.setProperty('--boy', ((VH - 192) / 2.56).toFixed(3) + 'cqw');
+  // si abajo de la escena entra el tablero (unos 24cqw), los textos y menús del combate van ahí, sin taparla
+  const scr = cv.parentElement; if (scr) scr.classList.toggle('tallScr', (VH - 192) / 2.56 >= 24);
 }
 const VW = 256, TS = 16; let VH = 192;
 const sleepMs = ms => new Promise(r => setTimeout(r, ms));

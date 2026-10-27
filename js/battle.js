@@ -558,13 +558,11 @@ function wallTone(bg){
   return bg._tone = typeof best === 'number' ? '#' + best.toString(16).padStart(6, '0') : best;
 }
 function drawBattleBG(kind, t){
-  const bg = battleBackdrop(kind), oy = VH - 192;
-  if (oy > 0){ // pantalla alta: la escena va abajo y la pared sigue para arriba
-    ctx.setTransform(2*RES, 0, 0, 2*RES, 0, 0);
-    ctx.fillStyle = wallTone(bg); ctx.fillRect(0, 0, VW, oy + 8); ctx.drawImage(bg, 0, 0, VW, 7, 0, 0, VW, 7);
-  }
-  ctx.setTransform(2*RES, 0, 0, 2*RES, 0, Math.max(0, oy) * 2*RES);
-  if (oy > 0) ctx.drawImage(bg, 0, 7, VW, 185, 0, 7, VW, 185); else ctx.drawImage(bg, 0, 0);
+  // la escena va arriba en 256x192; si la pantalla es más alta (celular parado), abajo queda el tablero del combate
+  const bg = battleBackdrop(kind);
+  ctx.setTransform(2*RES, 0, 0, 2*RES, 0, 0);
+  ctx.drawImage(bg, 0, 0);
+  if (VH > 192){ ctx.fillStyle = '#1b1830'; ctx.fillRect(0, 192, VW, VH - 192); ctx.fillStyle = '#3a3458'; ctx.fillRect(0, 192, VW, 1); }
   if (kind === 'final'){
     for (const sx of [70, 190]){ const o = Math.round(Math.sin(t/1400 + sx) * 10); ctx.fillStyle = 'rgba(255,240,200,.08)';
       for (let y = 0; y < 150; y++){ const w = 6 + y*.45; ctx.fillRect(Math.round(sx + o*y/150 - w/2), y, Math.round(w), 1); } }
@@ -600,5 +598,5 @@ function drawBattle(){
     const cx = fx.who === 'p' ? PPLAT.x : EPLAT.x, cy = fx.who === 'p' ? PPLAT.y - 50 : EPLAT.y - 30;
     for (let i = 0; i < 12; i++){ const a = i * .53, r = 18 + (i % 3) * 9, yy = cy + 30 - fk * 60 - (i % 4) * 6; ctx.fillStyle = i % 2 ? '#b6f03a' : '#ffffff'; ctx.fillRect(Math.round(cx + Math.cos(a) * r), Math.round(yy), 2, 2); }
   }
-  if (fx && fx.kind === 'hit' && fk < .3){ ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(0, 192 - VH, VW, VH); }
+  if (fx && fx.kind === 'hit' && fk < .3){ ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(0, 0, VW, 192); }
 }
