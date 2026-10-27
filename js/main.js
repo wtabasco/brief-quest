@@ -85,7 +85,7 @@ async function backToTitle(){
 async function pickPasante(menuEl, question){
   const T = $('title'), lbl = document.createElement('div'); lbl.className = 'tSub'; lbl.textContent = question;
   T.classList.add('picking'); menuEl.before(lbl); menuEl.classList.add('pick2');
-  const card = (k, n) => { const P = PORTRAIT_MOODS[k] || {}; return {label: (P.neutral ? `<img class="n" src="${P.neutral}" alt=""><img class="f" src="${P.feliz || P.neutral}" alt="">` : '') + `<span>${n}</span>`}; };
+  const card = (k, n) => { const P = PORTRAIT_MOODS[k] || {}; return {label: (P.neutral ? `<img class="n" src="${crispNow(P.neutral)}" alt=""><img class="f" src="${crispNow(P.feliz || P.neutral)}" alt="">` : '') + `<span>${n}</span>`}; };
   const gi = await listWidget(menuEl, [card('player_m', 'Chico'), card('player_f', 'Chica')], {cols: 2, cancel: null});
   lbl.remove(); menuEl.classList.remove('pick2'); T.classList.remove('picking'); menuEl.innerHTML = '';
   return ['m', 'f'][gi];

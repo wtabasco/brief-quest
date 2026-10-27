@@ -2,6 +2,20 @@
 "use strict";
 /* ================= DIÁLOGOS Y MENÚS ================= */
 const PEOPLE = {fede:'Fede', sahi:'Sahi', lu:'Lu', pimi:'Pimi', reni:'Reni', agus:'Agus', lia:'Lía', montse:'Montserrat', sofi:'Sofi', tato:'Tato', alejo:'Alejo', giuli:'Giuli', marga:'Marga', logo:'Don Logo', explote:'Clienta Explosiva', fantasma:'Clienta Fantasma'};
+/* Retratos: se agrandan 4 veces con píxeles exactos y el navegador los achica suave al tamaño de la caja.
+   Escalados directo a un tamaño no entero (1,5x en el celular) se perdían rayas finas, como las de la camisa de Alejo. */
+const CRISP = {}, CRISP_OK = {};
+const crispNow = src => CRISP_OK[src] || src;
+function crispSrc(src){
+  if (CRISP[src]) return CRISP[src];
+  return CRISP[src] = new Promise(res => { const im = new Image(); im.onload = () => {
+    try { const k = 4, c = document.createElement('canvas'); c.width = im.width * k; c.height = im.height * k;
+      const x = c.getContext('2d'); x.imageSmoothingEnabled = false; x.drawImage(im, 0, 0, c.width, c.height); res(CRISP_OK[src] = c.toDataURL()); }
+    catch(e){ res(src); } }; im.onerror = () => res(src); im.src = src; });
+}
+function crispPortrait(img, src){ img.dataset.want = src; crispSrc(src).then(u => { if (img.dataset.want === src) img.src = u; }); if (!CRISP[src + ':done']){ img.src = src; CRISP[src].then(() => CRISP[src + ':done'] = 1); } }
+/* precarga los retratos para que la primera vez ya aparezcan bien */
+setTimeout(() => { try { Object.values(PORTRAITS).forEach(crispSrc); if (typeof PORTRAIT_MOODS !== 'undefined') Object.values(PORTRAIT_MOODS).forEach(m => Object.values(m).forEach(crispSrc)); } catch(e){} }, 1500);
 function hideDlg(){ $('dlg').hidden = true; }
 /* prepara la caja de diálogo (retrato con expresión y nombre) */
 function prepDlg(who, opt){
@@ -9,7 +23,7 @@ function prepDlg(who, opt){
   dlg.hidden = false; dlg.classList.toggle('battle', G.mode === 'battle');
   const [wk, mood] = (who || '').split(':');
   const src = (mood && typeof PORTRAIT_MOODS !== 'undefined' && PORTRAIT_MOODS[wk] && PORTRAIT_MOODS[wk][mood]) || PORTRAITS[wk];
-  if (wk && src){ pic.src = src; pic.hidden = false; } else pic.hidden = true;
+  if (wk && src){ crispPortrait(pic, src); pic.hidden = false; } else pic.hidden = true;
   nm.textContent = wk ? (PEOPLE[wk] || wk) : (opt.name || '');
   nm.hidden = !nm.textContent;
 }
