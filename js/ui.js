@@ -5,7 +5,7 @@ const PEOPLE = {fede:'Fede', sahi:'Sahi', lu:'Lu', pimi:'Pimi', reni:'Reni', agu
 /* Retratos: se agrandan 4 veces con píxeles exactos y el navegador los achica suave al tamaño de la caja.
    Escalados directo a un tamaño no entero (1,5x en el celular) se perdían rayas finas, como las de la camisa de Alejo. */
 const CRISP = {}, CRISP_OK = {};
-const crispNow = src => CRISP_OK[src] || src;
+const crispNow = src => (CRISP_ON && CRISP_OK[src]) || src;
 function crispSrc(src){
   if (CRISP[src]) return CRISP[src];
   return CRISP[src] = new Promise(res => { const im = new Image(); im.onload = () => {
@@ -13,9 +13,10 @@ function crispSrc(src){
       const x = c.getContext('2d'); x.imageSmoothingEnabled = false; x.drawImage(im, 0, 0, c.width, c.height); res(CRISP_OK[src] = c.toDataURL()); }
     catch(e){ res(src); } }; im.onerror = () => res(src); im.src = src; });
 }
-function crispPortrait(img, src){ img.dataset.want = src; crispSrc(src).then(u => { if (img.dataset.want === src) img.src = u; }); if (!CRISP[src + ':done']){ img.src = src; CRISP[src].then(() => CRISP[src + ':done'] = 1); } }
+const CRISP_ON = (() => { try { return matchMedia('(pointer: coarse)').matches; } catch(e){ return false; } })(); // solo en el celular; en la compu, como siempre
+function crispPortrait(img, src){ if (!CRISP_ON){ img.src = src; return; } img.dataset.want = src; crispSrc(src).then(u => { if (img.dataset.want === src) img.src = u; }); if (!CRISP[src + ':done']){ img.src = src; CRISP[src].then(() => CRISP[src + ':done'] = 1); } }
 /* precarga los retratos para que la primera vez ya aparezcan bien */
-setTimeout(() => { try { Object.values(PORTRAITS).forEach(crispSrc); if (typeof PORTRAIT_MOODS !== 'undefined') Object.values(PORTRAIT_MOODS).forEach(m => Object.values(m).forEach(crispSrc)); } catch(e){} }, 1500);
+setTimeout(() => { if (!CRISP_ON) return; try { Object.values(PORTRAITS).forEach(crispSrc); if (typeof PORTRAIT_MOODS !== 'undefined') Object.values(PORTRAIT_MOODS).forEach(m => Object.values(m).forEach(crispSrc)); } catch(e){} }, 1500);
 function hideDlg(){ $('dlg').hidden = true; }
 /* prepara la caja de diálogo (retrato con expresión y nombre) */
 function prepDlg(who, opt){
