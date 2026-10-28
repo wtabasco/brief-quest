@@ -33,12 +33,13 @@ ART.pimi = {world: 'assets/sprites/pimi-mundo.png', hd: true};
 ART.reni = {world: 'assets/sprites/reni-mundo.png', hd: true};
 ART.alejo = {world: 'assets/sprites/alejo-mundo.png', hd: true};
 ART.giuli = {world: 'assets/sprites/giuli-mundo.png', hd: true};
+ART.marga = {world: 'assets/sprites/marga-mundo.png', hd: true};
 ART.logo = {world: 'assets/sprites/logo-mundo.png', battle: 'assets/sprites/logo-combate.png', hd: true};
 ART.explote = {world: 'assets/sprites/explote-mundo.png', battle: 'assets/sprites/explote-combate.png', hd: true};
 ART.fantasma = {world: 'assets/sprites/fantasma-mundo.png', battle: 'assets/sprites/fantasma-combate.png', hd: true};
 ART.player_m = {world: 'assets/sprites/pasante-chico-mundo.png', back: 'assets/sprites/pasante-chico-espalda.png', hd: true};
 ART.player_f = {world: 'assets/sprites/pasante-chica-mundo.png', back: 'assets/sprites/pasante-chica-espalda.png', hd: true};
-for (const k of ['fede', 'sahi', 'lu', 'agus', 'lia', 'sofi', 'tato', 'pimi', 'reni', 'alejo', 'giuli', 'logo', 'explote', 'fantasma']) for (const m of ['neutral', 'feliz', 'sorpresa', 'serio', 'risa']) (PORTRAIT_MOODS[k] = PORTRAIT_MOODS[k] || {})[m] = `assets/portraits/${k}-${m}.png`;
+for (const k of ['fede', 'sahi', 'lu', 'agus', 'lia', 'sofi', 'tato', 'pimi', 'reni', 'alejo', 'giuli', 'marga', 'logo', 'explote', 'fantasma']) for (const m of ['neutral', 'feliz', 'sorpresa', 'serio', 'risa']) (PORTRAIT_MOODS[k] = PORTRAIT_MOODS[k] || {})[m] = `assets/portraits/${k}-${m}.png`;
 for (const [k, f] of [['player_m', 'pasante-chico'], ['player_f', 'pasante-chica']]) for (const m of ['neutral', 'feliz', 'sorpresa', 'serio', 'risa']) (PORTRAIT_MOODS[k] = PORTRAIT_MOODS[k] || {})[m] = `assets/portraits/${f}-${m}.png`;
 function loadArt(){
   for (const key in ART) for (const kind of ['world', 'battle', 'back', 'cheer']){
