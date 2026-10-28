@@ -38,6 +38,7 @@ function onScreen(n){
 }
 /* nadie aparece ni desaparece delante tuyo: se van (o llegan) cuando no los estás mirando */
 function updatePresence(force){
+  placeFounders(force);
   for (const n of NPCS){
     const want = shouldBeHere(n);
     if (want === !n.away) continue;
@@ -50,7 +51,7 @@ function placeDay(){
   const s = NPCS.find(n => n.id === 'sahi');
   if (rainy()) Object.assign(s, {map: 'barbacoa', x: 12, y: 3, hx: 12, hy: 3, dir: 'down', home: 'down', pingpong: false});
   else Object.assign(s, {map: 'outside', x: 4, y: 8, hx: 4, hy: 8, dir: 'down', home: 'down', pingpong: true});
-  placeReni();
+  placeReni(); placeFounders(true);
 }
 
 /* el humor de cada uno cuando llueve: lo dicen la primera vez que hablás con ellos ese día */
@@ -58,7 +59,6 @@ const RAIN = {
   fede: {mood: 'mate', f: 'fede', t: 'Día de lluvia: mate, música bajita y las ideas que con sol no salen. Aprovechalo.'},
   agus: {mood: '♥', f: 'agus', t: 'Con lluvia la agencia se siente más casa. Si llegaste mojad{o}, Sofi dejó toallas en la entrada.'},
   lia: {mood: '!', f: 'lia', t: 'Los días de lluvia nadie sale al patio y todos conversan más. Lo tengo medido: suben los mates y las buenas ideas.'},
-  montse: {mood: '…', f: 'montse', t: 'Traje paraguas. Me gusta la terraza con lluvia: el ruido del agua ordena la cabeza. Y si a vos la lluvia te baja el ánimo, es válido. Decilo.'},
   sahi: {mood: 'lluvia', f: 'sahi:serio', t: 'Con esta lluvia no hay ping pong... Me vine a la barbacoa a esperar que pare. Hoy ando medio bajón, no te voy a mentir.'},
   lu: {mood: '♪', f: 'lu:feliz', t: '¡La lluvia es el mejor fondo para cantar! Hoy toca algo tranquilo. Bueno, empiezo tranquilo.'},
   pimi: {mood: 'lluvia', f: 'pimi', t: 'Con tormenta desenchufo lo importante. Y me tapo con la campera. Hoy rindo un poco menos; no me juzgues.'},
@@ -138,9 +138,9 @@ function lightColor(mapId){
   const m = gameMin(); let a = LIGHT_KEYS[0], b = LIGHT_KEYS[LIGHT_KEYS.length - 1];
   for (let i = 0; i < LIGHT_KEYS.length - 1; i++) if (m >= LIGHT_KEYS[i][0] && m <= LIGHT_KEYS[i + 1][0]){ a = LIGHT_KEYS[i]; b = LIGHT_KEYS[i + 1]; break; }
   const k = b[0] === a[0] ? 0 : (m - a[0]) / (b[0] - a[0]);
-  const out = {outside: 1, terrace: .55, barbacoa: .7}[mapId] ?? .5;
+  const out = {outside: 1, barbacoa: .7}[mapId] ?? .5;
   let c = a[1].map((v, i) => v + (b[1][i] - v) * k).map(v => 255 + (v - 255) * out);
-  if (rainy()){ const r = mapId === 'outside' || mapId === 'terrace' ? [190, 198, 212] : [226, 229, 238]; c = c.map((v, i) => v * r[i] / 255); }
+  if (rainy()){ const r = mapId === 'outside' ? [190, 198, 212] : [226, 229, 238]; c = c.map((v, i) => v * r[i] / 255); }
   return c.map(Math.round);
 }
 const nightAmount = () => clamp((gameMin() - 18*60) / 120, 0, 1);
@@ -164,7 +164,7 @@ function drawWindowsWeather(M, cx, cy){
 }
 /* la lluvia afuera: gotas en diagonal y salpicaduras en el piso */
 function drawRain(mapId, cx, cy){
-  if (G.mode !== 'world' || !S || !rainy() || (mapId !== 'outside' && mapId !== 'terrace')) return;
+  if (G.mode !== 'world' || !S || !rainy() || mapId !== 'outside') return;
   const W = VW*2, H = VH*2, t = G.t, ox = Math.round(cx*2), oy = Math.round(cy*2);
   ctx.fillStyle = 'rgba(214,228,246,.68)';
   for (let i = 0; i < 230; i++){
@@ -180,7 +180,7 @@ function drawRain(mapId, cx, cy){
     ctx.fillRect(x - r, y, r * 2 + 1, 1); ctx.fillRect(x - r + 1, y - 1, r * 2 - 1, 1);
   }
 }
-/* paraguas para los que están afuera cuando llueve (Montserrat en la terraza) */
+/* paraguas para los que están afuera cuando llueve */
 function drawUmbrella(c, X, Y, col){
   const cx = X + 15, top = Y - 47;
   c.fillStyle = '#2a2236'; c.fillRect(cx, top + 9, 1, 12); c.fillRect(cx, top - 2, 1, 2);

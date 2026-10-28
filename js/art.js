@@ -14,7 +14,6 @@ const ART = {
   // Descomentá cada línea cuando el PNG esté en assets/sprites/:
   // pimi:       {world: 'assets/sprites/pimi-mundo.png'},
   // reni:       {world: 'assets/sprites/reni-mundo.png'},
-  // montse:     {world: 'assets/sprites/montse-mundo.png'},
   // explote:    {world: 'assets/sprites/explote-mundo.png', battle: 'assets/sprites/explote-combate.png'},
   // logo:       {world: 'assets/sprites/logo-mundo.png', battle: 'assets/sprites/logo-combate.png'},
   // fantasma:   {world: 'assets/sprites/fantasma-mundo.png', battle: 'assets/sprites/fantasma-combate.png'},

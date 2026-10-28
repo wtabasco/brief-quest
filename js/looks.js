@@ -18,7 +18,6 @@ const LOOKS = {
   // Marga todavía no tiene ficha: aspecto provisorio (60 años, pelo canoso, uniforme celeste) hasta que llegue la foto
   marga:{blush:true, skin:'#e9b896', hair:'#c9c2ba', style:'bob', shirt:'#a9cfe0', pants:'#3d4a5a', necklace:'#d4b85a'},
   anual:{hair:'#d9d9d9', style:'short', shirt:'#fbfaf4', jacket:'#1f2430', pants:'#1f2430', tie:'#d4b85a', glasses:'#2a2a2e', skin:'#e8b796'},
-  montse:{hair:'#cfcbc0', style:'bob', shirt:'#1e1e1e', pants:'#1e1e1e', glasses:'#6b3f1f', skin:'#e6b393'},
   explote:{hair:'#fe7a02', style:'spiky', shirt:'#fbfaf4', jacket:'#c2410c', pants:'#1e1e1e', shades:true, tie:'#92c100'},
   logo:{hair:'#8a8a8a', style:'bald', shirt:'#fbfaf4', jacket:'#23345a', pants:'#23345a', mustache:'#8a8a8a', tie:'#fe7a02'},
   fantasma:{hair:'#141414', style:'long', shirt:'#d9d9d9', jacket:'#4a4a52', pants:'#4a4a52', phone:true, shades:true},

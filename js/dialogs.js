@@ -469,14 +469,14 @@ async function pdpReview(){
    Solo pregunta por quien ya conociste. Acertar da un poco de experiencia; con tres aciertos, Agus te enseña una habilidad. */
 const DINAMICAS = [
   {if: () => talks('sahi') > 0, t: {q: '¿Quién del equipo es hincha de Boca a muerte?', a: 'Sahi', o: ['Pimi', 'Fede']}},
-  {if: () => talks('sahi') > 0, t: {q: '¿De dónde es Sahi?', a: 'De Argentina', o: ['De Rocha', 'De la terraza']}},
+  {if: () => talks('sahi') > 0, t: {q: '¿De dónde es Sahi?', a: 'De Argentina', o: ['De Rocha', 'De Paysandú']}},
   {if: () => talks('pimi') > 0, t: {q: '¿Quién se escapa a surfear a Rocha apenas hay olas?', a: 'Pimi', o: ['Sahi', 'Lu']}},
   {if: () => talks('pimi') > 0, t: {q: '¿Qué le alegra el día a Pimi?', a: 'Algo rico para comer', o: ['Una reunión larga', 'Un mail sin asunto']}},
   {if: () => talks('lu') > 0, t: {q: '¿Quién anda cantando por la agencia todo el día?', a: 'Lu', o: ['Reni', 'Fede']}},
   {if: () => talks('lu') > 0, t: {q: '¿Qué suena en la playlist de Lu?', a: 'Aitana y Morat', o: ['Solo música clásica', 'Ruido blanco']}},
   {if: () => talks('fede') > 0, t: {q: '¿Qué necesita Fede para pensar?', a: 'Un mate', o: ['Un café triple', 'Silencio absoluto']}},
   {if: () => talks('reni') > 0, t: {q: '¿Quién anda por la agencia con el termo convidando mate?', a: 'Reni', o: ['Sahi', 'Pimi']}},
-  {if: () => talks('sahi') > 0, t: {q: '¿Dónde encontrás a Sahi casi siempre?', a: 'En la mesa de ping pong', o: ['En la cocina', 'En la terraza']}},
+  {if: () => talks('sahi') > 0, t: {q: '¿Dónde encontrás a Sahi casi siempre?', a: 'En la mesa de ping pong', o: ['En la cocina', 'En Brasil, con Fede']}},
   {if: () => talks('reni') > 0, t: {q: '¿Quién graba videos con el celu por toda la agencia?', a: 'Reni', o: ['Lu', 'Pimi']}},
   {if: () => talks('sofi') > 0, t: {q: '¿Quién se ocupa de que haya fruta, ande internet y la casa esté linda?', a: 'Sofi', o: ['Tato', 'Lía']}},
   {if: () => (S.flags.lesGiuli || 0) > 0, t: {q: '¿Quién te enseña a preparar archivos para imprenta?', a: 'Giuli', o: ['Alejo', 'Tato']}},
@@ -714,16 +714,16 @@ async function talkFounders(n){
   }
   if (S.bosses >= 3 && !S.flags.card){
     if (me === 'lia'){
-      await say('¡{name}! ¡Tenemos algo para vos! ¡Montserrat te quiere conocer! ¡Casi nadie sube a la terraza!', 'lia:feliz');
-      await say('Tomá la tarjeta de acceso. La escalera a la terraza está al fondo del pasillo, acá arriba. Subí con respeto, ¿sí?', 'agus');
+      await say('¡{name}! ¡Los tres clientes quedaron conformes! ¡Ahora viene lo más grande: la Gran Presentación!', 'lia:feliz');
+      await say('Es en la Sala de Reuniones, la biblioteca de la planta baja. Viene todo el equipo. Te esperamos ahí.', 'agus:feliz');
     } else {
-      await say('{name}, tenemos algo para vos.', 'agus:feliz');
-      await say('¡Montserrat te quiere conocer! ¡Casi nadie sube a la terraza!', 'lia');
-      await say('Tomá la tarjeta de acceso. La escalera a la terraza está al fondo del pasillo, acá arriba. Subí con respeto, ¿sí?', 'agus');
+      await say('{name}, los tres clientes quedaron conformes. Ahora viene lo más grande: la Gran Presentación.', 'agus:feliz');
+      await say('¡En la Sala de Reuniones, la biblioteca de abajo! ¡Viene todo el equipo! ¡Te esperamos ahí!', 'lia:feliz');
     }
-    S.flags.card = true; SFX.learn(); await say('Recibiste la tarjeta de acceso a la terraza.');
+    S.flags.card = true; SFX.learn();
     if (qState('tarjeta')) qDone('tarjeta'); qOpen('terraza'); return;
   }
+  if (S.flags.card && !S.flags.done){ await presentation(me); return; }
   if (S.bosses >= 2 && !qState('consejo2') && qState('consejo') === 'done'){
     await say('Ya pasaste por dos clientes. Creemos que estás para probar el otro camino también.', me);
     await say(S.flags.path === 'lia' ? 'Probá mi consejo, el de la calma, en tres desafíos y vemos qué aprendés.' : '¡Probá mi consejo, el de ir a full, en tres desafíos y medimos qué aprendés!', S.flags.path === 'lia' ? 'agus' : 'lia');
@@ -749,7 +749,7 @@ async function talkFounders(n){
   if (me === 'lia' && !S.liaKpi && started && b - (m.kpiAskAt ?? -99) >= 2){ m.kpiAskAt = b; await kpiOffer(); noteTalk('founders'); return; }
   // la campaña a cuatro manos: la primera vez apenas cumpliste el consejo, después cada tanto
   if (qState('consejo') === 'done' && b - (m.duoAt ?? -99) >= 3 && (m.duoAt == null || Math.random() < .45)){ await duoCampaign(me); noteTalk('founders'); return; }
-  if (S.bosses >= 1 && !qState('tarjeta') && Math.random() < .5){ await say(me === 'lia' ? '¡Cuando destrabes a los tres clientes, vení a vernos! ¡Hay alguien que quiere conocerte!' : 'Cuando destrabes a los tres clientes, vení a vernos. Hay alguien que quiere conocerte.', me); qOpen('tarjeta'); return; }
+  if (S.bosses >= 1 && !qState('tarjeta') && Math.random() < .5){ await say(me === 'lia' ? '¡Cuando destrabes a los tres clientes, vení a vernos! ¡Te tenemos preparada la Gran Presentación!' : 'Cuando destrabes a los tres clientes, vení a vernos. Te tenemos preparada la Gran Presentación.', me); qOpen('tarjeta'); return; }
   if (me === 'agus' && talks('agus') >= 2 && b - (m.dinAt ?? -99) >= 3 && Math.random() < .4){ await agusDinamica(); noteTalk('founders'); return; }
   if (me === 'lia' && b >= 3 && b - (m.boardAt ?? -99) >= 4 && Math.random() < .5){
     await say(pick('lia:boardask', ['¡Te actualicé el tablero! ¿Lo querés ver?', '¡Tengo números nuevos tuyos! ¿Los vemos?', '¡Pará, pará! Antes de seguir: ¿viste cómo vienen tus números?']), 'lia:feliz');
@@ -774,9 +774,6 @@ async function talkFounders(n){
   } else if (me === 'lia' && Math.random() < .6){
     await say(pick('lia:chat', FOUNDERS.Lchat), Math.random() < .35 ? 'lia:risa' : 'lia');
     if (Math.random() < .35) await say(pick('agus:acota', FOUNDERS.Aacota), 'agus:risa');
-  }
-  else if (!S.flags.card && Math.random() < .25){
-    await say(pick('founders:montse', ['¿Montserrat? Está en la terraza. Sube a pensar. No se la molesta así nomás.', 'Montserrat es la dueña de la casona. Algún día vas a subir a conocerla.']), me);
   }
   noteTalk('founders');
   if (b <= (m.lastAdviceBattle ?? -1)){
@@ -1050,58 +1047,49 @@ async function talkReni(n){
   await say(pick('reni:no', RENI.no), 'reni');
 }
 
-/* ================= MONTSERRAT ================= */
-const MONTSE = {
-  R: {
-    lose: [f => `En esta casa se rompió una caldera, se inundó el sótano y se cayó un techo. Y acá estamos. ${f} no es el fin del mundo.`, f => `${f}, ¿eh? Los problemas difíciles son los que más enseñan.`],
-    boss: {explote: 'La Clienta Explosiva. Me acuerdo de su padre: quería que "implote". Bien hecho.', logo: 'Don Logo. Una vez me pidió agrandar el número de la puerta de la casona. Bien hecho.', fantasma: 'Lograste que la Clienta Fantasma conteste. Eso no lo logré ni yo.'},
-  },
-  lines: ['Una buena idea se defiende sola. Una mala necesita una presentación de cuarenta diapositivas.',
-    'Las ideas son como las plantas de esta terraza: si no las mirás todos los días, se te secan.',
-    'En esta casa hubo bailes, cumpleaños y una mudanza que duró tres años. Ahora hay ideas. Me gusta más.',
-    'Las mejores ideas llegan cuando te estás divirtiendo. Por eso hay ping pong abajo. Bueno, por eso y porque Sahi insistió.',
-    'Una idea que no te da un poquito de miedo no es una idea: es un trámite.',
-    'Si la idea entra en una frase, es buena. Si necesita un asterisco, todavía no.',
-    'Con los años aprendí a disfrutar el camino. El resultado dura un día; el camino, mucho más.',
-    'Las ideas no tienen dueño. La casa sí: soy yo. ¡Ja!',
-    'Los jueves, cuando hay after en el patio, me asomo desde acá. Nadie me ve. Yo los veo a todos.',
-    'Esta casa es de todos los que la cuidan. Por eso la cuidan tan bien.',
-    'Sofi cuida esta casa como si fuera suya. A veces mejor que yo. ¡Ja!',
-    {if: () => S.lvl >= PROJECT_LVL, t: 'Project Leader en mi casa. Me gusta cómo suena. Ahora cuidá a los que llegan, como te cuidaron a vos.'},
-    'Un buen equipo vale más que una buena idea. Pero tener las dos es mejor.', 'Los clientes difíciles enseñan más que los fáciles. No se lo digas a ellos.', 'El secreto es escuchar más de lo que hablás. Y tener siempre galletitas.',
-    'En mis tiempos el "ctrl+z" era una goma de borrar. Y funcionaba igual.', 'Nunca presentes una idea en la que no creés. Se nota en los ojos.', 'Una agencia es su gente. Lo demás son computadoras.',
-    'Cuando todos opinan, alguien tiene que decidir. Ojalá que sea quien escuchó a todos.', 'Si una reunión no tiene objetivo, el objetivo es salir de la reunión.',
-    () => `Llevás ${seenCount()} problemas en la bitácora. Cuando la llenes, venime a contar.`,
-    
-    {if: () => tod() === 'noche', t: 'A esta hora se escriben los mejores textos y se toman las peores decisiones. Elegí bien.'}],
-};
-async function talkMontse(){
-  if (!S.flags.montseMet){
-    S.flags.montseMet = true;
-    await says(['...', 'Así que llegaste hasta acá arriba. Soy Montserrat.', 'Esta casona es mía. Hace años le presté un cuarto a la agencia; ahora la agencia me presta la terraza. ¡Ja!', 'Subo a mirar la ciudad cuando necesito pensar. O cuando no quiero pensar, que también hace falta.', 'Me contaron de vos. Que entrenás con Fede aunque te cueste. Que Sahi te enseñó a gambetear. Que los tres clientes quedaron conformes.'], 'montse');
+/* ================= LA GRAN PRESENTACIÓN =================
+   En la Sala de Reuniones (la biblioteca de la planta baja), con todo el equipo. Cuando destrabás a los tres
+   clientes, Agus y Lía bajan a esperarte ahí (al lado de la mesa, en la punta sin silla); también se arranca desde
+   la tele de la punta de la mesa. Después de la presentación vuelven a Guaná. */
+const FOUNDERS_HOME = {agus: [14, 4, 'right', 'upstairs'], lia: [20, 4, 'left', 'upstairs']};
+const FOUNDERS_SALA = {agus: [18, 3, 'left', 'office'], lia: [18, 4, 'left', 'office']};
+function placeFounders(force){
+  if (!S) return;
+  const sala = S.flags.card && !S.flags.done;
+  for (const id of ['agus', 'lia']){
+    const n = NPCS.find(x => x.id === id), [x, y, d, map] = (sala ? FOUNDERS_SALA : FOUNDERS_HOME)[id];
+    if (n.map === map && n.hx === x && n.hy === y) continue;
+    if (!force && n.map === CURMAP.id && onScreen(n)) continue;
+    Object.assign(n, {map, x, y, hx: x, hy: y, dir: d, home: d, mv: null});
   }
+}
+async function presentation(me){
   if (!S.flags.done){
-    await says(['Te falta una sola cosa: La Gran Presentación. Y para eso hace falta algo que no se enseña en ningún curso.'], 'montse');
-    if (!S.skills.includes('vision')){ await learn('vision', sayN); await say('Visión. Ver lo que nadie ve. Usala bien.', 'montse'); }
-    await say('¿Estás list{o}?', 'montse');
-    const c = await choose(['Estoy list{o}', 'Todavía no']);
-    if (c !== 0){ await say(pick('montse:wait', ['Bien. Prepararse también es parte del trabajo. Te espero acá.', 'Bajá, respirá, volvé. La ciudad no se va a ningún lado.']), 'montse'); return; }
-  } else {
-    const r = reaction('montse', MONTSE.R);
-    await say(r || pick('montse:lines', MONTSE.lines), 'montse');
-    if (mem().montseIdea !== gameDay()){
-      if (!qState('ideas')) qOpen('ideas');
-      const ci = await choose(['Escuchar una idea', 'Presentar de nuevo', 'Mirar la ciudad'], {cancel: 2});
-      if (ci === 0){ await montseIdea(); return; }
-      if (ci === 2){ await say(pick('montse:city', ['Linda vista, ¿no? Desde acá los problemas se ven más chicos.', 'Cada ventana es una historia. Algunas son clientes nuestros.']), 'montse'); return; }
-    } else {
-    const c = await choose(['Presentar de nuevo', 'Mirar la ciudad']); if (c !== 0){ await say(pick('montse:city', ['Linda vista, ¿no? Desde acá los problemas se ven más chicos.', 'Cada ventana es una historia. Algunas son clientes nuestros.']), 'montse'); return; }
+    if (me === 'tv') await say('La tele de la sala ya tiene tu presentación cargada. El equipo se va acomodando alrededor de la mesa.');
+    else if (!S.flags.gpIntro){
+      S.flags.gpIntro = true;
+      if (me === 'lia'){
+        await say('¡Llegó el momento! ¡La Gran Presentación! ¡Viene todo el equipo y yo tengo el cronómetro listo! ¡Ja!', 'lia:feliz');
+        await say('Respirá hondo. Todo lo que aprendiste ya está en vos: con el equipo, con los clientes y con los procesos.', 'agus:feliz');
+      } else {
+        await say('Llegó el momento: la Gran Presentación. Todo lo que aprendiste ya está en vos: con el equipo, con los clientes y con los procesos.', 'agus:feliz');
+        await say('¡Viene todo el equipo! ¡La tele ya está prendida y yo tengo el cronómetro listo! ¡Ja!', 'lia:feliz');
+      }
+    } else await say(pick(me + ':gpback', me === 'lia' ? ['¡Volviste! ¿Ahora sí? ¡La sala está lista!', '¡Acá estamos! ¡El equipo ya se está sentando!'] : ['¿Ahora sí? Tranqui, te esperamos lo que haga falta.', 'Acá estamos. Cuando quieras, arrancamos.']), me === 'lia' ? 'lia:feliz' : 'agus');
+    const c = await choose(['¡Arranquemos!', 'Prepararme antes'], {cancel: 1});
+    if (c !== 0){
+      if (me === 'tv') await say('Dejás la presentación lista en la tele. Cuando vuelvas, arrancamos.');
+      else await say(pick(me + ':gpwait', me === 'lia' ? ['¡Dale! ¡Pero no tardes, que el cronómetro ya está corriendo! ¡Ja! Mentira.', '¡Andá, preparate! ¡Acá te esperamos!'] : ['Bien. Prepararse también es parte del trabajo. Acá te esperamos.', 'Andá tranqui. La sala no se va a ningún lado.']), me);
+      return;
     }
+  } else {
+    await say('La tele todavía tiene tu presentación. ¿La das de nuevo?');
+    if (await choose(['Presentar de nuevo', 'Ahora no'], {cancel: 1}) !== 0) return;
   }
   hideDlg();
   const res = await bossBattle('final', 'final');
-  if (res === 'win' && !S.flags.done){ S.flags.done = true; qDone('terraza'); if (qState('objetivo') === 'open') qDone('objetivo'); await ending(); qOpen('anual'); }
-  else if (res === 'win') await say('Impecable. Como siempre que se prepara bien.', 'montse');
+  if (res === 'win' && !S.flags.done){ S.flags.done = true; qDone('terraza'); if (qState('objetivo') === 'open') qDone('objetivo'); await ending(); qOpen('anual'); placeFounders(); }
+  else if (res === 'win') await say('Impecable. Como siempre que se prepara bien.', 'agus:feliz');
 }
 
 /* ================= SOFI Y TATO: ASTEROIDE (Administración, planta alta) =================
@@ -1134,7 +1122,7 @@ const SOFI = {
     '¿Precisás algo? Una silla, un cargador, una contraseña del wifi, una curita. Tengo de todo.',
     {d: 6, t: 'Cuando todo se desordena, primero se ordena. Después se sigue. Funciona con los cables y con los días.'},
     {if: () => S.lvl >= 15, t: 'Ahora que quedaste fij{o} te toca tu propia taza. Elegí color. Bueno, quedan verdes.'},
-    {d: 7, t: 'Montserrat me dijo que cuido esta casa como si fuera mía. Le dije que es de todos. Se rió y me dio la llave del placard.'},
+    {d: 7, t: 'Fede me dijo que cuido esta casa como si fuera mía. Le dije que es de todos. Se rió y me dio la llave del placard.'},
     {if: () => talks('tato') === 0, t: 'Ah, ¿no conociste a Tato? Es el que está al lado de la mesa, con el reggae sonando. Hablale fuerte, que no te escucha.'}],
 };
 async function talkSofi(){
@@ -1146,7 +1134,7 @@ async function talkSofi(){
     await say('Cada persona del equipo te va a enseñar algo. Si no sabés qué hacer, tocá AYUDA. La jornada es de 9 a 18, y si te quedás sin energía, Lu te recarga en Bienestar. ¡Y comé algo!', 'sofi');
     await say('Mirá, así es la casa:', 'sofi');
     await panelInfo('LA CASA', casaHTML()); closePanel();
-    await say('La agencia la dirigen Agus, Lía y Fede: en los procesos los vas a ver como AZ, LÍ y FD. Y Montserrat es la dueña de la casona: está en la terraza, y casi nadie llega hasta allá.', 'sofi');
+    await say('La agencia la dirigen Agus, Lía y Fede: en los procesos los vas a ver como AZ, LÍ y FD.', 'sofi');
     S.items.fruta = (S.items.fruta || 0) + 1; m.sofiFruitAt = b; SFX.heal(); await say('Tomá una fruta, para que arranques con energía.', 'sofi'); await say('Recibiste una Fruta.');
     await say(S.flags.tatoMet ? 'A Tato ya lo conociste, ¿no? El contador, el del reggae. Bueno: ahora pasá por Brasil, la primera oficina de este piso, que Fede te quiere conocer.' : 'Él es Tato, el contador. Saludalo, que con el reggae no te va a ver. Y después pasá por Brasil, la primera oficina de este piso: Fede te quiere conocer.', 'sofi');
     return;
@@ -1322,8 +1310,10 @@ async function talkBoss(key, n){
 
 
 async function ending(){
-  await says(['Eso fue Visión. Y un poco de suerte, no te voy a mentir.', 'Ahora disfrutalo, que eso también se entrena.', 'Bienvenid{o} de verdad a la casa, {name}.'], 'montse');
+  await say('Eso fue la Gran Presentación. Bienvenid{o} de verdad a la casa, {name}.', 'agus:feliz');
+  await say('¡Y lo medí: la sala entera aplaudió! ¡Récord de aplausos! ¡Ja!', 'lia:risa');
   await say('¿Viste? Lo importante es todo lo que aprendiste para llegar hasta acá.', 'fede');
+  await repasoFinal(true);
   await say('¡Golazo, crack! ¡Esto se festeja con asado!', 'sahi');
   await say('Con calma...', 'agus:feliz');
   await say('¡...y a full!', 'lia');
@@ -1335,7 +1325,6 @@ async function ending(){
   await say('La programo para las siete, que es cuando más se ve. Y con subtítulos.', 'alejo');
   await say('Ya la guardé: bien nombrada y en su carpeta. Como corresponde.', 'giuli');
   await say('La Gran Presentación fue un éxito. La agencia celebra.');
-  await repasoFinal();
   await say('FIN. ¿O el lunes que viene entra otro brief? Podés seguir jugando, completar la bitácora y llegar al nivel 25: en la Sala del Directorio te espera el Cliente del Año.');
 }
 
@@ -2087,7 +2076,7 @@ function casaHTML(){
     col('<div class="k">Planta baja</div>', row('El Hall', 'la entrada'), row('La Base', 'los pendientes (de ahí salen los problemas), con Alejo y Giuli'),
       row('Sala de Reuniones', 'la biblioteca'), row('Bienestar', 'Lu, para recargar energía'), row('Archivos X', 'el lab de Pimi'), row('Baño', 'al lado de La Base'),
       row('Sala de Clientes', 'los clientes'), row('Sala del Directorio', 'cerrada hasta el nivel 25')) +
-    col('<div class="k">Planta alta</div>', row('Brasil', 'Fede'), row('Guaná', 'Agus y Lía'), row('Asteroide', 'Sofi y Tato'), row('Al fondo', 'la escalera a la terraza (con tarjeta)'),
+    col('<div class="k">Planta alta</div>', row('Brasil', 'Fede'), row('Guaná', 'Agus y Lía'), row('Asteroide', 'Sofi y Tato'),
       '<div class="k">Afuera</div>', row('El Patio', 'Sahi y el ping pong'), row('La Barbacoa', 'la cocina, donde suele estar Marga'),
       '<div class="k">Y por toda la casa</div>', row('Reni', 'grabando contenido')) + '</div>';
 }

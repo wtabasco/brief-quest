@@ -40,7 +40,6 @@ const SK = {
   carpetas:{n:'Todo en su carpeta',t:'TEC',p:55,a:100,pp:15,fx:'selfDef+1',d:'Enseñada por Fede cuando ponés en práctica el orden de carpetas. Cuando todo está en su lugar, nada te toma por sorpresa: daña y sube tu defensa.'},
   fases:{n:'Campaña en fases',t:'EST',p:85,a:100,pp:8,fx:'selfAtk+1',d:'Enseñada por Sahi cuando ponés en práctica el proceso de campañas. Brief, conceptos, presupuesto, medios, diseño, presentación y aprobación: daña y sube tu ataque.'},
   campana:{n:'Campaña del año',t:'VIS',p:130,a:95,pp:3,d:'Lección del Cliente del Año. Todo lo que aprendiste, en una sola idea. La más fuerte de todas.'},
-  vision:{n:'Visión',t:'VIS',p:110,a:100,pp:4,d:'Regalo de Montserrat. Ver lo que nadie ve. Muy efectiva contra todo.'},
   alcance:{n:'Definir alcance',t:'EST',p:50,a:100,pp:15,fx:'foeAtk-1',d:'Lección de Scopecreep. Daña y baja el ataque del rival.'},
   defender:{n:'Defender la idea',t:'CRE',p:55,a:100,pp:15,fx:'selfDef+1',d:'Lección de Feedbackón. Daña y sube tu defensa.'},
   mail:{n:'Esto era un mail',t:'CRE',p:65,a:100,pp:12,d:'Lección de Reunionauro. Corta la burocracia de raíz.'},
@@ -70,7 +69,7 @@ const SKILL_HOW = {
   diseno: 'Giuli: terminá sus capacitaciones y ponelas en práctica resolviendo 6 problemas en La Base. Nivel 9.',
   cronograma: 'Alejo: hacé las seis capacitaciones del proceso de cronograma (desde el nivel 5) y ponelas en práctica en 5 desafíos. Nivel 7.',
   redes: 'Alejo: terminá sus capacitaciones de redes y ponelas en práctica en 6 desafíos. Nivel 11.',
-  dupla: 'Giuli y Alejo: completá la práctica con los dos. Nivel 15.', vision: 'Montserrat, en la terraza, al final.',
+  dupla: 'Giuli y Alejo: completá la práctica con los dos. Nivel 15.',
   alcance: 'Resolvé 3 Scopecreep. Nivel 5.', mail: 'Resolvé 3 Reunionauro. Nivel 6.', nombrar: 'Resolvé 3 Archivo_final_v7. Nivel 7.', datos: 'Resolvé 3 Wifi Caído. Nivel 8.',
   defender: 'Resolvé 3 Feedbackón. Nivel 9.', reiniciar: 'Resolvé 3 Bugsito. Nivel 10.', responder: 'Resolvé 3 Mailfantasma. Nivel 12.', mastiempo: 'Resolvé 3 Deadlinito. Nivel 13.',
   carpetas: 'Fede: hacé las cinco capacitaciones de orden de carpetas (desde el principio) y ponelas en práctica en 4 desafíos. Nivel 5.',
@@ -159,6 +158,7 @@ const need = L => 12 + L*L*5;
    pasa a Social (Social Manager); en el 25, Project (Project Leader). Al lado del nombre va la versión corta (n);
    en los diálogos de los ascensos, el cargo completo (full). Los celebran Agus y Lía (RRHH) y Fede. */
 const CLIENT_LVL = {fantasma: 10, logo: 17, explote: 22, anual: 27}; // los clientes tienen nivel fijo
+const FINAL_LVL = {min: 24, up: 3}; // la Gran Presentación crece con vos
 const PROJECT_LVL = 25; // a Project Leader (y se abre la Sala del Directorio)
 const ROLES = [{lvl: 1, n: 'Pasante', full: 'Pasante'}, {lvl: 15, n: 'Social', full: 'Social Manager'}, {lvl: PROJECT_LVL, n: 'Project', full: 'Project Leader'}];
 const roleAt = lvl => ROLES.filter(r => lvl >= r.lvl).pop();

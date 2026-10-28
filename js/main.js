@@ -1,7 +1,7 @@
 /* Construcción de mapas, título, intro y bucle principal */
 "use strict";
 /* Construcción de los mapas (necesita todo lo anterior cargado) */
-buildInterior('office'); buildInterior('upstairs'); buildInterior('barbacoa'); buildOutside(); buildTerrace(); useMap('office'); loadArt();
+buildInterior('office'); buildInterior('upstairs'); buildInterior('barbacoa'); buildOutside(); useMap('office'); loadArt();
 /* ================= TÍTULO E INICIO ================= */
 /* Menú de inicio: Continuar (la última partida), Cargar partida, Nueva partida. Hay 4 espacios para guardar. */
 async function titleScreen(){
@@ -93,6 +93,11 @@ async function pickPasante(menuEl, question){
 async function startWorld(isNew){
   await fade(true, false, 300);
   $('title').hidden = true;
+  // partidas viejas: la terraza ya no existe (la Gran Presentación es en la Sala de Reuniones) y Visión tampoco
+  if (S.pos.map === 'terrace') S.pos = {x: 32, y: 9, dir: 'left', map: 'upstairs'};
+  if (S.skills.includes('vision')){ S.skills = S.skills.filter(id => id !== 'vision'); S.equip = S.equip.map(id => id === 'vision' ? null : id); delete S.pp.vision;
+    for (const id of S.skills) if (!S.equip.includes(id)){ const i = S.equip.indexOf(null); if (i < 0) break; S.equip[i] = id; } }
+  if (S.quests.ideas){ delete S.quests.ideas; if (S.qbase) delete S.qbase.ideas; }
   useMap(S.pos.map || 'office'); placeDay();
   // partidas viejas: si quedaste parado donde ahora hay un seto o una planta, volvés a la entrada
   if (!WALK.has(tileAt(S.pos.x, S.pos.y))){ S.pos = {x: 15, y: 13, dir: 'up', map: 'outside'}; useMap('outside'); }

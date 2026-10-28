@@ -33,7 +33,7 @@ const roleHTML = k => { const r = ROLE_SCOPE[k];
 const objetivoPasos = () => (welcomeStep() >= 3 ? 1 : 0) + Math.min(3, S.bosses || 0) + (S.flags.done ? 1 : 0);
 function objetivoDesc(){
   if (S.flags.done) return '¡Lo lograste! Si querés seguir: Project Leader y el Cliente del Año.';
-  const next = welcomeStep() < 3 ? 'conocer la agencia' : (S.bosses || 0) < 3 ? `destrabar a los clientes (${S.bosses || 0} de 3)` : 'la Gran Presentación, en la terraza';
+  const next = welcomeStep() < 3 ? 'conocer la agencia' : (S.bosses || 0) < 3 ? `destrabar a los clientes (${S.bosses || 0} de 3)` : 'la Gran Presentación, en la Sala de Reuniones';
   return `Próximo paso: ${next}.`;
 }
 const objetivoHTML = () => H_([
@@ -41,7 +41,7 @@ const objetivoHTML = () => H_([
   B_('1. Conocé la agencia:', 'Sahi, Sofi, Fede, y Agus y Lía te reciben y te cuentan quiénes somos.'),
   B_('2. Aprendé:', 'capacitaciones con el equipo y los problemas de La Base. Así subís de nivel y sumás habilidades.'),
   B_('3. Destrabá a los tres clientes:', 'la Clienta Fantasma, Don Logo y la Clienta Explosiva, en la Sala de Clientes.'),
-  B_('4. La Gran Presentación:', 'en la terraza, con Montserrat.'),
+  B_('4. La Gran Presentación:', 'en la Sala de Reuniones, con todo el equipo.'),
   P_('Y después, si querés seguir: crecés hasta <b>Project Leader</b> y le presentás la campaña del año al Cliente del Año.'),
   `<div class="k">Tu próximo paso siempre está en Tareas (START o la tecla M).</div>`], 2.6);
 const AGENCIA = [
@@ -148,8 +148,6 @@ const CULTURE_LINES = {
   marga: ['Acá se habla de frente, mi vida. Se habla con las personas, no de las personas. Eso no lo enseña ningún manual. Bueno, este sí.',
     'Hace muchos años que estoy en esta casa, y te digo una cosa: la buena onda no se da por sentada. Se cuida.',
     'Mi vida, yo no uso ese ClickUp, pero los chicos siempre dicen: "¡el tiempo, cargá el tiempo!". Así que cargalo, ¿eh?'],
-  montse: ['El camino no es recto, pero es importante ir en la dirección correcta. Eso aplica a las casonas y a las agencias.',
-    'Un gran lugar para trabajar se hace con grandes personas. Y trabajando a lo grande.'],
 };
 const CULTURE_AGUS = ['Tenemos dos trabajos: hacer lo que hay que hacer y pensar cómo hacerlo mejor.',
   'Se habla con, no se habla de. Si algo no te cierra, llevalo a donde y con quién corresponde.',
@@ -175,7 +173,7 @@ const CULTURE_DUO = [{t: [['alejo', 'Primero, la tarea que el Project puso arrib
   const add = (arr, xs) => { if (Array.isArray(arr)) arr.push(...xs.map(t => typeof t === 'string' ? {d: 1, t} : t)); };
   add(FEDE.tips, CULTURE_LINES.fede); add(SAHI.lines, CULTURE_LINES.sahi); add(PIMI.lines, CULTURE_LINES.pimi);
   add(SOFI.lines, CULTURE_LINES.sofi); add(TATO.lines, CULTURE_LINES.tato); add(LU.tips, CULTURE_LINES.lu);
-  add(MARGA.lines, CULTURE_LINES.marga); add(MONTSE.lines, CULTURE_LINES.montse);
+  add(MARGA.lines, CULTURE_LINES.marga);
   add(FOUNDERS.chat, CULTURE_AGUS); add(FOUNDERS.Lchat, CULTURE_LIA); add(DUO.lines, CULTURE_DUO);
 })();
 

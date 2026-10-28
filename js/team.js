@@ -5,8 +5,7 @@
    repasa sale de "The Way We Work" (Cultura y Clientes), los equipos y los rituales, lo que menos aparecía.
    - Charla de cómo trabajamos con Fede (una vez por día, en Brasil): tres situaciones de todos los días. Cada
      respuesta buena suma experiencia; si no sale, Fede explica y no pasa nada.
-   - Las ideas de la casa, con Montserrat en la terraza (después de la Gran Presentación, una por día): una
-     idea a la que le falta una letra del AEIOU; hay que encontrar cuál.
+   - Repasitos: cada tanto alguien te tira una pregunta rápida (tipos, tareas y horas, AEIOU, propósito o valores).
    - Encargos del equipo: alguien te pide que le lleves algo o le avises algo a otra persona. Al hablar con
      esa persona se cumple y suma experiencia. Uno por vez, hasta tres por día. */
 /* situaciones de todos los días (Cultura, Clientes, Equipos y Rituales de las presentaciones de la agencia) */
@@ -116,9 +115,9 @@ async function teamExtras(n){
   return false;
 }
 
-/* ---- Las ideas de la casa: Montserrat te cuenta una idea y hay que ver qué letra del AEIOU le falta ---- */
+/* ---- Ideas con alguna letra del AEIOU de menos: van en los repasitos ---- */
 const IDEAS = [
-  {t: 'Una campaña con el baile que estaba de moda hace cinco años. Me lo mostró mi nieto. En 2019.', no: 'Actual', why: 'Le falta lo Actual: tiene que estar a la vanguardia y ser pertinente en su contexto.'},
+  {t: 'Una campaña con el baile que estaba de moda hace cinco años. Bueno, seis.', no: 'Actual', why: 'Le falta lo Actual: tiene que estar a la vanguardia y ser pertinente en su contexto.'},
   {t: 'Un posteo divino, con colores lindos, que no sabemos para qué sirve ni a qué objetivo apunta. Pero es divino.', no: 'Estratégico', why: 'Le falta lo Estratégico: todo parte de una estrategia definida antes.'},
   {t: 'Un texto larguísimo en letra chiquita, gris sobre gris, para leer con lupa. Muy completo, eso sí.', no: 'Impactante', why: 'Le falta lo Impactante: tiene que llamar la atención y ser visualmente atractivo.'},
   {t: 'Hacemos lo mismo que hizo la competencia la semana pasada. Total, a ellos les funcionó.', no: 'Original', why: 'Le falta lo Original: no se copia de la competencia ni se repite de la propia marca.'},
@@ -127,30 +126,16 @@ const IDEAS = [
   {t: 'Una pieza para el Día de la Madre. La publicamos en agosto, que hay menos ruido.', no: 'Actual', why: 'Le falta lo Actual: fuera de su contexto, no es pertinente.'},
   {t: 'Una acción en una plaza, sin objetivo ni público pensado. Vemos qué pasa.', no: 'Estratégico', why: 'Le falta lo Estratégico: primero se define la estrategia, después la idea.'},
 ];
-async function montseIdea(){
-  const m = mem(); m.montseIdea = gameDay();
-  const pool = IDEAS.filter((_, i) => !(m.ideasOk || []).includes(i)), list = pool.length ? pool : IDEAS, idea = list[rnd(list.length)], idx = IDEAS.indexOf(idea);
-  await say(pick('montse:idea', ['Te cuento una idea que me trajeron. Vos me decís qué le falta.', 'Sentate. Te cuento una idea y vos me decís qué letra le falta. Del AEIOU, obvio.', 'Una idea de las de antes. A ver si le encontrás la falla.']), 'montse');
-  await say(idea.t, 'montse');
-  const c = await choose(AEIOU.map(([a]) => a), {cancel: null});
-  if (AEIOU[c][0] === idea.no){
-    m.ideasOk = (m.ideasOk || []).concat(idx);
-    await say(pick('montse:ok', ['Exacto. Tenés ojo. Eso no se enseña: se entrena.', 'Eso mismo. Si no es AEIOU, no se propone.', 'Bien visto. Así se cuida una idea.']), 'montse');
-    await gainXP(Math.max(20, Math.floor(need(S.lvl) * .22)), sayN);
-    if (qState('ideas') === 'open' && m.ideasOk.length >= 5){ qDone('ideas'); await say('Cinco ideas, cinco fallas encontradas. Ahora las ideas te las traigo yo a vos para que las mejores. ¡Ja!', 'montse'); }
-  } else {
-    await say(`Mmm, no. ${idea.why}`, 'montse');
-    await say('Mañana te traigo otra. Las ideas no se acaban; la paciencia, a veces.', 'montse');
-  }
-}
 
 /* ================= EL PRÓXIMO PASO, SIEMPRE A LA VISTA =================
    Un cartelito abajo a la izquierda dice qué hacer ahora y dónde (también arriba de todo en Tareas).
    Prioridad: la recorrida, las noticias que te esperan, las tareas cumplidas para cobrar, el encargo en curso y
    después el objetivo del juego (con el nivel que conviene tener para cada cliente). */
 const PLACE = {'Fede': 'Brasil (planta alta)', 'Sahi': 'el patio, en la mesa de ping pong', 'Pimi': 'Archivos X (planta baja)', 'Sofi': 'Asteroide (planta alta)',
-  'Agus': 'Guaná (planta alta)', 'Lía': 'Guaná (planta alta)', 'Agus y Lía': 'Guaná (planta alta)', 'Lu': 'Bienestar (planta baja)', 'Giuli': 'La Base', 'Alejo': 'La Base', 'Montserrat': 'la terraza'};
-const AUTO_Q = ['objetivo', 'clientes', 'repaso', 'ideas', 'encargo', 'bienvenida', 'terraza', 'anual', 'fijo', 'senior', 'pimi_surf'];
+  'Agus': 'Guaná (planta alta)', 'Lía': 'Guaná (planta alta)', 'Agus y Lía': 'Guaná (planta alta)', 'Lu': 'Bienestar (planta baja)', 'Giuli': 'La Base', 'Alejo': 'La Base'};
+// mientras te esperan para la Gran Presentación, Agus y Lía están en la Sala de Reuniones
+const placeOf = g => /Agus|Lía/.test(g) && S.flags.card && !S.flags.done ? 'la Sala de Reuniones (planta baja)' : PLACE[g];
+const AUTO_Q = ['objetivo', 'clientes', 'repaso', 'encargo', 'bienvenida', 'terraza', 'anual', 'fijo', 'senior', 'pimi_surf'];
 function nextStep(){
   if (!S) return '';
   if (welcomeStep() < 3) return `Hablá con ${WELCOME_NEXT[welcomeStep()]}.`;
@@ -159,7 +144,7 @@ function nextStep(){
   if (wildTotal() === 0) return 'Resolvé tu primer problema: caminá entre las pilas de pendientes de La Base (planta baja).';
   if (trainingNext('carpetas') === 0 && !trainingToday('carpetas')) return 'Fede te espera en Brasil (planta alta) con tu primera capacitación: orden de carpetas.';
   const ready = QUEST_ORDER.find(id => qState(id) === 'open' && !AUTO_Q.includes(id) && qReady(id));
-  if (ready){ const g = QUESTS[ready].giver; return `¡Cumpliste "${QUESTS[ready].title}"! Volvé a hablar con ${g}${PLACE[g] ? ', en ' + PLACE[g] : ''}.`; }
+  if (ready){ const g = QUESTS[ready].giver; return `¡Cumpliste "${QUESTS[ready].title}"! Volvé a hablar con ${g}${placeOf(g) ? ', en ' + placeOf(g) : ''}.`; }
   if (S.errand){ const e = errandBy(S.errand.from, S.errand.to); if (e) return `${e.what}.`; }
   if (!S.flags.done){
     const k = BOSS_ORDER.find(x => !S.beaten[x]);
@@ -167,11 +152,11 @@ function nextStep(){
       return S.lvl < L ? `Preparate para ${n} (nivel ${L}): resolvé problemas en La Base y capacitate con el equipo. Estás en el ${S.lvl}.`
         : `Destrabá a ${n} en la Sala de Clientes (planta baja).${k === 'explote' ? ' Podés ir con Fede.' : ''}`; }
     if (!S.flags.card) return 'Agus y Lía te esperan en Guaná (planta alta).';
-    return 'La Gran Presentación: subí a la terraza por la escalera del fondo del pasillo de arriba.';
+    return 'La Gran Presentación: Agus y Lía te esperan en la Sala de Reuniones (planta baja).';
   }
   if (S.lvl < PROJECT_LVL) return `Seguí aprendiendo: en el nivel ${PROJECT_LVL} pasás a Project Leader. Estás en el ${S.lvl}.`;
   if (!S.flags.anual) return `Presentale la campaña del año al Cliente del Año (nivel ${CLIENT_LVL.anual}), en la Sala del Directorio (planta baja).`;
-  return S.lvl < 30 ? `Seguí creciendo hasta el nivel 30: ayudá al equipo y charlá con Fede y Montserrat. Estás en el ${S.lvl}.` : '¡Llegaste lejísimos! Ayudá al equipo y completá la bitácora.';
+  return S.lvl < 30 ? `Seguí creciendo hasta el nivel 30: ayudá al equipo y charlá con Fede. Estás en el ${S.lvl}.` : '¡Llegaste lejísimos! Ayudá al equipo y completá la bitácora.';
 }
 /* El cartelito "AHORA" no queda fijo: aparece unos segundos cuando cambia el próximo paso (y al empezar el día).
    Para verlo cuando quieras está el botón AYUDA (o la tecla H, o "Ayuda" en el menú de START). */
@@ -188,7 +173,7 @@ function drawTrackHUD(){
 const isFreshStart = () => !!S && welcomeStep() === 0;
 /* AYUDA: qué hacer ahora, las tareas en curso y cómo se juega */
 function helpHTML(){
-  const open = QUEST_ORDER.filter(id => qState(id) === 'open' && !['objetivo', 'repaso', 'ideas', 'clientes', 'bienvenida'].includes(id)).slice(0, 3);
+  const open = QUEST_ORDER.filter(id => qState(id) === 'open' && !['objetivo', 'repaso', 'clientes', 'bienvenida'].includes(id)).slice(0, 3);
   const qs = open.map(id => { const [a, b] = qProg(id); return `<div>· <b>${QUESTS[id].title}</b> (${a}/${b}), de ${QUESTS[id].giver}</div>`; }).join('');
   const ideas = xpIdeas().map(t => `<div>· ${fmt(t)}</div>`).join('');
   return `<div style="font-size:2.45cqw;line-height:1.2;display:flex;flex-direction:column;gap:.45cqw"><h4>Ahora</h4><div>${fmt(nextStep())}</div>` + (ideas ? `<h4 style="margin-top:.6cqw">Para sumar experiencia hoy</h4>${ideas}` : '') + (qs ? `<h4 style="margin-top:.6cqw">En curso</h4>${qs}` : '') +
@@ -244,7 +229,6 @@ function xpIdeas(){
   for (const id of Object.keys(TRAININGS)){ const T = TRAININGS[id]; if (S.lvl >= T.minLvl && trainingNext(id) >= 0 && !trainingToday(id)) L.push(`Capacitación con ${PEOPLE[T.who]}: ${T.title}.`); }
   for (const who of ['giuli', 'alejo']) if (S.flags.foundersMet && duoNext(who) >= 0 && !duoToday(who)) L.push(`Capacitación de ${who === 'giuli' ? 'diseño con Giuli' : 'redes con Alejo'}, en La Base.`);
   if (S.flags.fedeMet && mem().repaso !== gameDay()) L.push('La charla de cómo trabajamos con Fede, en Brasil.');
-  if (S.flags.done && mem().montseIdea !== gameDay()) L.push('Una idea de Montserrat, en la terraza.');
   if (!S.errand && welcomeStep() >= 3) L.push('Charlá con el equipo: a veces te piden una mano.');
   return L.slice(0, 3);
 }
@@ -286,6 +270,8 @@ const TYPE_WEAK = {CAOS: ' Ojo: contra el caos, lo creativo y la calma rinden po
 const valOpts = n => shuffle(VALORES.map(v => v[0]).filter(x => x !== n)).slice(0, 2);
 function repQuestion(kind){
   if (kind === 'tareas') return {...REP_TASKS[rnd(REP_TASKS.length)], why: TASKS_WHY};
+  if (kind === 'aeiou'){ const i = IDEAS[rnd(IDEAS.length)], o = shuffle(AEIOU.map(([x]) => x).filter(x => x !== i.no)).slice(0, 2);
+    return {q: `Te cuento una idea: "${i.t}" Si no es AEIOU, no se propone. ¿Qué le falta?`, a: i.no, o, why: i.why}; }
   if (kind === 'prop') return {...REP_PURPOSE[rnd(REP_PURPOSE.length)], why: 'Nuestro propósito: ' + PROPOSITO};
   if (kind === 'def'){ const [n, d] = VALORES[rnd(VALORES.length)]; return {q: `"${d}" ¿Qué valor es?`, a: n, o: valOpts(n), why: `Nuestros cinco valores son: ${VALORES.map(v => v[0]).join(', ')}.`}; }
   if (kind === 'sit'){ const [t, n] = REP_SIT[rnd(REP_SIT.length)], d = VALORES.find(v => v[0] === n)[1]; return {q: `${t} ¿Qué valor es ese?`, a: n, o: valOpts(n), why: d}; }
@@ -296,7 +282,7 @@ function repQuestion(kind){
   return {q: k ? `Te salta ${EN[k].n}, que es de ${PT_LBL[pt]}. ¿Qué tipo de habilidad lo destraba mejor?` : `Te salta un problema de ${PT_LBL[pt]}. ¿Qué tipo de habilidad lo destraba mejor?`,
     a: TYPE_LBL[sk], o: shuffle(Object.keys(TYPE_LBL).filter(x => x !== sk)).slice(0, 2).map(x => TYPE_LBL[x]), why: TYPE_RULE + TYPE_WEAK[pt]};
 }
-// cada uno pregunta, festeja y explica con su estilo (Lu no: con ella se recarga; Montserrat tiene sus ideas)
+// cada uno pregunta, festeja y explica con su estilo (Lu no: con ella se recarga)
 const REP_VOICE = {
   fede: {in: ['Pregunta rápida, de las que me gustan. Lo importante se repite, como la ronda.', 'Un repasito antes de seguir. Sin mate, pero rápido.', 'Te tomo una. Cortita. Después seguimos.'],
     ok: ['Eso. Ahora en menos tiempo. Es chiste: bien ahí.', 'Exacto. Eso, todos los días.'], no: ['Tranqui. Lo importante es que ahora lo sabés.', 'La próxima sale. Probar y aprender.'], m: 'fede:feliz'},
@@ -338,7 +324,7 @@ async function repasito(n){
   m.repAt = m.battles || 0; m.repToday = (m.repToday || 0) + 1; m.repN = (m.repN || 0) + 1;
   // antes de los clientes conviene repasar los tipos; después, más propósito y valores
   const r = Math.random(), early = (S.bosses || 0) < 3;
-  const W = early ? [['tipo', .3], ['tareas', .2], ['prop', .15], ['def', .15], ['sit', .15], ['fun', .05]] : [['tipo', .15], ['tareas', .25], ['prop', .2], ['def', .15], ['sit', .2], ['fun', .05]];
+  const W = early ? [['tipo', .3], ['tareas', .2], ['aeiou', .1], ['prop', .1], ['def', .1], ['sit', .15], ['fun', .05]] : [['tipo', .15], ['tareas', .2], ['aeiou', .15], ['prop', .15], ['def', .1], ['sit', .2], ['fun', .05]];
   let acc = 0, kind = 'sit'; for (const [k, w] of W){ acc += w; if (r < acc){ kind = k; break; } }
   const q = repQuestion(kind);
   await say(pick(who + ':repin', v.in), who);
@@ -384,10 +370,10 @@ const REPASO_FINAL = () => [
 async function repasoFinalPages(){
   for (const p of REPASO_FINAL()){ await say(p.intro, p.who); await panelInfo(p.title, p.html); closePanel(); }
 }
-async function repasoFinal(){
+async function repasoFinal(ending){
   S.flags.repasoFinal = true;
-  await say('Antes del festejo, un repaso de todo lo que aprendiste. En la agencia te lo vamos a preguntar, así que mejor tenerlo fresco: así quedás bien parad{o}.', 'agus');
+  await say(`${ending ? 'Antes del festejo, un repaso' : 'Un repaso'} de todo lo que aprendiste. En la agencia te lo vamos a preguntar, así que mejor tenerlo fresco: así quedás bien parad{o}.`, 'agus');
   await repasoFinalPages();
   await say('¡Y lo tenés siempre a mano: en START, La agencia, Repaso final! ¡Repasalo, que lo voy a medir! ¡Ja! Bueno, un poquito.', 'lia:risa');
-  await say('Con todo esto, ya sos parte de la casa de verdad.', 'agus:feliz');
+  await say(ending ? 'Ahora sí: ¡a festejar!' : 'Con todo esto, ya sos parte de la casa de verdad.', 'agus:feliz');
 }

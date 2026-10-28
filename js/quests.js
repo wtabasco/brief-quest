@@ -11,8 +11,6 @@ const QUESTS = {
   // cosas para el equipo (part_team.js): experiencia charlando y ayudando
   repaso:     {giver: 'Fede', title: 'Cómo trabajamos', abs: true, goal: 1, count: () => mem().repaso === gameDay() ? 1 : 0,
                desc: () => mem().repaso === gameDay() ? 'Hoy ya charlaste con Fede. Mañana, otra.' : 'Una vez por día, Fede te plantea tres situaciones de todos los días. Hablale en Brasil: suma experiencia.'},
-  ideas:      {giver: 'Montserrat', title: 'Las ideas de la casa', abs: true, goal: 5, count: () => Math.min(5, (mem().ideasOk || []).length),
-               desc: () => 'Una vez por día, Montserrat te cuenta una idea en la terraza. Encontrá qué letra del AEIOU le falta: Actual, Estratégico, Impactante, Original o Útil.'},
   encargo:    {giver: 'El equipo', title: 'Una mano al equipo', abs: true, goal: 1, count: () => S.errand ? 0 : 1, desc: () => errandDesc()},
   fede_prueba:{giver: 'Fede', title: 'Volver a entrenar', minLvl: 6, goal: 2, count: () => mem().spars || 0, desc: () => 'Entrená con Fede dos veces más, salga como salga. Lo que cuenta es volver.'},
   consejo:    {giver: 'Agus y Lía', title: 'Poner en práctica el consejo', minLvl: 5, goal: 3, count: () => mem().adviceWins || 0, desc: () => `Resolvé 3 desafíos con un consejo de ${S.flags.path === 'lia' ? 'Lía' : 'Agus'} activo.`},
@@ -26,7 +24,7 @@ const QUESTS = {
   pimi_bug:   {giver: 'Pimi', title: 'Cazar bugs', goal: 2, count: () => beatCount('bug'), desc: () => 'Resolvé 2 Bugsito. Aparecen en La Base después del primer cliente.'},
   pimi_file:  {giver: 'Pimi', title: 'Ordenar los archivos', minLvl: 12, goal: 3, count: () => beatCount('archivo'), desc: () => 'Resolvé 3 Archivo_final_v7.'},
   pimi_surf:  {giver: 'Pimi', title: 'La ola grande', abs: true, goal: 3, count: () => S.bosses, desc: () => 'Destrabá a los tres clientes.'},
-  tarjeta:    {giver: 'Agus y Lía', title: 'La tarjeta de la terraza', abs: true, goal: 3, count: () => S.bosses, desc: () => 'Destrabá a los tres clientes y volvé a hablar con Agus y Lía, en Guaná, su oficina de la planta alta.'},
+  tarjeta:    {giver: 'Agus y Lía', title: 'Agus y Lía te esperan', abs: true, goal: 3, count: () => S.bosses, desc: () => 'Destrabá a los tres clientes y volvé a hablar con Agus y Lía, en Guaná, su oficina de la planta alta.'},
   fede_mate:  {giver: 'Fede', title: 'Un mate para Fede', abs: true, goal: 1, count: () => Math.min(1, S.items.mate || 0), desc: () => (S.items.mate || 0) > 0 ? 'Ya tenés un mate. Llevaselo a Fede, a Brasil, su oficina de la planta alta.' : `Reni anda con el termo por toda la agencia: pedile un mate y llevaselo a Fede. Ahora está en ${reniWhere()}.`},
   pimi_comida:{giver: 'Pimi', title: 'Comida para Pimi', abs: true, goal: 1, count: () => ((S.items.alfajor || 0) + (S.items.medialunas || 0)) > 0 ? 1 : 0, desc: () => 'Llevale a Pimi un alfajor o unas medialunas. Revisá la heladera de la cocina, en la barbacoa del patio.'},
   lu_agua:    {giver: 'Lu', title: 'Agua para Lu', abs: true, goal: 1, count: () => Math.min(1, S.items.agua || 0), desc: () => (S.items.agua || 0) > 0 ? 'Ya tenés el vaso. Llevaselo a Lu, en Bienestar.' : 'Llenale un vaso de agua a Lu en un dispensador.'},
@@ -55,7 +53,7 @@ const QUESTS = {
                desc: () => welcomeStep() >= 3 ? 'Ya conociste a todos los de la recorrida.' : `Próxima parada: ${WELCOME_NEXT[welcomeStep()]}. Después: ${['Fede, y Agus y Lía', 'Agus y Lía', 'Pimi o Alejo y Giuli'][welcomeStep()]}.`},
   fijo:       {giver: 'Agus y Lía', title: 'Una noticia de RRHH', abs: true, goal: 1, count: () => S.flags.fijo ? 1 : 0, desc: () => 'Llegaste al nivel 15. Agus y Lía te quieren dar una noticia en Guaná, su oficina de la planta alta.'},
   senior:     {giver: 'Fede', title: 'Charla con Fede', abs: true, goal: 1, count: () => S.flags.senior ? 1 : 0, desc: () => 'Llegaste al nivel 25. Fede te espera en Brasil, su oficina de la planta alta.'},
-  terraza:    {giver: 'Montserrat', title: 'La Gran Presentación', abs: true, goal: 1, count: () => S.flags.done ? 1 : 0, desc: () => 'Subí a la planta alta por la escalera del hall y, al fondo del pasillo, a la terraza. Montserrat te espera.'},
+  terraza:    {giver: 'Agus y Lía', title: 'La Gran Presentación', abs: true, goal: 1, count: () => S.flags.done ? 1 : 0, desc: () => 'En la Sala de Reuniones, la biblioteca de la planta baja. Agus y Lía te esperan ahí, con todo el equipo. También podés arrancar desde la tele de la punta de la mesa.'},
 };
 const QUEST_ORDER = Object.keys(QUESTS);
 const qState = id => (S.quests || {})[id];

@@ -9,7 +9,6 @@ const NPCS = [
   {id:'fede', map:'upstairs', x:6, y:2, dir:'down', look:'fede', talk:talkFede, wander:[2, 2, 9, 5], mood:'mate'},
   {id:'agus', map:'upstairs', x:14, y:4, dir:'right', look:'agus', talk:talkFounders, still:true, mood:'♥'},
   {id:'lia', map:'upstairs', x:20, y:4, dir:'left', look:'lia', talk:talkFounders, still:true, mood:'!'},
-  {id:'montse', map:'terrace', x:9, y:4, dir:'up', look:'montse', talk:talkMontse, still:true, mood:'…'},
   {id:'sahi', map:'outside', x:4, y:8, dir:'down', look:'sahi', talk:talkSahi, still:true, mood:'pp', pingpong:true},
   {id:'lu', map:'office', x:5, y:20, dir:'down', look:'lu', talk:talkLu, wander:[2, 20, 8, 23], mood:'♪', sings:true},
   {id:'pimi', map:'office', x:29, y:12, dir:'down', look:'pimi', talk:talkPimi, wander:[26, 11, 31, 14], mood:'~'},
@@ -143,7 +142,6 @@ function drawNotes(c, X, Y, n){
 async function warp(mapId, x, y, dir){
   G.busy = true; G.pendA = false;
   await fade(true, false, 260);
-  if (mapId === 'terrace' && MAPS.terrace.sky !== skyKey()) buildTerrace();
   useMap(mapId); teleport(x, y, dir); G.zone = null; updatePresence(true);
   await fade(false, false, 260);
   G.busy = false; onStep(true); save();
@@ -161,17 +159,10 @@ async function quickOpen(which){
   G.busy = true; const prev = CLOSE_BTN; CLOSE_BTN = which === 'log' ? 'l' : 'r';
   try { if (which === 'log') await logScreen(); else await skillsScreen(); } finally { CLOSE_BTN = prev; closePanel(); G.busy = false; }
 }
-/* cualquier escalón sirve: en el hall toda la escalera sube; arriba, todo el hueco baja. La 'U' del pasillo de arriba va a la terraza */
+/* cualquier escalón sirve: en el hall toda la escalera sube; arriba, todo el hueco baja */
 function stairAt(t){ if (t === 'U') return 'up'; if (t === 'v') return 'down'; if (t === 'y') return CURMAP.id === 'office' ? 'up' : CURMAP.id === 'upstairs' ? 'down' : null; return null; }
 function goDownstairs(){ SFX.sel(); warp('office', 14, 21, 'down'); }
-async function climbStairs(){
-  if (CURMAP.id === 'office'){ SFX.sel(); warp('upstairs', 5, 9, 'right'); return; }
-  if (S.flags.card){ warp('terrace', 8, 10, 'up'); return; }
-  G.busy = true;
-  await say('TERRAZA. Acceso restringido: solo con tarjeta.');
-  await say(pick('stairs:lock', ['Dicen que Montserrat sube a la terraza a pensar. Casi nadie llega hasta ahí.', 'La cuerda está bien atada. No parece que puedas pasar sin permiso.', 'Agus y Lía tienen las tarjetas. Primero hay que destrabar a los clientes.']));
-  hideDlg(); G.busy = false;
-}
+async function climbStairs(){ SFX.sel(); warp('upstairs', 5, 9, 'right'); }
 /* cosas del patio que se pueden mirar; desde la otra cabecera de la mesa se le habla a Sahi */
 async function patioThing(ch, tx){
   if (ch === 'T'){
@@ -198,6 +189,7 @@ async function houseThing(ch, tx){
   G.busy = true;
   try {
     if (ch === 'J'){ await liaBoardLook(); return; }
+    if (ch === 'N' && tx < 22 && S.flags.card){ await presentation('tv'); return; }
     if (ch === 'base14'){ await valuesLook(); return; }
     if (ch === 'H' && (zoneAt(tx, 2) || {}).n === 'Brasil'){ await statusBoardLook(); return; }
     if (ch === 'c'){ // la cafetera de Agus y Lía convida un café cada tanto
@@ -250,11 +242,11 @@ async function interact(){
   const st = !n && stairAt(tileAt(G.x+dx, G.y+dy));
   if (st === 'up') return climbStairs();
   if (st === 'down') return goDownstairs();
-  if (!n && CURMAP.id !== 'outside' && CURMAP.id !== 'terrace' && tileAt(G.x+dx, G.y+dy) === 'F') return openFridge();
-  if (!n && CURMAP.id !== 'outside' && CURMAP.id !== 'terrace' && tileAt(G.x+dx, G.y+dy) === 'Q') return useCooler();
+  if (!n && CURMAP.id !== 'outside' && tileAt(G.x+dx, G.y+dy) === 'F') return openFridge();
+  if (!n && CURMAP.id !== 'outside' && tileAt(G.x+dx, G.y+dy) === 'Q') return useCooler();
   if (!n && CURMAP.id === 'outside' && 'TFVw'.includes(tileAt(G.x+dx, G.y+dy))) return patioThing(tileAt(G.x+dx, G.y+dy), G.x+dx);
   if (!n && CURMAP.id === 'office' && G.y+dy === 7 && [11, 12, 14, 18, 19].includes(G.x+dx)) return houseThing('base' + (G.x+dx), G.x+dx);
-  if (!n && CURMAP.id !== 'outside' && CURMAP.id !== 'terrace' && 'MBYcGoqmJNHfelpnugrjwhiStdz'.includes(tileAt(G.x+dx, G.y+dy))) return houseThing(tileAt(G.x+dx, G.y+dy), G.x+dx);
+  if (!n && CURMAP.id !== 'outside' && 'MBYcGoqmJNHfelpnugrjwhiStdz'.includes(tileAt(G.x+dx, G.y+dy))) return houseThing(tileAt(G.x+dx, G.y+dy), G.x+dx);
   if (!n) return;
   G.busy = true; n.dir = OPP[G.dir];
   n.mv = null; emote(n, moodOf(n), 1500); await sleepMs(380);
@@ -286,7 +278,6 @@ function onStep(silentWarp){
     if (CURMAP.id === 'outside' && tileAt(G.x, G.y) === 'O'){ warp('office', 16, 23, 'up'); return; }
     if (CURMAP.id === 'outside' && tileAt(G.x, G.y) === 'K'){ warp('barbacoa', 3, 10, 'up'); return; }
     if (CURMAP.id === 'barbacoa' && tileAt(G.x, G.y) === 'E' && G.dir === 'down'){ warp('outside', 4, 16, 'down'); return; }
-    if (CURMAP.id === 'terrace' && tileAt(G.x, G.y) === 'O'){ warp('upstairs', 33, 9, 'left'); return; }
   }
   const z = zoneAt(G.x, G.y);
   if (z && z !== G.zone){ G.zone = z; const el = $('zone'); el.textContent = z.n; el.hidden = false; clearTimeout(onStep.zt); onStep.zt = setTimeout(() => el.hidden = true, 1800); }
@@ -324,7 +315,7 @@ function drawScene(cx, cy, withPlayer, px, py){
     else if (n.sings && !G.busy) notes.push([n, nx, ny]);
     if (n.mop && !n.mv) list.push({y: ny + 14.2, draw: () => drawMop(ctx, Math.round((nx - cx)*2), Math.round((ny - cy)*2), n)});
     if (n.termo && !n.mv) list.push({y: ny + 14.2, draw: () => drawTermo(ctx, Math.round((nx - cx)*2), Math.round((ny - cy)*2), n)});
-    if (S && rainy() && (M.id === 'outside' || M.id === 'terrace') && RAIN[n.id]) list.push({y: ny + 14.3, draw: () => drawUmbrella(ctx, Math.round((nx - cx)*2), Math.round((ny - cy)*2), n.id === 'montse' ? '#3d6fb0' : '#d8492f')});
+    if (S && rainy() && M.id === 'outside' && RAIN[n.id]) list.push({y: ny + 14.3, draw: () => drawUmbrella(ctx, Math.round((nx - cx)*2), Math.round((ny - cy)*2), '#d8492f')});
     if (n.pingpong && !n.mv) list.push({y: ny + 14.2, draw: () => drawPingPong(ctx, Math.round((nx - cx)*2), Math.round((ny - cy)*2), n)});
   }
   if (withPlayer){

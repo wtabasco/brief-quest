@@ -1,4 +1,4 @@
-/* Mapas (planta baja, planta alta, patio y terraza) y cambio de mapa */
+/* Mapas (planta baja, planta alta, patio y barbacoa) y cambio de mapa */
 "use strict";
 /* ================= MAPA ================= */
 const OFFICE_GRID = (() => {
@@ -89,7 +89,7 @@ const MAPS = {
    métricas de Lía) y Asteroide (Administración: Sofi y Tato; e es la pared de madera con estantes empotrados y la
    ventana de rejas grises, l la lámpara de pie de arco, u el parlante de torre donde suena el reggae de Tato,
    p la impresora sobre el mueble gris, T la mesa redonda). n son las sansevierias.
-   I es pared lisa a toda altura (con moldura en Brasil), y al fondo del pasillo la escalera a la terraza (con tarjeta). */
+   I es pared lisa a toda altura (con moldura en Brasil); al fondo del pasillo, una sansevieria. */
 const UPSTAIRS_GRID = [
   '####################################',
   '#IYYYYHHWWI#WWYYYYIIWWJJ#IeeeeeeIII#',
@@ -100,7 +100,7 @@ const UPSTAIRS_GRID = [
   '#P........P#P..........P#P........P#',
   '#####..##########..##########..#####',
   '#yyyy..................Q...........#',
-  '#yyyv.............................U#',
+  '#yyyv.............................n#',
   '#yyyy.....P.........n.........P....#',
   '####################################',
 ].map(r => r.split(''));
@@ -132,23 +132,6 @@ const BARBACOA_GRID = [
   '################',
 ].map(r => r.split(''));
 MAPS.barbacoa = {id:'barbacoa', grid: BARBACOA_GRID, walk: new Set(['.','E']), zones: [{n:'La Barbacoa', x:1,y:1,w:14,h:10, floor:'marble'}]};
-/* Terraza: el lugar de Montserrat, arriba de todo */
-const TERRACE_GRID = [
-  'kkkkkkkkkkkkkkkkkk',
-  'kkkkkkkkkkkkkkkkkk',
-  'kkkkkkkkkkkkkkkkkk',
-  '==================',
-  '=pdddddddddddddp==',
-  '=dddddddddddddddd=',
-  '=ddddbbddddbbdddd=',
-  '=dddddddddddddddd=',
-  '=pdddddddddddddcp=',
-  '=dddddddddddddddd=',
-  '=dddddddddddddddd=',
-  '=pddddddOdddddddp=',
-  '==================',
-].map(r => r.split(''));
-MAPS.terrace = {id:'terrace', grid: TERRACE_GRID, walk: new Set(['d','O']), zones: [{n:'La Terraza', x:0,y:0,w:18,h:13, floor:'deck'}]};
 let CURMAP, MAP, MW, MH, ZONES, WALK;
 function useMap(id){ CURMAP = MAPS[id]; MAP = CURMAP.grid; MH = MAP.length; MW = MAP[0].length; ZONES = CURMAP.zones; WALK = CURMAP.walk; }
 useMap('office');

@@ -1,7 +1,7 @@
 /* Diálogos, listas, menús, paneles y textos según género */
 "use strict";
 /* ================= DIÁLOGOS Y MENÚS ================= */
-const PEOPLE = {fede:'Fede', sahi:'Sahi', lu:'Lu', pimi:'Pimi', reni:'Reni', agus:'Agus', lia:'Lía', montse:'Montserrat', sofi:'Sofi', tato:'Tato', alejo:'Alejo', giuli:'Giuli', marga:'Marga', anual:'El Cliente del Año', logo:'Don Logo', explote:'Clienta Explosiva', fantasma:'Clienta Fantasma'};
+const PEOPLE = {fede:'Fede', sahi:'Sahi', lu:'Lu', pimi:'Pimi', reni:'Reni', agus:'Agus', lia:'Lía', sofi:'Sofi', tato:'Tato', alejo:'Alejo', giuli:'Giuli', marga:'Marga', anual:'El Cliente del Año', logo:'Don Logo', explote:'Clienta Explosiva', fantasma:'Clienta Fantasma'};
 /* Retratos: se agrandan 4 veces con píxeles exactos y el navegador los achica suave al tamaño de la caja.
    Escalados directo a un tamaño no entero (1,5x en el celular) se perdían rayas finas, como las de la camisa de Alejo. */
 const CRISP = {}, CRISP_OK = {};
@@ -193,6 +193,6 @@ function statsHTML(){
   return `<div class="stat"><span>Nombre</span><b>${S.name}</b><span>Cargo</span><b>${roleAt(S.lvl).full}</b><span>Nivel</span><b>${S.lvl}</b><span>Energía</span><b>${S.hp}/${st.max}</b>
   <span>Ataque</span><b>${st.atk}</b><span>Defensa</span><b>${st.def}</b><span>Velocidad</span><b>${st.spd}</b>
   <span>Experiencia</span><b>${S.xp}/${need(S.lvl)}</b><span>Clientes</span><b>${S.bosses}/3</b></div><div class="k" style="margin-top:1.2cqw">${fmt(next)}</div>` +
-  (S.flags.typesHint ? `<div class="k" style="margin-top:1.2cqw">Montserrat dice: lo creativo destraba la burocracia, la estrategia ordena el caos, lo técnico arregla bugs y la calma desarma la presión.</div>` : '');
+  (S.flags.typesHint ? `<div class="k" style="margin-top:1.2cqw">Recordá: lo creativo destraba la burocracia, la estrategia ordena el caos, lo técnico arregla bugs y la calma desarma la presión.</div>` : '');
 }
 

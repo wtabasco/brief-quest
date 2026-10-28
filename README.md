@@ -40,7 +40,7 @@ js/
   core.js       Utilidades base, canvas y rutas de retratos
   sound.js      Efectos de sonido (WebAudio)
   music.js      Música de fondo con temas originales
-  maps.js       Mapas (oficina, vereda y terraza) y cambio de mapa
+  maps.js       Mapas (planta baja, planta alta, patio y barbacoa) y cambio de mapa
   zones.js      Helpers de baldosas y zonas
   color.js      Colores y elipses
   pixel.js      Kit de pixel art: paleta, rampas de color, bloques y contornos
@@ -49,7 +49,6 @@ js/
   looks.js      Aspecto de cada personaje
   office.js     La oficina: pisos, paredes, objetos de pared y muebles
   outside.js    Vereda: pasto, caminos, árboles, canteros y fachada
-  terrace.js    Terraza de Montserrat con cielo según la hora
   data.js       Tipos, habilidades, problemas, clientes, objetos y guardado
   input.js      Teclado, cruceta táctil y panel de controles
   ui.js         Diálogos, listas, menús, paneles y textos según género

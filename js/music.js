@@ -35,8 +35,6 @@ const TRACKS = {
           [83, 2], [86, 1], [83, 1], [79, 2], [83, 2],            [85, 2], [88, 1], [85, 1], [81, 2], [85, 2],
           [83, 2], [80, 1], [83, 1], [88, 2], [83, 2],            [85, 3], [83, 1], [81, 2], [_, 2]],
     bass: 'gallop', drums: 'action', lead: 'square', leadVol: .05, arp: 'fast', pad: .008},
-  // "La terraza": el tema de la agencia, más lento, sin batería y con un sonido más suave
-  terrace: {base: 'world', bpm: 88, drums: 'none', lead: 'triangle', leadVol: .06, arp: 'soft', swing: .1},
 };
 for (const k in TRACKS){ const t = TRACKS[k]; if (t.base) TRACKS[k] = Object.assign({}, TRACKS[t.base], t); }
 const MUSIC = {cur: null, step: 0, next: 0, mel: [], bus: null, timer: null};
@@ -109,7 +107,6 @@ function playMusic(id){
 /* qué tema corresponde a cada momento */
 function wantedMusic(){
   if (G.mode === 'battle') return 'battle';
-  if (G.mode === 'world' && CURMAP && CURMAP.id === 'terrace') return 'terrace';
   return 'world';
 }
 /* Lu canta: una frase cortita con vibrato */
