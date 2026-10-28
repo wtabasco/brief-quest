@@ -337,6 +337,7 @@ async function gainXP(n, msg){
     if (S.lvl === 15){ SFX.learn(); await msg('¡Quedaste fij{o} en la agencia! Desde hoy sos Social Manager.'); qOpen('fijo'); }
     if (S.lvl === PROJECT_LVL){ SFX.learn(); await msg('¡Ascenso! Desde hoy sos Project Leader.'); qOpen('senior'); qOpen('anual', true); await msg('Y algo más: se abrió la Sala del Directorio, en la planta baja. Te espera el Cliente del Año.'); }
     if (LEARN_AT[S.lvl]) await learn(LEARN_AT[S.lvl], msg);
+    await levelUnlocks(S.lvl, msg);
   }
   syncBoxes();
 }
@@ -368,8 +369,10 @@ async function battleFlow(foe, kind, key){
     S.log[key].beaten++;
     const d = EN[key] || BOSS[key];
     // después de la Gran Presentación ya sos de la casa: cada problema te enseña un poco más (el camino al 30 no se hace eterno)
-    await gainXP(Math.floor(d.xp * foe.lvl / 5 * (kind === 'wild' && S.flags.done ? 1.3 : 1)), bsay);
+    // los problemas de La Base rinden un poco más (para que el camino entre clientes no se haga largo) y más todavía después de la Gran Presentación
+    await gainXP(Math.floor(d.xp * foe.lvl / 5 * (kind === 'wild' ? (S.flags.done ? 1.5 : 1.3) : 1)), bsay);
     if (kind === 'wild') await wayQuote(key, bsay);
+    if (kind === 'wild') await hitoCheck(bsay);
     if (d.lesson && !S.skills.includes(d.lesson)){
       const need = kind === 'wild' ? LESSON_NEED : 1;
       const ll = kind === 'wild' ? (LESSON_LVL[key] || 0) : 0;

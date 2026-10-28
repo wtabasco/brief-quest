@@ -1825,8 +1825,11 @@ async function quizLoop(who, q, helper){
     const opts = [q.a, ...q.o].map(t => ({t, k: Math.random()})).sort((a, b) => a.k - b.k).map(o => o.t);
     const c = await choose(opts, {cancel: null});
     if (opts[c] === q.a){ await say(pick(who + ':quizok', ['¡Eso! Lo tenés.', '¡Exacto! Así se hace.', 'Perfecto. Eso es lo que hace la diferencia.']), who); return; }
-    tries++; await say(tries === 1 ? 'Casi. ' + q.why : q.why + ' Probemos otra vez.', who);
-    if (tries >= 2 && helper) await say('Tranqui: equivocarse es la mitad de aprender.', helper);
+    tries++;
+    if (tries === 1) await say('Casi. ' + q.why, who);
+    else if (tries === 2) await say(pick(who + ':quiz2', ['Esa tampoco. Releé lo que te conté, que está ahí.', 'Mmm, no. Pensalo como si fuera de verdad: ¿qué harías?', 'Tampoco. Pero ya estás más cerca que antes.']), who);
+    else { await say(`Te la doy: es "${q.a}". Ahora elegila vos, así te queda.`, who); }
+    if (tries === 2 && helper) await say('Tranqui: equivocarse es la mitad de aprender.', helper);
   }
 }
 async function trainingSession(id){

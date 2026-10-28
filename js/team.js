@@ -174,9 +174,10 @@ function drawTrackHUD(){
 const isFreshStart = () => !!S && welcomeStep() === 0;
 /* AYUDA: qué hacer ahora, las tareas en curso y cómo se juega */
 function helpHTML(){
-  const open = QUEST_ORDER.filter(id => qState(id) === 'open' && !['objetivo', 'repaso', 'ideas'].includes(id)).slice(0, 3);
-  const qs = open.map(id => { const [a, b] = qProg(id); return `<div>· <b>${QUESTS[id].title}</b> (${a}/${b}) — ${QUESTS[id].desc()}</div>`; }).join('');
-  return `<div style="font-size:2.55cqw;line-height:1.22;display:flex;flex-direction:column;gap:.55cqw"><h4>Ahora</h4><div>${fmt(nextStep())}</div>` + (qs ? `<h4 style="margin-top:.8cqw">En curso</h4>${qs}` : '') +
+  const open = QUEST_ORDER.filter(id => qState(id) === 'open' && !['objetivo', 'repaso', 'ideas', 'clientes', 'bienvenida'].includes(id)).slice(0, 3);
+  const qs = open.map(id => { const [a, b] = qProg(id); return `<div>· <b>${QUESTS[id].title}</b> (${a}/${b}), de ${QUESTS[id].giver}</div>`; }).join('');
+  const ideas = xpIdeas().map(t => `<div>· ${fmt(t)}</div>`).join('');
+  return `<div style="font-size:2.45cqw;line-height:1.2;display:flex;flex-direction:column;gap:.45cqw"><h4>Ahora</h4><div>${fmt(nextStep())}</div>` + (ideas ? `<h4 style="margin-top:.6cqw">Para sumar experiencia hoy</h4>${ideas}` : '') + (qs ? `<h4 style="margin-top:.6cqw">En curso</h4>${qs}` : '') +
     `</div>`;
 }
 async function helpPanel(){ const p = panelInfo('AYUDA', helpHTML()); $('panelHint').textContent = 'B: volver · Todas tus tareas: START → Tareas'; await p; }
@@ -189,3 +190,46 @@ async function helpScreen(){
 /* tocar el cartelito abre la ayuda */
 (() => { const el = $('nowstep'); if (!el) return;
   el.addEventListener('click', () => helpScreen()); })();
+
+/* ================= QUE NO ABURRA: ritmo, hitos y qué se destrabó =================
+   - Hitos de La Base: cada tanto (10, 25, 50, 75, 100, 150 y 200 problemas resueltos) alguien del equipo lo festeja
+     con su estilo y suma un poco de experiencia. Así el camino entre clientes tiene pequeñas celebraciones.
+   - Al subir de nivel, el juego dice qué se destrabó: el próximo cliente, capacitaciones nuevas o tareas para cobrar.
+   - En AYUDA, "Para sumar experiencia": lo que podés hacer hoy además de resolver problemas. */
+const HITOS = [
+  [10, 'sahi', '¡Diez problemas resueltos, crack! Ya tenés hinchada en La Base.'],
+  [25, 'lia', '¡Veinticinco problemas! ¡Ya hice un gráfico! ¡Dos, en realidad! ¡Uno de barras y uno de torta!'],
+  [50, 'pimi', 'Cincuenta problemas. Tranqui. Ya sos parte del sistema.'],
+  [75, 'agus', 'Setenta y cinco problemas resueltos. ¿Y cómo te hace sentir eso? Perdón, me salió.'],
+  [100, 'fede', 'Cien problemas. Muy bien. Ahora resolvé el ciento uno en menos turnos.'],
+  [150, 'tato', '¿Ciento cincuenta problemas? ¿Ya? Uh. Felicitaciones atrasadas.'],
+  [200, 'reni', '¡Doscientos problemas! Lo subo a las stories. ¿Comiste algo, por lo menos?'],
+];
+const wildTotal = () => Object.keys(EN).reduce((n, k) => n + ((S.log[k] && S.log[k].beaten) || 0), 0);
+async function hitoCheck(msg){
+  const n = wildTotal(), m = mem(); m.hitos = m.hitos || [];
+  const h = HITOS.find(([k]) => n >= k && !m.hitos.includes(k)); if (!h) return;
+  m.hitos.push(h[0]);
+  await msg(`${PEOPLE[h[1]]}: "${h[2]}"`, 2600);
+  await gainXP(Math.max(10, Math.floor(need(S.lvl) * .1)), msg);
+}
+async function levelUnlocks(L, msg){
+  const out = [];
+  const k = BOSS_ORDER.find(x => !S.beaten[x]);
+  if (k && L === CLIENT_LVL[k]) out.push(`¡Ya tenés el nivel para ${({fantasma: 'la Clienta Fantasma', logo: 'Don Logo', explote: 'la Clienta Explosiva'})[k]}! Te espera en la Sala de Clientes.`);
+  if (S.flags.done && L === CLIENT_LVL.anual && !S.flags.anual) out.push('Ya estás a la altura del Cliente del Año. Te espera en la Sala del Directorio.');
+  for (const id of Object.keys(TRAININGS)) { const T = TRAININGS[id]; if (T.minLvl === L && trainingNext(id) === 0) out.push(`${PEOPLE[T.who]} ya te puede dar la capacitación "${T.title}".`); }
+  const ready = QUEST_ORDER.filter(id => qState(id) === 'open' && QUESTS[id].minLvl === L && qCountOk(id));
+  for (const id of ready) out.push(`Ya podés volver con ${QUESTS[id].giver}: cumpliste "${QUESTS[id].title}".`);
+  for (const t of out.slice(0, 3)) await msg(t, 2000);
+}
+/* lo que se puede hacer hoy para sumar experiencia, además de los problemas de La Base */
+function xpIdeas(){
+  const L = [];
+  for (const id of Object.keys(TRAININGS)){ const T = TRAININGS[id]; if (S.lvl >= T.minLvl && trainingNext(id) >= 0 && !trainingToday(id)) L.push(`Capacitación con ${PEOPLE[T.who]}: ${T.title}.`); }
+  for (const who of ['giuli', 'alejo']) if (S.flags.foundersMet && duoNext(who) >= 0 && !duoToday(who)) L.push(`Capacitación de ${who === 'giuli' ? 'diseño con Giuli' : 'redes con Alejo'}, en La Base.`);
+  if (S.flags.fedeMet && mem().repaso !== gameDay()) L.push('La charla de cómo trabajamos con Fede, en Brasil.');
+  if (S.flags.done && mem().montseIdea !== gameDay()) L.push('Una idea de Montserrat, en la terraza.');
+  if (!S.errand && welcomeStep() >= 3) L.push('Charlá con el equipo: a veces te piden una mano.');
+  return L.slice(0, 3);
+}
