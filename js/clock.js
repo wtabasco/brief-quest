@@ -87,12 +87,27 @@ function tickClock(dt){
     clockAcc -= MIN_MS; c.min++;
     if (c.min === 12*60) margaBye();
     picanteTick(c.min);
+    if (c.min === DAY_START + 5 || c.min === WORK_END - 30) workToast(c.min < 12*60);
     if (c.min === WORK_END) toast('Son las 18: terminó la jornada. Si querés, te podés ir a casa desde el menú.', 3600);
     if (c.min === LAST_CALL) toast('Son las 19:30: a las 20 cierra la oficina.', 3200);
     if (c.min >= CLOSE){ endDay(); break; }
   }
   updatePresence(); moveMarga();
   drawClockHUD();
+}
+/* el recordatorio de todos los días, sin abrumar: a la mañana, Slack (las tareas en orden de prioridad);
+   antes del cierre, ClickUp (las horas cargadas). Recién después de la recorrida de bienvenida. */
+function workToast(morning){
+  if (!S || welcomeStep() < 3) return;
+  const lead = S.lvl >= PROJECT_LVL;
+  const t = morning
+    ? pick(lead ? 'cu:amPL' : 'cu:am', lead
+      ? ['Slack: mandale a tu equipo las tareas de hoy, en orden de prioridad. Y que cada uno trackee en ClickUp.', 'Slack: ¿tu equipo ya tiene sus prioridades del día? Primero lo primero.']
+      : ['Slack · Tu Project: «¡Buen día! Te dejé las tareas de hoy, en orden de prioridad.»', 'Slack: tus tareas del día ya están, en orden de prioridad. Arrancá por la primera.',
+         'Slack · Tu Project: «Hoy, primero lo primero. Y todo trackeado en ClickUp.»', 'Slack: llegaron las prioridades del día. Una por una, en orden.'])
+    : pick('cu:pm', ['ClickUp: antes de irte, revisá que las horas de hoy estén cargadas.', 'ClickUp: ¿quedó alguna tarea sin trackear? Cada hora cuenta para valorizar el trabajo.',
+         'ClickUp: con las horas de hoy sabemos cuánto le dedicamos a cada cliente. ¿Están todas?']);
+  toast(t, 4200);
 }
 /* después de las 18 te podés ir a casa cuando quieras (desde el menú): arranca el día siguiente */
 const canGoHome = () => !!S && gameMin() >= WORK_END && G.mode === 'world' && !G.mini;

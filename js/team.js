@@ -14,6 +14,8 @@ const REPASO = () => [
   {p: 'Te piden una tarea y no te queda claro para cuándo es. ¿Qué hacés?', ok: 'Pregunto antes de arrancar', opts: ['Pregunto antes de arrancar', 'Arranco y después veo', 'Espero a que me avisen'], why: 'No empiezo una tarea sin entenderla ni saber cuándo se entrega.'},
   {p: 'Ves que no llegás con una entrega. ¿Qué hacés?', ok: 'Escalo a tiempo', opts: ['Escalo a tiempo', 'Me quedo hasta tarde y no digo nada', 'Aviso el día de la entrega'], why: 'Si no llego, escalo a tiempo. Avisar temprano es transparencia.'},
   {p: 'Algo de un compañero no te gustó. ¿Cómo lo resolvés?', ok: 'Se lo digo a él, de frente', opts: ['Se lo digo a él, de frente', 'Lo comento en la cocina', 'Lo dejo pasar y me enojo'], why: 'Se habla CON, no se habla DE. Las puertas siempre están abiertas.'},
+  {p: 'Te llegan tres tareas por Slack. ¿Por cuál arrancás?', ok: 'Por la que el Project puso primera', opts: ['Por la que el Project puso primera', 'Por la que más me gusta', 'Por la más fácil, para sacarla'], why: 'Las tareas las manda el Project por Slack en orden de prioridad, y se respeta ese orden.'},
+  {p: 'Arrancás una tarea para un cliente. ¿Qué no te olvidás?', ok: 'Trackear el tiempo en ClickUp', opts: ['Trackear el tiempo en ClickUp', 'Avisarle a toda la agencia', 'Cambiar el fondo de pantalla'], why: 'Con las horas de ClickUp sabemos cuánto le dedicamos a cada cliente: así valorizamos mejor nuestro trabajo y elegimos con qué clientes trabajar.'},
   {p: 'Te equivocaste en algo. ¿Y ahora?', ok: 'Lo cuento y aprendo', opts: ['Lo cuento y aprendo', 'Lo escondo', 'Le echo la culpa al wifi'], why: 'El error es una oportunidad: busquemos errores nuevos, no repetir los viejos.'},
   {p: 'Te escriben y estás a mil. ¿Qué hacés con el mensaje?', ok: 'Respondo, aunque sea "lo veo a la tarde"', opts: ['Respondo, aunque sea "lo veo a la tarde"', 'Lo dejo en visto', 'Lo contesto la semana que viene'], why: 'Los mensajes se responden: no dejo a nadie colgado.'},
   {p: 'Terminaste algo, pero no te convence del todo. ¿Lo entregás?', ok: 'Me tomo 15 minutos más', opts: ['Me tomo 15 minutos más', 'Lo entrego igual', 'Lo tiro y empiezo de cero'], why: 'Siempre hay 15 minutos más para corregir algo que no nos convence.'},
@@ -88,8 +90,18 @@ async function teamExtras(n){
     await say('Antes de entrenar: ¿charlamos tres situaciones de todos los días? Así se aprende cómo trabajamos acá. Y suma experiencia.', 'fede');
     const c = await choose(['Dale', 'Ahora no'], {cancel: 1});
     if (c === 0){ await repasoValores(); return true; }
+    return false;
   }
-  // 3) alguien te pide una mano
+  // el repaso final, para quien terminó el juego antes de que existiera (o lo quiere ver otra vez desde La agencia)
+  if (S.flags.done && !S.flags.repasoFinal && (n.id === 'agus' || n.id === 'lia') && m.repFinalAsk !== gameDay()){
+    m.repFinalAsk = gameDay();
+    await say(n.id === 'lia' ? '¡Te debemos algo! ¡El repaso final de todo lo que aprendiste! En la agencia te lo vamos a preguntar, ¿lo hacemos?' : 'Te debemos el repaso final de todo lo que aprendiste. En la agencia te lo vamos a preguntar, así quedás bien parad{o}. ¿Lo hacemos?', n.id);
+    if (await choose(['Dale', 'Ahora no'], {cancel: 1}) === 0){ await repasoFinal(); return true; }
+    return false;
+  }
+  // 3) un repasito de lo importante: propósito, valores o tipos
+  if (repasitoReady(n, m)){ await repasito(n); return true; }
+  // 4) alguien te pide una mano
   const today = gameDay(); if (m.errandDay !== today){ m.errandDay = today; m.errandsToday = 0; }
   if (!S.errand && m.errandsToday < ERRAND_MAX && talksFor(n.id) > 1 && Math.random() < .4){
     const opts = ERRANDS.filter(e => e.from === n.id && metNpc(e.to));
@@ -98,7 +110,7 @@ async function teamExtras(n){
       await say(e.ask, n.id);
       const c = await choose(['Dale, ya voy', 'Ahora no puedo'], {cancel: 1});
       if (c === 0){ S.errand = {from: e.from, to: e.to}; m.errandsToday++; qReopen('encargo'); return true; }
-      await say('Tranqui, no pasa nada.', n.id);
+      await say(pick(n.id + ':errno', ['Tranqui, no pasa nada.', 'Dale, otro día será.', 'Todo bien, lo resuelvo de otra forma.']), n.id);
     }
   }
   return false;
@@ -235,4 +247,147 @@ function xpIdeas(){
   if (S.flags.done && mem().montseIdea !== gameDay()) L.push('Una idea de Montserrat, en la terraza.');
   if (!S.errand && welcomeStep() >= 3) L.push('Charlá con el equipo: a veces te piden una mano.');
   return L.slice(0, 3);
+}
+
+/* ---- Repasitos: cada tanto, alguien del equipo te tira una pregunta rápida (propósito, valores o tipos) ---- */
+const REP_SIT = [
+  ['Te das cuenta de que no llegás con una entrega y avisás temprano.', 'Transparencia'],
+  ['Un cliente te pregunta algo que no sabés y le decís "lo averiguo y te confirmo", en vez de inventar.', 'Transparencia'],
+  ['Le pasás a alguien de otro equipo el atajo que te ahorró una hora.', 'Colaboración'],
+  ['Se complica una entrega en otro equipo y te ofrecés a dar una mano.', 'Colaboración'],
+  ['Se cae el wifi en plena presentación y buscás cómo seguir, con una sonrisa.', 'Actitud positiva'],
+  ['Te llega un "cambio chiquito" el viernes a las 17 y lo resolvés sin drama.', 'Actitud positiva'],
+  ['Después de cada campaña anotás qué harías distinto la próxima vez.', 'Aprendizaje'],
+  ['Probás una herramienta nueva para hacer el reporte más rápido.', 'Aprendizaje'],
+  ['Dejás la cocina como la encontraste, cuidás las plantas y saludás a Marga por su nombre.', 'Sentido de pertenencia'],
+  ['Hablás de los clientes de la agencia como "nuestros clientes".', 'Sentido de pertenencia'],
+];
+const REP_FAKE = ['El cambio chiquito', 'La reunión que podía ser un mail', 'Archivo_final_v7', 'Contestar mails a las tres de la mañana', 'El "lo vemos el lunes"', 'Que todo sea urgente'];
+const REP_PURPOSE = [
+  {q: 'Completá nuestro propósito: "Creamos estrategias de comunicación que generan un impacto positivo en el crecimiento de..."', a: 'Nuestros clientes, las personas y el planeta', o: ['Los likes, los seguidores y las stories', 'La cantidad de reuniones por semana']},
+  {q: 'Según nuestro propósito, ¿qué creamos?', a: 'Estrategias de comunicación con impacto positivo', o: ['Posteos lindos para llenar el calendario', 'Presentaciones de ochenta diapositivas']},
+  {q: 'Nuestro propósito habla de un impacto positivo. ¿En el crecimiento de quiénes?', a: 'De los clientes, las personas y el planeta', o: ['Solo de la agencia', 'Del que más fuerte habla en la reunión']},
+];
+// cómo llegan las tareas y dónde se trackea el tiempo
+const REP_TASKS = [
+  {q: '¿Cómo te llegan las tareas del día?', a: 'Por Slack, de mi Project, en orden de prioridad', o: ['Por señales de humo', 'Las elijo yo, según cuál me gusta más']},
+  {q: 'Tenés tres tareas en Slack. ¿Cuál hacés primero?', a: 'La que el Project puso como prioridad', o: ['La más divertida', 'La más corta, para tachar algo']},
+  {q: '¿Dónde se trackea el tiempo de cada tarea?', a: 'En ClickUp', o: ['En un post-it', 'En la memoria, que nunca falla']},
+  {q: '¿Para qué trackeamos las horas en ClickUp?', a: 'Para saber cuánto le dedicamos a cada cliente y valorizar mejor el trabajo', o: ['Para que Lía tenga más gráficos', 'Para saber a qué hora almorzás']},
+  {q: 'Con las horas de ClickUp, la agencia puede...', a: 'Elegir mejor con qué clientes trabajar', o: ['Dormir la siesta con la conciencia tranquila', 'Hacer reuniones más largas']},
+];
+const TASKS_WHY = 'Las tareas te las manda tu Project por Slack, en orden de prioridad. Y el tiempo se trackea en ClickUp: así sabemos cuánto le dedicamos a cada cliente, valorizamos mejor el trabajo y elegimos con qué clientes trabajar.';
+// el tipo de habilidad que destraba cada tipo de problema (ver CHART en data.js)
+const TYPE_LBL = {CRE: 'Creativo', EST: 'Estrategia', TEC: 'Técnico', CAL: 'Calma'};
+const PT_LBL = {BURO: 'burocracia', CAOS: 'caos', BUG: 'bug', PRES: 'presión'};
+const REP_TYPES = [['CRE', 'BURO'], ['EST', 'CAOS'], ['TEC', 'BUG'], ['CAL', 'PRES']];
+const TYPE_RULE = 'Lo creativo destraba la burocracia, la estrategia ordena el caos, lo técnico arregla los bugs y la calma desarma la presión.';
+const TYPE_WEAK = {CAOS: ' Ojo: contra el caos, lo creativo y la calma rinden poco.', BUG: ' Ojo: contra un bug, la estrategia rinde poco.', BURO: ' Ojo: contra la burocracia, lo técnico rinde poco.', PRES: ''};
+const valOpts = n => shuffle(VALORES.map(v => v[0]).filter(x => x !== n)).slice(0, 2);
+function repQuestion(kind){
+  if (kind === 'tareas') return {...REP_TASKS[rnd(REP_TASKS.length)], why: TASKS_WHY};
+  if (kind === 'prop') return {...REP_PURPOSE[rnd(REP_PURPOSE.length)], why: 'Nuestro propósito: ' + PROPOSITO};
+  if (kind === 'def'){ const [n, d] = VALORES[rnd(VALORES.length)]; return {q: `"${d}" ¿Qué valor es?`, a: n, o: valOpts(n), why: `Nuestros cinco valores son: ${VALORES.map(v => v[0]).join(', ')}.`}; }
+  if (kind === 'sit'){ const [t, n] = REP_SIT[rnd(REP_SIT.length)], d = VALORES.find(v => v[0] === n)[1]; return {q: `${t} ¿Qué valor es ese?`, a: n, o: valOpts(n), why: d}; }
+  if (kind === 'fun'){ const [n] = VALORES[rnd(VALORES.length)]; return {q: '¿Cuál de estos es uno de nuestros cinco valores?', a: n, o: shuffle(REP_FAKE).slice(0, 2), why: `Los cinco son: ${VALORES.map(v => v[0]).join(', ')}.`}; }
+  // tipos: con un problema que ya cruzaste, si hay
+  const [sk, pt] = REP_TYPES[rnd(REP_TYPES.length)];
+  const seen = Object.keys(LESSON_LVL).filter(k => EN[k] && EN[k].t === pt && S.log[k]), k = seen.length ? seen[rnd(seen.length)] : null;
+  return {q: k ? `Te salta ${EN[k].n}, que es de ${PT_LBL[pt]}. ¿Qué tipo de habilidad lo destraba mejor?` : `Te salta un problema de ${PT_LBL[pt]}. ¿Qué tipo de habilidad lo destraba mejor?`,
+    a: TYPE_LBL[sk], o: shuffle(Object.keys(TYPE_LBL).filter(x => x !== sk)).slice(0, 2).map(x => TYPE_LBL[x]), why: TYPE_RULE + TYPE_WEAK[pt]};
+}
+// cada uno pregunta, festeja y explica con su estilo (Lu no: con ella se recarga; Montserrat tiene sus ideas)
+const REP_VOICE = {
+  fede: {in: ['Pregunta rápida, de las que me gustan. Lo importante se repite, como la ronda.', 'Un repasito antes de seguir. Sin mate, pero rápido.', 'Te tomo una. Cortita. Después seguimos.'],
+    ok: ['Eso. Ahora en menos tiempo. Es chiste: bien ahí.', 'Exacto. Eso, todos los días.'], no: ['Tranqui. Lo importante es que ahora lo sabés.', 'La próxima sale. Probar y aprender.'], m: 'fede:feliz'},
+  sahi: {in: ['Che, pará. Pregunta de la tribuna, rapidita.', 'Antes de seguir, una de repaso. Como el himno antes del partido.'],
+    ok: ['¡Golazo, crack! Lo tenés clarísimo.', '¡Eso! Lo sabés de memoria, como la formación del equipo.'], no: ['Uh, pegó en el travesaño. Pero ahora ya la sabés.', 'Tranqui, crack. Para eso están los repasos.'], m: 'sahi:feliz'},
+  pimi: {in: ['Pregunta rápida. Tranqui, es fácil.', 'Te tiro una. Sin presión.'],
+    ok: ['Bien. Así de simple.', 'Eso. Tranqui, lo tenés.'], no: ['Tranqui. Ahora ya está.', 'No pasa nada. La próxima sale.'], m: 'pimi'},
+  reni: {in: ['Ay, para una story: ¿me contestás una cosita rápida?', 'Te pregunto algo y te grabo contestando. Mentira. Bueno, un poquito.'],
+    ok: ['¡Ay, qué bien! Eso va para las stories.', '¡Sabía que lo sabías!'], no: ['No pasa nada. Ahora ya lo sabés. ¿Comiste?', 'Tranqui, que esto no lo subo. Ahora ya lo sabés.'], m: 'reni'},
+  agus: {in: ['Un repasito, que lo importante se repite. ¿Te animás?', 'Te hago una pregunta. Prometo que no es de psicoanálisis.'],
+    ok: ['Muy bien. ¿Y cómo te hace sentir eso? Es chiste. Bueno, medio.', 'Eso. Se nota que lo hiciste tuyo.'], no: ['Tranqui. Equivocarse también es aprender. Freud diría algo, pero lo dejo ahí.', 'No pasa nada. Lo importante es que ahora te queda.'], m: 'agus:feliz'},
+  lia: {in: ['¡Pregunta relámpago! ¡Tenés cinco segundos! Bueno, los que necesites.', '¡Te mido una cosa! ¿Cuánto te acordás de lo importante?'],
+    ok: ['¡Correcto! ¡Lo anoto en el tablero!', '¡Bien! ¡En tiempo récord! ¿Que no lo medí? ¡Ja! Sí lo medí.'], no: ['¡No pasa nada! Ahora ya lo sabés, y lo que se sabe se mejora.', '¡Casi! La próxima la clavás, lo tengo medido.'], m: 'lia:feliz'},
+  sofi: {in: ['Antes de que te vayas, una preguntita. ¿Comiste? No, esa no. Otra.', 'Te pregunto algo rapidito, como cuando reviso que anden todas las compus.'],
+    ok: ['¡Bien! Ahora comé una fruta, que pensar cansa.', '¡Eso! Todo en orden.'], no: ['Tranqui, para eso está la hoja de los valores en La Base.', 'No pasa nada. Ahora ya lo sabés. ¿Tomaste agua?'], m: 'sofi:feliz'},
+  tato: {in: ['...Ah, hola. Me pidieron que te pregunte algo. Creo que era esto.', 'Che, una pregunta. Tranqui, sin apuro. Yo tampoco tengo.'],
+    ok: ['...¿Ya contestaste? Bien. Muy bien. Creo.', 'Eso. Los números cierran.'], no: ['Tranqui. Yo me enteré la semana pasada.', 'No pasa nada. A mí me lo preguntaron hace un mes y todavía lo estoy pensando.'], m: 'tato'},
+  alejo: {in: ['Te tiro una, como en un rodaje: toma única.', 'Una rápida, antes de que Giuli me robe la escena.'],
+    ok: ['Eso. Plano perfecto.', 'Bien. Eso tiene buena luz.'], no: ['Tranqui. Se repite la toma y listo.', 'Salió fuera de foco, pero ahora ya lo ves.'], m: 'alejo'},
+  giuli: {in: ['Una rápida, antes de volver al diseño.', 'Te hago una pregunta prolija, de esas que van en su carpeta.'],
+    ok: ['¡Eso! Va directo a la carpeta de lo importante.', 'Bien. Claro y en su lugar.'], no: ['Tranqui. Ahora lo guardás en la carpeta correcta.', 'No pasa nada. Lo importante es que ya lo tenés ordenado.'], m: 'giuli'},
+  marga: {in: ['Mi vida, ¿me ayudás? Me preguntaron esto el otro día y no me acordaba.', 'Corazón, vos que estás aprendiendo tanto: ¿me contestás una?'],
+    ok: ['¡Eso, mi vida! Qué inteligente.', '¡Ay, qué bien! Se lo cuento a mis nietas.'], no: ['Ay, yo tampoco me acordaba, corazón. Ahora ya sabemos los dos.', 'No pasa nada, mi vida. Ahora ya lo sabés.'], m: 'marga'},
+};
+const REP_MAX = 2; // como mucho dos por día
+function repasitoReady(n, m){
+  const v = REP_VOICE[n.id]; if (!v || !S.flags.valores) return false;
+  if (m.repDay !== gameDay()){ m.repDay = gameDay(); m.repToday = 0; }
+  if (m.repToday >= REP_MAX || (m.battles || 0) - (m.repAt ?? -99) < 4 || talksFor(n.id) < 2) return false;
+  // si te espera una recompensa o una ceremonia con esa persona, primero lo importante
+  const nm = PEOPLE[n.id] || '';
+  if (QUEST_ORDER.some(id => qState(id) === 'open' && !AUTO_Q.includes(id) && qReady(id) && String(QUESTS[id].giver || '').includes(nm))) return false;
+  if ((n.id === 'agus' || n.id === 'lia') && S.lvl >= 15 && !S.flags.fijo) return false;
+  if (n.id === 'fede' && S.lvl >= PROJECT_LVL && !S.flags.senior) return false;
+  return Math.random() < .3;
+}
+async function repasito(n){
+  const m = mem(), v = REP_VOICE[n.id], who = n.id;
+  m.repAt = m.battles || 0; m.repToday = (m.repToday || 0) + 1; m.repN = (m.repN || 0) + 1;
+  // antes de los clientes conviene repasar los tipos; después, más propósito y valores
+  const r = Math.random(), early = (S.bosses || 0) < 3;
+  const W = early ? [['tipo', .3], ['tareas', .2], ['prop', .15], ['def', .15], ['sit', .15], ['fun', .05]] : [['tipo', .15], ['tareas', .25], ['prop', .2], ['def', .15], ['sit', .2], ['fun', .05]];
+  let acc = 0, kind = 'sit'; for (const [k, w] of W){ acc += w; if (r < acc){ kind = k; break; } }
+  const q = repQuestion(kind);
+  await say(pick(who + ':repin', v.in), who);
+  await say(q.q, who);
+  const opts = shuffle([q.a, ...q.o]);
+  const c = await choose(opts, {cancel: null});
+  if (opts[c] === q.a){
+    m.repOk = (m.repOk || 0) + 1;
+    await say(pick(who + ':repok', v.ok), v.m || who);
+    await gainXP(Math.max(8, Math.floor(need(S.lvl) * .06)), sayN);
+  } else {
+    await say(`Era "${q.a}". ${q.why}`, who);
+    await say(pick(who + ':repno', v.no), who);
+  }
+}
+
+/* ---- El repaso final: al terminar la Gran Presentación, lo importante de todo lo aprendido ---- */
+const REPASO_FINAL = () => [
+  {who: 'agus', intro: 'Primero, lo que nos une: el propósito y los valores.', title: 'PROPÓSITO Y VALORES', html: valoresHTML()},
+  {who: 'fede', intro: 'Después, cómo trabajamos. Esto se nota todos los días, con el equipo y con los clientes.', title: 'CÓMO TRABAJAMOS', html: H_([
+    B_('AEIOU:', 'si no es actual, estratégico, impactante, original y útil, no lo proponemos.'),
+    B_('Con, no de:', 'se habla con las personas, no de las personas. Y si no llegás, escalás a tiempo.'),
+    B_('Plazos reales:', 'si prometemos algo, lo cumplimos. Y si no sabemos algo, no inventamos.'),
+    B_('Tareas y horas:', 'las tareas llegan por Slack, de tu Project, en orden de prioridad. El tiempo se trackea en ClickUp: así valorizamos mejor el trabajo.'),
+    B_('Minuta clara:', 'toda conversación con el cliente queda registrada. R = R: relaciones es igual a resultados.'),
+    B_('15 minutos más:', 'siempre hay tiempo para mejorar lo que no nos convence. Partimos de lo máximo.')], 2.6)},
+  {who: 'giuli', intro: 'Y el orden, que nos ahorra horas a todos.', title: 'CARPETAS Y ARCHIVOS', html: H_([
+    B_('La carpeta del equipo:', 'ahí se trabaja todo, porque tiene respaldo. Nunca en el Escritorio ni en Descargas.'),
+    B_('Cada mes:', '01 Cronograma, 02 Materiales, 03 Editables, 04 Finales y 05 Reporte. Lo que no es Always On, en Extras.'),
+    B_('Exclientes:', 'a 01 INACTIVAS después de un mes sin activar. No se borran: se ordenan.'),
+    B_('Siempre en orden:', 'las cosas se ordenan al momento de trabajarlas: bien nombradas y en su carpeta correspondiente. Después nunca llega.')], 2.6)},
+  {who: 'alejo', intro: 'Los procesos de todos los meses, y los de las campañas.', title: 'CRONOGRAMA Y CAMPAÑAS', html: H_([
+    B_('Cronograma:', 'se sube a la carpeta del cliente antes del 27 de cada mes, y se manda por mail con el asunto "Cronograma Marca MES".'),
+    B_('Cambios:', 'la nueva versión se guarda con _V2. En las dos carpetas quedan todas las versiones.'),
+    B_('Reporte:', 'antes del 15 de cada mes: Paid aporta la pauta y Social, lo orgánico.'),
+    B_('Campañas:', 'brief y coordinación, conceptos, presupuesto, plan de medios, diseño, presentación y aprobación.')], 2.6)},
+  {who: 'sahi', intro: '¡Y quiénes somos en la cancha, che!', title: 'ROLES, EQUIPOS Y RITUALES', html: H_([
+    B_('Social Manager:', 'comunicar y gestionar. <b>Graphic Designer:</b> materializar.'),
+    B_('Paid Media:', 'planificar y optimizar. <b>Project Leader:</b> liderar y encantar.'),
+    B_('Equipos:', 'Tabasco es el soporte estratégico; Putaparió, Peppers y Chili, los equipos ejecutivos.'),
+    B_('Rituales:', 'el Picante cada dos viernes, los cumpleaños en el último Picante del mes y el aniversario el 21 de octubre.')], 2.6)},
+];
+async function repasoFinalPages(){
+  for (const p of REPASO_FINAL()){ await say(p.intro, p.who); await panelInfo(p.title, p.html); closePanel(); }
+}
+async function repasoFinal(){
+  S.flags.repasoFinal = true;
+  await say('Antes del festejo, un repaso de todo lo que aprendiste. En la agencia te lo vamos a preguntar, así que mejor tenerlo fresco: así quedás bien parad{o}.', 'agus');
+  await repasoFinalPages();
+  await say('¡Y lo tenés siempre a mano: en START, La agencia, Repaso final! ¡Repasalo, que lo voy a medir! ¡Ja! Bueno, un poquito.', 'lia:risa');
+  await say('Con todo esto, ya sos parte de la casa de verdad.', 'agus:feliz');
 }

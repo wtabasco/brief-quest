@@ -70,6 +70,10 @@ const AGENCIA = [
     P_('Plazos reales desde el principio: ser flexibles no es decir que sí a todo. Si prometemos algo, lo cumplimos.'),
     P_('Toda conversación queda en una minuta clara, y la bitácora se mantiene al día.'),
     P_('<b>R = R</b>: relaciones es igual a resultados. Y si no sabemos algo, no inventamos.')], 2.7)},
+  {t: 'Tareas y horas', title: 'CÓMO TRABAJAMOS: TAREAS Y HORAS', d: 'Por Slack, en orden de prioridad. El tiempo, en ClickUp.', full: () => H_([
+    P_('Las tareas las mandan los <b>Project Leaders por Slack</b>, en <b>orden de prioridad</b>, y se hacen en ese orden: primero lo primero. Si algo cambia o no llegás, se habla y se escala a tiempo.'),
+    P_('El tiempo de cada tarea se trackea en <b>ClickUp</b>. Siempre, en todas.'),
+    P_('¿Para qué? Para saber cuánto tiempo le dedicamos a cada cliente. Así <b>valorizamos mejor nuestro trabajo</b> y podemos <b>elegir con qué clientes trabajar</b>.')], 2.9)},
   {t: 'Social Manager', title: 'ROL: SOCIAL MANAGER', d: 'Comunicar y gestionar.', full: () => roleHTML('sm')},
   {t: 'Graphic Designer', title: 'ROL: GRAPHIC DESIGNER', d: 'Materializar.', full: () => roleHTML('gd')},
   {t: 'Paid Media', title: 'ROL: PAID MEDIA', d: 'Planificar y optimizar.', full: () => roleHTML('pm')},
@@ -90,16 +94,20 @@ const AGENCIA = [
     ...['Identificá tus metas y motivaciones.', 'Reconocé tus fortalezas y oportunidades.', 'Definí objetivos SMART y pasos de acción.', 'Poné en común tu plan con tu líder y AZ.',
       'Activalo: capacitaciones, proyectos, job shadowing.', 'Registrá resultados y avances.', 'Revisá y evaluá tu plan.'].map((t, i) => B_(`${i + 1}.`, t))], 2.75)},
   {t: 'La casa', d: 'Las salas y quién está en cada una.', full: () => casaHTML(), title: 'LA CASA'},
+  {t: 'Repaso final', d: 'Todo lo importante, en un solo lugar. En la agencia te lo van a preguntar.', when: () => S.flags.done, pages: () => REPASO_FINAL(), full: () => REPASO_FINAL().map(p => p.html).join('')},
 ];
+const agList = () => AGENCIA.filter(x => !x.when || x.when());
 async function agenciaScreen(){
   let start = 0;
   for (;;){
-    const r = await panelList({title: 'LA AGENCIA', start, rows: () => AGENCIA.map(x => ({label: x.t, right: ''})),
-      detail: i => { const x = AGENCIA[i]; return `<h4>${(x.title || x.t).replace(/^ROL: |^CÓMO TRABAJAMOS: /, m => m === 'ROL: ' ? 'Rol: ' : 'Cómo trabajamos: ').replace(/^[A-ZÁÉÍÓÚ ]+$/, () => x.t)}</h4><div>${typeof x.d === 'function' ? x.d() : x.d}</div><div class="k">A: leer completo.</div>`; },
+    const r = await panelList({title: 'LA AGENCIA', start, rows: () => agList().map(x => ({label: x.t, right: ''})),
+      detail: i => { const x = agList()[i]; return `<h4>${(x.title || x.t).replace(/^ROL: |^CÓMO TRABAJAMOS: /, m => m === 'ROL: ' ? 'Rol: ' : 'Cómo trabajamos: ').replace(/^[A-ZÁÉÍÓÚ ]+$/, () => x.t)}</h4><div>${typeof x.d === 'function' ? x.d() : x.d}</div><div class="k">A: leer completo.</div>`; },
       hint: 'A: leer · B: volver'});
     if (r < 0) return;
-    start = r; const x = AGENCIA[r];
-    closePanel(); await panelInfo(x.title || x.t.toUpperCase(), x.full()); closePanel();
+    start = r; const x = agList()[r];
+    closePanel();
+    if (x.pages){ for (const p of x.pages()){ await panelInfo(p.title, p.html); closePanel(); } }
+    else { await panelInfo(x.title || x.t.toUpperCase(), x.full()); closePanel(); }
   }
 }
 
@@ -111,25 +119,35 @@ const CULTURE_LINES = {
     'El contenido tiene que verse igual de bien en la presentación que publicado. La presentación es un medio, no el final.',
     'Las correcciones internas son para tu desarrollo. Las del cliente, para el cliente. No las mezcles.',
     'Podés pedir cualquier recurso que necesites para hacerlo mejor. Acá pensamos en grande.',
-    'Dos contenidos iguales en un mismo cronograma no existen. Cada uno es una chance de decir algo.'],
+    'Dos contenidos iguales en un mismo cronograma no existen. Cada uno es una chance de decir algo.',
+    'Las tareas te llegan por Slack, de tu Project, en orden de prioridad. Se respeta el orden, como la ronda: no se saltea a nadie.',
+    'Cada tarea, con su tiempo en ClickUp. Lo que no se registra no se puede valorizar.'],
   sahi: ['Los creativos venimos a contar historias que conectan. Como un buen relato de un gol: que lo sientas aunque no lo hayas visto.',
     'Acá no alcanza con meter un gol, crack. Trabajamos con estrategia para ganar partidos.',
     'Si se te ocurre algo, compartilo aunque no esté cerrado. Mejor anticipar que esperar a que lo proponga el cliente.',
-    'Proponemos cosas increíbles y después, si el cliente pide, bajamos. Siempre se arranca de lo máximo. Como salir a ganar.'],
+    'Proponemos cosas increíbles y después, si el cliente pide, bajamos. Siempre se arranca de lo máximo. Como salir a ganar.',
+    'Las tareas, en el orden que las manda el Project por Slack. Como los penales, crack: no patea el que quiere, patea el que toca.',
+    'Y el tiempo, siempre en ClickUp. Si no, es como jugar sin marcador: nadie sabe cuánto costó el partido.'],
   pimi: ['Paid media: planificar y optimizar. No opino, analizo. Las campañas hablan con resultados.',
     'Soy el músculo tecnológico del equipo: automatizo lo operativo para tener más tiempo para lo estratégico.',
     'Bajar el CPA, subir el CTR, maximizar el ROAS. Todos los días. Todo se pone a prueba.',
-    'Si implemento algo que sirve para hoy pero no para mañana, no sirve. Pan para hoy, hambre para mañana.'],
+    'Si implemento algo que sirve para hoy pero no para mañana, no sirve. Pan para hoy, hambre para mañana.',
+    'ClickUp abierto, tiempo trackeado. Tranqui: con eso sabemos cuánto le dedicamos a cada cliente.'],
   sofi: ['Me tomo un segundo para trabajar con orden. Se pierde mucho más tiempo cuando algo no queda ordenado.',
     'Los mensajes se responden. No dejo a nadie colgado, ni aunque sea para decir "lo veo mañana".',
-    'Soy responsable del clima de la oficina, aunque no sea mi rol. Bueno, un poco sí es mi rol. Todo se contagia.'],
+    'Soy responsable del clima de la oficina, aunque no sea mi rol. Bueno, un poco sí es mi rol. Todo se contagia.',
+    '¿Cargaste tus horas en ClickUp? Las de sueño también importan, pero esas no se cargan.'],
   tato: ['Si todo es urgente, nada es urgente. Eso lo dice el manual. Yo lo digo más despacio.',
     'Presupuestos transparentes: que cualquiera los mire y los entienda. Hasta Lía. Sobre todo Lía.',
-    'No confundo lo personal con lo laboral. Y no me abuso de la buena onda. Bueno, del reggae un poco.'],
+    'No confundo lo personal con lo laboral. Y no me abuso de la buena onda. Bueno, del reggae un poco.',
+    'Las horas de ClickUp después terminan en mis números. Con eso se valoriza el trabajo. Y se ve con qué clientes conviene seguir.',
+    '...Ah, y trackeá en ClickUp. Te lo digo tarde, pero te lo digo.'],
   lu: ['¡Soy responsable del clima de la oficina! ¡Todo se contagia! ¡Por eso canto!',
-    '¡Un día con pocas tareas no está mal! ¡Aprovechalo para investigar, ordenar o capacitarte! ¡O para cantar!'],
+    '¡Un día con pocas tareas no está mal! ¡Aprovechalo para investigar, ordenar o capacitarte! ¡O para cantar!',
+    '¡Mirá Slack con calma! Tu Project te deja las tareas en orden de prioridad: una por una, sin desesperarse.'],
   marga: ['Acá se habla de frente, mi vida. Se habla con las personas, no de las personas. Eso no lo enseña ningún manual. Bueno, este sí.',
-    'Hace muchos años que estoy en esta casa, y te digo una cosa: la buena onda no se da por sentada. Se cuida.'],
+    'Hace muchos años que estoy en esta casa, y te digo una cosa: la buena onda no se da por sentada. Se cuida.',
+    'Mi vida, yo no uso ese ClickUp, pero los chicos siempre dicen: "¡el tiempo, cargá el tiempo!". Así que cargalo, ¿eh?'],
   montse: ['El camino no es recto, pero es importante ir en la dirección correcta. Eso aplica a las casonas y a las agencias.',
     'Un gran lugar para trabajar se hace con grandes personas. Y trabajando a lo grande.'],
 };
@@ -139,13 +157,17 @@ const CULTURE_AGUS = ['Tenemos dos trabajos: hacer lo que hay que hacer y pensar
   'Si no llegás con un entregable, escalá a tiempo. Pedir ayuda también es trabajar bien.',
   'No empieces una tarea sin entenderla ni saber cuándo se entrega. Preguntá hasta entender: es tu responsabilidad.',
   'Si no estás de acuerdo con un proceso, ofrecé uno mejor. Que funcione para todos.',
-  'Los resultados son compartidos. Ganamos todos y perdemos todos.'];
-const CULTURE_LIA = ['¡Preparamos cada reunión con un objetivo y salimos habiéndolo cumplido! ¡Si no, es un café caro!',
+  'Los resultados son compartidos. Ganamos todos y perdemos todos.',
+  'Seguir el orden de prioridad que te manda tu Project por Slack es cuidar el proceso. Si algo cambia, se habla.',
+  'Trackear el tiempo en ClickUp es transparencia: sabemos cuánto le dedicamos a cada cliente y podemos valorizar mejor nuestro trabajo.'];
+const CULTURE_LIA = ['¡ClickUp es mi tablero favorito! ¡Con las horas de cada cliente valorizamos mejor el trabajo y elegimos con qué clientes trabajar!',
+  '¡Tareas por Slack, en orden de prioridad! ¡Y el tiempo en ClickUp! ¡Lo que no se mide no se mejora! ¡Ja! Eso ya lo sabías.','¡Preparamos cada reunión con un objetivo y salimos habiéndolo cumplido! ¡Si no, es un café caro!',
   '¡Los argumentos se dan a tiempo! ¡Después son excusas! ¡Y las excusas no se pueden medir!',
   '¡Plazos reales desde el principio! ¡Ser flexibles no es decir que sí a todo!',
   '¡Buscamos la excelencia aunque el cliente no la pida! ¡Nosotros ponemos la vara!',
   '¡Si no sabemos algo, no inventamos! ¡Mejor callar que inventar!'];
-const CULTURE_DUO = [{t: [['giuli', 'Cuido los editables para que cada contenido sea el punto de partida del siguiente. No arrastro errores.'], ['alejo', 'Lo dice el alcance del rol. Y lo cumple, que es lo difícil.']]},
+const CULTURE_DUO = [{t: [['alejo', 'Primero, la tarea que el Project puso arriba en Slack. Después, la que sigue.'], ['giuli', 'Y cada una, con su tiempo en ClickUp. Si no, nadie sabe cuánto llevó.']]},
+  {t: [['giuli', 'Cuido los editables para que cada contenido sea el punto de partida del siguiente. No arrastro errores.'], ['alejo', 'Lo dice el alcance del rol. Y lo cumple, que es lo difícil.']]},
   {t: [['alejo', 'Dejo lineamientos claros: referencias, recursos y textos simples de entender.'], ['giuli', 'Y yo los complemento. Si tengo una idea, la comparto.']]},
   {t: [['giuli', 'Diseñar es materializar: resolver visualmente la idea para que logre el resultado.'], ['alejo', 'Comunicar y gestionar, en mi caso. Juntos, un contenido completo.']]},
   {t: [['alejo', 'La IA nos ayuda a redactar, chequear y ordenar. Así no perdemos tiempo en lo innecesario.'], ['giuli', 'Y lo que ahorramos lo ponemos en pensar mejor.']]}];

@@ -169,8 +169,8 @@ async function talkFede(){
     return;
   }
   if (tr) c--;
-  if (c !== 0){ await say(pick('fede:bye', ['Dale. Acá estoy cuando quieras.', 'Cuando quieras, ya sabés dónde encontrarme.', 'Bueno. Pero no te escapes mucho, ¿eh?']), 'fede'); return; }
-  await say(pick('fede:go', ['¡Dale! Mostrame qué aprendiste.', 'Arrancamos. No te guardes nada.', 'Voy en serio, ¿eh? Así se aprende.', 'Hoy probá algo que nunca hayas usado.', 'Fijate el tipo de cada habilidad antes de elegir.', 'Hoy quiero ver estrategia, no suerte.']), 'fede:serio'); hideDlg();
+  if (c !== 0){ await say(pick('fede:bye', ['Dale. Acá estoy cuando quieras.', 'Cuando quieras, ya sabés dónde encontrarme.', 'Bueno. Pero no te escapes mucho, ¿eh?', 'Andá. Pero volvé con la versión dos, ¿eh?', 'Dale. Y si pasás por lo de Reni, ya sabés.']), 'fede'); return; }
+  await say(pick('fede:go', ['¡Dale! Mostrame qué aprendiste.', 'Arrancamos. No te guardes nada.', 'Voy en serio, ¿eh? Así se aprende.', 'Hoy probá algo que nunca hayas usado.', 'Fijate el tipo de cada habilidad antes de elegir.', 'Hoy quiero ver estrategia, no suerte.', 'Dale. Ahora en menos turnos que la última vez.', 'Mostrame la versión dos de vos.']), 'fede:serio'); hideDlg();
   const res = await bossBattle('fede', 'spar');
   if (res === 'win'){
     if (!S.flags.fedeBeaten){
@@ -231,20 +231,20 @@ async function seniorCeremony(){
 async function fedeMateFavor(){
   const m = mem(), b = m.battles || 0;
   if (qState('fede_mate') === 'open'){
-    if ((S.items.mate || 0) === 0){ await say(pick('fede:mateq', ['Te espero con el mate, ¿eh? Mientras tanto pienso, pero a media máquina.', '¿Sabés con qué pensaría mejor ahora? Exacto. Con un mate.', '¿Y mi mate? No es por apurar. Bueno, un poco sí.', 'Sin mate no hay ideas, {name}. Bueno, hay menos. Y peores.', () => NPCS.find(n => n.id === 'reni').away ? 'Reni ya se fue con el termo. Mañana me traés uno, ¿dale?' : `Reni anda con el termo. Recién la vi por ${reniWhere()}. Decile que es para mí, que ya sabe cómo me gusta.`, 'Tengo el termo listo y la bombilla esperando. Falta lo más importante: el mate.']), 'fede:risa'); return; }
-    await say(pick('fede:matesee', ['¿Eso es un mate? ¡Lo huelo desde acá!', '¡Pará! ¿Me trajiste el mate?', 'Esa cara es de alguien que trae un mate. Conozco esa cara.']), 'fede:sorpresa');
+    if ((S.items.mate || 0) === 0){ await say(pick('fede:mateq', ['Te espero con el mate, ¿eh? Mientras tanto pienso, pero a media máquina.', '¿Sabés con qué pensaría mejor ahora? Exacto. Con un mate.', '¿Y mi mate? No es por apurar. Bueno, un poco sí.', 'Sin mate no hay ideas, {name}. Bueno, hay menos. Y peores.', () => NPCS.find(n => n.id === 'reni').away ? 'Reni ya se fue con el termo. Mañana me traés uno, ¿dale?' : `Reni anda con el termo. Recién la vi por ${reniWhere()}. Decile que es para mí, que ya sabe cómo me gusta.`, 'Tengo el termo listo y la bombilla esperando. Falta lo más importante: el mate.', 'Mateee. Perdón, se me escapó. Pero mateee.', '¿Y? ¿Hay mate? ...No hay mate. Respiro. Por favoooor, cuando puedas.', 'Te aviso temprano, como corresponde: sigo sin mate. Porfi.', 'Estoy pensando en modo ahorro de energía. Un mate me pasa a modo normal. Porfiii.', 'No es apuro, es una necesidad básica. Como un buen brief. Como el mate. Sobre todo el mate.', 'El agua no espera, ¿eh? Si se enfría, hay que empezar de nuevo. Por favor, por favor.']), 'fede:risa'); return; }
+    await say(pick('fede:matesee', ['¿Eso es un mate? ¡Lo huelo desde acá!', '¡Pará! ¿Me trajiste el mate?', 'Esa cara es de alguien que trae un mate. Conozco esa cara.', '¡Ese mate tiene mi nombre! No lo veo, pero lo sé.', '¿Ese es para mí? Decime que sí. Decime que síiii.', 'Esperá que me siento derecho. Un mate se recibe con respeto.', '¡Mateee! Bueno, calma. Primero confirmemos: ¿es para mí?']), 'fede:sorpresa');
     const c = await choose(['Darle un mate', 'Todavía no']);
-    if (c !== 0){ await say(pick('fede:mateno', ['Bueno. Lo guardás para vos. Te entiendo. Me duele, pero te entiendo.', '¿Todavía no? Está bien. La paciencia también se entrena.']), 'fede:serio'); return; }
+    if (c !== 0){ await say(pick('fede:mateno', ['Bueno. Lo guardás para vos. Te entiendo. Me duele, pero te entiendo.', '¿Todavía no? Está bien. La paciencia también se entrena.', '¿No? ¿Nooo? Bueno. Acepto. Con dolor, pero acepto.', 'Está bien. Te aviso con transparencia: en un rato te lo vuelvo a pedir.', 'Ok. Pero la próxima ronda no se negocia, ¿eh?', 'Bueno. Me quedo mirando la bombilla. Quieta. Sin mate.']), 'fede:serio'); return; }
     S.items.mate--; m.fedeMateAt = b; m.mates = (m.mates || 0) + 1; qDone('fede_mate');
-    await say(pick('fede:mate', ['¡Salvador! Ahora sí se piensa.', '¡Cebado por Reni, se nota! Ni un palito. Eso es oficio.', 'No te digo "gracias" porque si no, no me cebás otro. Es la regla.', 'Fijate: el mate no se toma apurado. Las decisiones tampoco. Ahora sí, a pensar.']), 'fede:feliz');
-    await say(pick('fede:matetip', ['Te devuelvo el favor: en el próximo desafío arrancá con lo que mejor te sale. Dale con todo desde el principio.', 'Un consejo de regalo: mirá el tipo del rival antes del primer turno. Arrancás con ventaja.', 'Vení, te muestro un truco: la primera jugada marca el ritmo de todo el desafío.']), 'fede');
-    S.buff = 'fede'; SFX.learn(); await say('Fede te ayuda: en tu próxima pelea arrancás con más ataque y más velocidad.');
+    await say(pick('fede:mate', ['¡Salvador! Ahora sí se piensa.', '¡Cebado por Reni, se nota! Ni un palito. Eso es oficio.', 'No te digo "gracias" porque si no, no me cebás otro. Es la regla.', 'Fijate: el mate no se toma apurado. Las decisiones tampoco. Ahora sí, a pensar.', '¡Graciaaas! Ahora sí. Esto es un proceso bien cuidado.', 'Mirá la temperatura. Mirá la espuma. Esto ya es la versión dos del mate.', 'Ahhh. ¿Escuchás? Es mi cabeza arrancando.', 'Vos, Reni y el termo: eso es colaboración. Gracias, en serio.', {if: () => (mem().mates || 0) >= 3, t: () => `Van ${mem().mates} mates. Ya sos parte de la ronda, oficialmente.`}]), 'fede:feliz');
+    await say(pick('fede:matetip', ['Te devuelvo el favor: en el próximo desafío arrancá con lo que mejor te sale. Dale con todo desde el principio.', 'Un consejo de regalo: mirá el tipo del rival antes del primer turno. Arrancás con ventaja.', 'Vení, te muestro un truco: la primera jugada marca el ritmo de todo el desafío.', 'De regalo: si el rival te baja algo, no te enganches. Volvé a lo tuyo, como la bombilla: quieta en su lugar.', 'Un consejo de mate: a veces conviene prepararse un turno antes de pegar. Como el agua: se calienta, no se apura.', 'Te devuelvo el favor con un dato: cuidá los usos de tus habilidades, que el final siempre pide un poco más.']), 'fede');
+    S.buff = 'fede'; SFX.learn(); await say('Fede te ayuda: en tu próximo desafío arrancás con más ataque y más velocidad.');
     if ((S.items.libreta || 0) < 2){ S.items.libreta = (S.items.libreta || 0) + 1; await say('Y te regaló una hoja de su libreta. Recibiste Libreta de Fede.'); }
     return;
   }
   if (S.flags.fedeMet && b - (m.fedeMateAt ?? -99) >= 3 && Math.random() < .6){
     m.fedeMateAt = b;
-    await say(pick('fede:mateask', ['{name}, ¿me hacés un favor enorme? Traeme un mateee, por favor. Reni anda con el termo, buscala.', 'Pará, pará. Antes de seguir: ¿me conseguís un mate? Sin mate no doy consejos. Doy opiniones, que es peor.', 'Te voy a pedir algo serio: un mate. Reni sabe cómo me gusta. Te espero.', 'En todos estos años aprendí dos cosas: escuchar al cliente y no pensar sin mate. ¿Me traés uno?']), 'fede:risa');
+    await say(pick('fede:mateask', ['{name}, ¿me hacés un favor enorme? Traeme un mateee, por favor. Reni anda con el termo, buscala.', 'Pará, pará. Antes de seguir: ¿me conseguís un mate? Sin mate no doy consejos. Doy opiniones, que es peor.', 'Te voy a pedir algo serio: un mate. Reni sabe cómo me gusta. Te espero.', 'En todos estos años aprendí dos cosas: escuchar al cliente y no pensar sin mate. ¿Me traés uno?', 'Un mate, por favoooor. Uno solo. Bueno, uno y después vemos.', '¿Sabés qué necesito? Un mateee. Porfi. Porfi, porfi. Reni anda con el termo.', '{name}... ¿un matecito? Por favooor. Te lo cambio por un consejo de los buenos.', 'Tengo una idea a medio calentar. Le falta un mate para terminar de salir. ¿Me traés uno? Porfiii.', 'Pedido oficial de la dirección: un mate. Pedido no oficial: por favoooor, que me seco.', 'Mirá esta cara. Es la cara de alguien sin mate. ¿Me salvás? Porfa, porfa, porfa.', 'Se cortó la ronda justo en mí, y eso no puede pasar. ¿Me conseguís un mate? Por favoooor.', 'Mateee. Matecitooo. ¿Escuchás? Es mi cabeza pidiendo. Reni sabe cómo me gusta.', 'Te propongo un trato transparente: me traés un mate y dejo de pedírtelo. Por hoy. Porfi.', {if: () => (mem().mates || 0) >= 1, t: 'Vos ya sabés cómo es esto: Reni, el termo y un mate para mí. Por favor, por favor, por favor.'}, {if: () => (mem().mates || 0) >= 3, t: () => `Ya me trajiste ${mem().mates} mates y nunca fallaste. No me cortes la racha: uno más, porfiii.`}]), 'fede:risa');
     qReopen('fede_mate');
   }
 }
@@ -256,14 +256,14 @@ async function pimiFoodFavor(){
     const c = await choose([food === 'alfajor' ? 'Darle un alfajor' : 'Darle medialunas', 'Todavía no']);
     if (c !== 0) return true;
     S.items[food]--; m.pimiFoodAt = b; m.pimiFood = (m.pimiFood || 0) + 1; qDone('pimi_comida');
-    await say(pick('pimi:food', ['¡Combustible! Ahora sí.', 'Ñam. Mi cerebro pasó de 3G a fibra óptica.', 'Gracias. Esto vale más que una actualización.']), 'pimi');
+    await say(pick('pimi:food', ['¡Combustible! Ahora sí.', 'Ñam. Mi cerebro pasó de 3G a fibra óptica.', 'Gracias. Esto vale más que una actualización.', 'Ahora sí. Batería al cien.', 'Esto es mejor que reiniciar.', 'Gracias. Te debo una. Bueno, ya te la pago.', 'Ñam. Rindo el doble. Lía me va a querer medir.']), 'pimi');
     if (m.pimiFood <= 3){ S.bonus.spd += 1; S.bonus.atk += 1; SFX.learn(); await say('Pimi te optimizó la compu. Tu ataque y tu velocidad subieron de forma permanente.'); }
-    S.items.pendrive = (S.items.pendrive || 0) + 1; await say(pick('pimi:gift', ['Tomá, te paso un pendrive con mis scripts. Usalo en una emergencia.', 'Llevate esto: un pendrive con atajos. Ojo que no es para guardar fotos.']), 'pimi'); await say('Recibiste Pendrive de Pimi.');
+    S.items.pendrive = (S.items.pendrive || 0) + 1; await say(pick('pimi:gift', ['Tomá, te paso un pendrive con mis scripts. Usalo en una emergencia.', 'Llevate esto: un pendrive con atajos. Ojo que no es para guardar fotos.', 'Tomá un pendrive. Adentro hay magia. Bueno, scripts. Es parecido.', 'Llevate este pendrive. Si algo se traba, lo enchufás y listo.']), 'pimi'); await say('Recibiste Pendrive de Pimi.');
     return true;
   }
   if (S.flags.pimiMet && b - (m.pimiFoodAt ?? -99) >= 4 && Math.random() < .4){
     m.pimiFoodAt = b;
-    await say(pick('pimi:foodask', ['Con hambre no rindo. Si me traés un alfajor o unas medialunas, te doy una mano con algo.', 'Tengo el estómago en modo avión. ¿Me conseguís algo de comer? Te devuelvo el favor.']), 'pimi');
+    await say(pick('pimi:foodask', ['Con hambre no rindo. Si me traés un alfajor o unas medialunas, te doy una mano con algo.', 'Tengo el estómago en modo avión. ¿Me conseguís algo de comer? Te devuelvo el favor.', 'Che, ¿hay algo para comer por ahí? Salí a correr temprano y vengo en reserva.', 'Tengo hambre de surfista. Un alfajor o unas medialunas me salvan. Te devuelvo el favor.', 'La compu anda. Yo no. Me falta comer algo. ¿Me das una mano?', 'Tranqui, no es urgente. Bueno, un poco. ¿Me traés algo de la heladera? Porfa.', 'Si encontrás medialunas, son mías. Si encontrás un alfajor, también. Te debo una.']), 'pimi');
     qReopen('pimi_comida'); return true;
   }
   return false;
@@ -275,15 +275,15 @@ async function luWaterFavor(){
     const c = await choose(['Darle el vaso de agua', 'Todavía no']);
     if (c !== 0) return true;
     S.items.agua = 0; m.luAguaAt = b; qDone('lu_agua');
-    await say(pick('lu:agua', ['¡Sos lo más! Ahora sí llego al estribillo.', '¡Hidratación completa! Gracias, gracias.']), 'lu:feliz');
+    await say(pick('lu:agua', ['¡Sos lo más! Ahora sí llego al estribillo.', '¡Hidratación completa! Gracias, gracias.', '¡Ahhh! ¡Esto es vida! Gracias, gracias, gracias.', '¡Agua! ¡Lo que el cuerpo pide! Te debo un estribillo.', '¡Así me gusta! Vos también tomá, ¿eh? Que te estoy mirando.', '¡Qué mimo! Ya me siento nueva.']), 'lu:feliz');
     S.items.playlist = (S.items.playlist || 0) + 1; SFX.sing();
-    await say('Te armé una playlist para tus desafíos. Mucho Morat, un poco de Aitana y Cruzando el Charco para el final.', 'lu:risa');
+    await say(pick('lu:playlist', ['Te armé una playlist para tus desafíos. Mucho Morat, un poco de Aitana y Cruzando el Charco para el final.', 'Tomá: una playlist para los desafíos. Arranca tranqui y termina a los saltos.', '¡Te hice una playlist! Para cuando el problema se pone pesado: subís el volumen y listo.', 'Te pasé una playlist. Si te aburre, es que no la escuchaste fuerte.']), 'lu:risa');
     await say('Recibiste Playlist de Lu.');
     return true;
   }
   if (talks('lu') >= 1 && b - (m.luAguaAt ?? -99) >= 5 && Math.random() < .4){
     m.luAguaAt = b;
-    await say(pick('lu:aguaask', ['¡Me quedé sin agua y estoy por cantar el estribillo! ¿Me traés un vaso del dispensador? Porfi, porfi.', '¿Me hacés un favorcito? Un vaso de agua del dispensador. Cantar deshidrata, no sabés.']), 'lu:sorpresa');
+    await say(pick('lu:aguaask', ['¡Me quedé sin agua y estoy por cantar el estribillo! ¿Me traés un vaso del dispensador? Porfi, porfi.', '¿Me hacés un favorcito? Un vaso de agua del dispensador. Cantar deshidrata, no sabés.', '¡Socorro! Bueno, no tanto: ¿me traés un vaso de agua del dispensador? ¡Porfiii!', '¡Estoy seca como planta de oficina! Un vaso de agua, ¿me salvás?', '¿Me traés agüita del dispensador? Te lo pido con la voz que me queda. Que es mucha, igual.', '¡Pausa activa con misión! Andá al dispensador y traeme un vaso. Yo te espero cantando.', 'Ay, ¿me harías un mimo? Un vaso de agua. Del dispensador que quieras: ¡hay tres!']), 'lu:sorpresa');
     qReopen('lu_agua'); return true;
   }
   return false;
@@ -293,7 +293,7 @@ async function useCooler(){
   G.busy = true;
   try {
     if (qState('lu_agua') === 'open' && !(S.items.agua > 0)){ S.items.agua = 1; SFX.heal(); await say('Llenás un vaso de agua para Lu. Glu, glu.'); await say('Conseguiste Vaso de agua.'); }
-    else await say(pick('cooler', ['Tomás un vaso de agua. Lu estaría orgullosa.', 'El dispensador hace "glu-glu". Es lo más emocionante que pasó en la última hora.', 'Agua fresquita. Nada más que decir.']));
+    else await say(pick('cooler', ['Tomás un vaso de agua. Lu estaría orgullosa.', 'El dispensador hace "glu-glu". Es lo más emocionante que pasó en la última hora.', 'Agua fresquita. Nada más que decir.', 'Agua fresquita. Lu te mira desde algún lado y aprueba.', 'Un vasito de agua. Pausa activa, nivel uno.', 'Glu, glu. Te quedás mirando las lucecitas azules un rato.']));
   } finally { hideDlg(); G.busy = false; save(); }
 }
 /* la heladera de la cocina (en la barbacoa del patio): a veces hay algo para llevarle a Pimi */
@@ -303,9 +303,9 @@ async function openFridge(){
     if (b - (m.fridgeAt ?? -99) >= 3 && Math.random() < .6){
       m.fridgeAt = b; const k = Math.random() < .5 ? 'medialunas' : 'alfajor';
       S.items[k] = (S.items[k] || 0) + 1; SFX.heal();
-      await say(pick('fridge:yes', ['Alguien dejó comida con un cartel: "Para compartir". Te llevás una parte.', 'Atrás de los yogures hay algo rico. Nadie lo reclamó.', 'Sobró del cumple de ayer. Te llevás un poco.']));
+      await say(pick('fridge:yes', ['Alguien dejó comida con un cartel: "Para compartir". Te llevás una parte.', 'Atrás de los yogures hay algo rico. Nadie lo reclamó.', 'Sobró del cumple de ayer. Te llevás un poco.', 'Hay un tupper con un cartel: "Sobró, sírvanse". Te servís.', 'En la puerta hay algo rico con una nota de Sofi: "Para el que pase".']));
       await say(`Conseguiste ${k === 'alfajor' ? 'un Alfajor' : 'Medialunas'}.`);
-    } else await say(pick('fridge:no', ['Hay una vianda con un cartel: "NO TOCAR. ESTO ES DE PIMI".', 'Hay un yogur de 2019. Mejor cerrás la heladera.', 'Solo hay hielo y una mostaza solitaria.', 'Hay una torta con un cartel: "Para el cumple de Reni. NI SE TE OCURRA".']));
+    } else await say(pick('fridge:no', ['Hay una vianda con un cartel: "NO TOCAR. ESTO ES DE PIMI".', 'Hay un yogur de 2019. Mejor cerrás la heladera.', 'Solo hay hielo y una mostaza solitaria.', 'Hay una torta con un cartel: "Para el cumple de Reni. NI SE TE OCURRA".', 'Hay un limón cortado por la mitad. Te mira. Lo mirás. Cerrás.', 'Hay doce botellas de agua y nada más. Lu pasó por acá.', 'Hay un tupper sin nombre. Nadie sabe de quién es. Nadie quiere saber.']));
   } finally { hideDlg(); G.busy = false; save(); }
 }
 
@@ -698,8 +698,9 @@ async function talkFounders(n){
     qOpen('consejo');
     S.buff = c === 1 ? 'atk' : 'def'; m.lastAdviceBattle = b;
     await say('Ahora la casa es tuya. Bajá a La Base: ahí están Alejo y Giuli, y entre las pilas de pendientes saltan los problemas. ¡Resolvé el primero!', 'agus:feliz');
+    await say('¡Y dos cosas que vas a escuchar mucho! Las tareas te las manda tu Project por Slack, en orden de prioridad. ¡Y el tiempo se trackea en ClickUp, así sabemos cuánto le dedicamos a cada cliente!', 'lia');
     if (qState('bienvenida') === 'open') qDone('bienvenida');
-    if (!qState('clientes')){ await say('¡Y cuando estés list{o}, los clientes te esperan en la Sala de Clientes, en la planta baja! ¡Yo voy midiendo cómo te va!', 'lia:feliz'); qOpen('clientes'); }
+    if (!qState('clientes')){ await say(`¡Y cada problema que resolvés te suma experiencia y te sube de nivel! Los clientes te esperan en la Sala de Clientes, en la planta baja: la primera es nivel ${CLIENT_LVL.fantasma}. ¡Yo voy midiendo cómo te va!`, 'lia:feliz'); qOpen('clientes'); }
     return;
   }
   // recompensas ganadas
@@ -861,21 +862,21 @@ async function talkSahi(){
    después, un poco de experiencia (una vez entre pelea y pelea). */
 async function sahiRally(skipAsk){
   const m = mem(), b = m.battles || 0;
-  if (rainy()){ await say(pick('sahi:lluvia', ['Hoy la mesa está empapada. El peloteo queda para cuando pare.', 'Con lluvia no se pelotea: la pelota no pica, flota. Mañana te la cobro.']), 'sahi'); return; }
+  if (rainy()){ await say(pick('sahi:lluvia', ['Hoy la mesa está empapada. El peloteo queda para cuando pare.', 'Con lluvia no se pelotea: la pelota no pica, flota. Mañana te la cobro.', 'Llueve. La mesa está para surfear, no para pelotear. Preguntale a Pimi.']), 'sahi'); return; }
   const c = skipAsk ? 0 : await choose(['¡Un peloteo!', 'Ahora no']);
-  if (c !== 0){ await say(pick('sahi:ppno', ['Dale, cuando quieras. La mesa no se va a ningún lado.', 'Te espero. Igual sigo con los jueguitos.']), 'sahi'); return; }
-  await say(pick('sahi:ppgo', ['Saco yo. Apretá A cuando la pelota llegue a tu franja verde. Ni antes ni después: como un penal.', 'Dale. Devolvé cuando llegue a la franja verde. A la tercera me empiezo a cansar, no le digas a nadie.', '¡Vamos! Vos devolvé cuando llegue a tu paleta, que yo me encargo del resto.']), 'sahi:feliz');
+  if (c !== 0){ await say(pick('sahi:ppno', ['Dale, cuando quieras. La mesa no se va a ningún lado.', 'Te espero. Igual sigo con los jueguitos.', 'Todo bien, la mesa espera. Yo sigo con los jueguitos.', 'Dale, otro día. Igual te aviso: estoy en racha.', 'Tranqui. El peloteo es como el asado: cuando se puede, se puede.']), 'sahi'); return; }
+  await say(pick('sahi:ppgo', ['Saco yo. Apretá A cuando la pelota llegue a tu franja verde. Ni antes ni después: como un penal.', 'Dale. Devolvé cuando llegue a la franja verde. A la tercera me empiezo a cansar, no le digas a nadie.', '¡Vamos! Vos devolvé cuando llegue a tu paleta, que yo me encargo del resto.', '¡Saco yo! Vos atent{o} a la franja verde, como arquero en un penal.', '¡Dale que va! Franja verde y le pegás. Simple, como un pase de Riquelme.', 'Te tiro una suavecita. Bueno, la primera. Las otras no te las prometo.', 'Vamos, crack. Ojo en la pelota y paleta en la franja verde.']), 'sahi:feliz');
   hideDlg();
   const res = await pingPongGame();
   m.ppGames = (m.ppGames || 0) + 1; m.ppBest = Math.max(m.ppBest || 0, res.hits);
-  if (res.quit){ await say('¿Ya te vas? Bueno, la mesa queda acá.', 'sahi'); return; }
+  if (res.quit){ await say(pick('sahi:quit', ['¿Ya te vas? Bueno, la mesa queda acá.', 'Dejaste el partido por la mitad. Lo seguimos otro día, che.', '¿Te fuiste al vestuario? Todo bien, la revancha queda.']), 'sahi'); return; }
   if (res.win){
     m.ppWins = (m.ppWins || 0) + 1;
-    await say(pick('sahi:pplost', ['¡Uh! ¡Se me fue larga! Bien jugado, crack.', '¡Qué devolución! Me dejaste parado como arquero en un penal.', 'Te llevaste el punto. Que no se entere nadie en la Bombonera.']), 'sahi:sorpresa');
+    await say(pick('sahi:pplost', ['¡Uh! ¡Se me fue larga! Bien jugado, crack.', '¡Qué devolución! Me dejaste parado como arquero en un penal.', 'Te llevaste el punto. Que no se entere nadie en la Bombonera.', '¡No! ¡Me la clavaste en el ángulo!', '¡Puntazo! Me dejaste mirando cómo pasaba.']), 'sahi:sorpresa');
     if (!S.flags.ppSpeed){ S.flags.ppSpeed = true; S.bonus.spd += 1; SFX.learn(); await say('Esos reflejos te van a servir en las reuniones. Tu velocidad subió de forma permanente.'); }
     else if (b > (m.ppAt ?? -1)){ m.ppAt = b; await gainXP(Math.max(8, Math.floor(need(S.lvl) * .08)), sayN); }
     else await say('La revancha con premio, después de tu próximo desafío. Ahora me hidrato.', 'sahi:risa');
-  } else await say(pick('sahi:ppwon', [{if: () => res.hits >= 2, t: () => `${res.hits} devoluciones. ¡Nada mal! La próxima apretá en el momento justo.`}, 'Punto para mí. Pero jugaste con garra, eso me gusta.', 'Se te pasó la pelota. Tranqui, a mí me pasa con los mails.']), res.hits >= 3 ? 'sahi' : 'sahi:risa');
+  } else await say(pick('sahi:ppwon', [{if: () => res.hits >= 2, t: () => `${res.hits} devoluciones. ¡Nada mal! La próxima apretá en el momento justo.`}, 'Punto para mí. Pero jugaste con garra, eso me gusta.', 'Se te pasó la pelota. Tranqui, a mí me pasa con los mails.', 'Punto para mí. Pero ojo, que te vi la garra.', 'Uh, se te escapó. Tranqui, Riquelme también erraba. Poco, pero erraba.']), res.hits >= 3 ? 'sahi' : 'sahi:risa');
 }
 
 /* ================= LU ================= */
@@ -916,10 +917,10 @@ async function talkLu(){
   await say(pick('lu:song', LU.songs), 'lu:risa');
   let open;
   if (talks('lu') === 0) open = `¡Hola, {name}! Soy Lu. Si algo te cansa, este es tu lugar. Acá se recarga energía y se canta. Lo segundo es obligatorio.`;
-  else if (fresh('lu', mem().lastLose)){ ack('lu', mem().lastLose); open = pick('lu:lose', ['¡Uh, vení! Te recargo y salís como cohete.', '¿Una mala racha? Nada que no arregle un tema de Aitana y un vaso de agua.', 'Ay, ese desafío costó. Vení que te recargo.']); }
-  else if (p < .35) open = pick('lu:low', ['¡Uy, venís arrastrando los pies! ¡Vení que te enchufo!', '¿Qué te pasó? ¡Parecés un celular al dos por ciento!', '¡Estás sin pilas! Vení, que acá se recarga.']);
-  else if (p >= .99) open = pick('lu:full', ['¡Estás impecable! Igual te hago un chequeo, que me encanta hacer chequeos.', '¡Vos estás al cien! ¿Viniste por el show? Bien hecho.', '¡Estás a full! Igual pasá, que te canto algo.']);
-  else open = pick('lu:hi', ['¡Hola, {name}! ¡Vení, vení, que te dejo nuev{o}!', '¿Una pausa? ¡La mejor idea del día!', '¡Pasá! ¿Cómo venís? Contame mientras te recargo.']);
+  else if (fresh('lu', mem().lastLose)){ ack('lu', mem().lastLose); open = pick('lu:lose', ['¡Uh, vení! Te recargo y salís como cohete.', '¿Una mala racha? Nada que no arregle un tema de Aitana y un vaso de agua.', 'Ay, ese desafío costó. Vení que te recargo.', '¡Vení, vení! De los errores se aprende, pero con agua se aprende mejor.', '¡Uh! Ese desafío te despeinó. Vení que te acomodo.']); }
+  else if (p < .35) open = pick('lu:low', ['¡Uy, venís arrastrando los pies! ¡Vení que te enchufo!', '¿Qué te pasó? ¡Parecés un celular al dos por ciento!', '¡Estás sin pilas! Vení, que acá se recarga.', '¡Ay, no! ¡Vení que te hago la pausa activa completa!', '¡Uy, uy, uy! Sentate antes de que te caigas, que te recargo.', '¡Estás en modo ahorro de batería! Vení, que acá se enchufa.']);
+  else if (p >= .99) open = pick('lu:full', ['¡Estás impecable! Igual te hago un chequeo, que me encanta hacer chequeos.', '¡Vos estás al cien! ¿Viniste por el show? Bien hecho.', '¡Estás a full! Igual pasá, que te canto algo.', '¡Estás espléndid{o}! Igual te mimo un poco, no me cuesta nada.', '¡Al cien! ¿Viniste por el temita? Hacés bien.']);
+  else open = pick('lu:hi', ['¡Hola, {name}! ¡Vení, vení, que te dejo nuev{o}!', '¿Una pausa? ¡La mejor idea del día!', '¡Pasá! ¿Cómo venís? Contame mientras te recargo.', '¡Llegaste justo! Estaba por tararear el mejor tema del mundo.', '¡Hola, hola! Sentate, que acá nadie te apura.', '¡Bienvenid{o} al taller de recarga! Hoy, con show incluido.', '¿Venís a recargar? ¡Pasá! Agua, estiramiento y un temita. En ese orden.', '¡{name}! ¿Dormiste bien? No me mientas, que se nota.']);
   await say(open, p < .35 ? 'lu:sorpresa' : 'lu:feliz');
   fullHeal(); SFX.heal();
   await say('Recuperaste toda tu energía y todos los usos de tus habilidades.');
@@ -932,7 +933,7 @@ async function talkLu(){
    Práctico y sencillo para hablar, come mucho, hace deporte (surfea en Rocha) y en las crisis tiene calma total.
    Compinche de Lía: los dos viven mirando los números de las campañas. */
 const PIMI = {
-  again: ['¿Volviste? Todo bien. Decime.', '¿Qué precisás? Si es rápido, lo resolvemos ya.', '¿Trajiste algo para comer? Pregunto nomás.'],
+  again: ['¿Volviste? Todo bien. Decime.', '¿Qué precisás? Si es rápido, lo resolvemos ya.', '¿Trajiste algo para comer? Pregunto nomás.', '¿Qué onda? Tranqui, decime.', '¿Se trabó algo? Tranqui, lo vemos.', 'Volviste. Bien. ¿Comida o compu?', '¿Todo bien? Yo acá, mirando números con Lía.'],
   R: {
     lose: [f => `${f} te complicó. Tranqui: se ajusta y se vuelve a lanzar. Como una campaña.`, f => `¿${f}? Es débil a lo técnico. Probá por ahí.`],
     boss: {explote: 'Explotó, pero controlado. Así me gustan las campañas.', logo: 'El logo quedó del mismo tamaño. Eso es eficiencia.', fantasma: 'La Clienta Fantasma respondió. Lo anoto como hito.'},
@@ -1029,16 +1030,16 @@ async function talkReni(n){
     S.reniGift = false;
     let l;
     if (m.lastWin && fresh('reni', m.lastWin)){ ack('reni', m.lastWin); l = `¡Te grabé resolviendo a ${m.lastWin.name}! Saliste re concentrad{o}. Va para las stories.`; }
-    else if (n.map === 'outside') l = pick('reni:out', ['¡Mirá estas aves del paraíso! Van para el reel. Vos también: ¡posá!', '¡Qué luz hay en el patio! Quedate quiet{o}... ¡grabando!', '¡Con la casona de fondo! Sonreí... ¡listo!']);
-    else if (n.map === 'upstairs') l = pick('reni:up', ['¡Un video bajando la escalera! Despacito... ¡listo!', '¡Acá arriba hay una luz divina! Quiet{o}... ¡listo!']);
+    else if (n.map === 'outside') l = pick('reni:out', ['¡Mirá estas aves del paraíso! Van para el reel. Vos también: ¡posá!', '¡Qué luz hay en el patio! Quedate quiet{o}... ¡grabando!', '¡Con la casona de fondo! Sonreí... ¡listo!', '¡La fuente de fondo queda espectacular! Quiet{o}... ¡listo!', '¡Con las guirnaldas atrás! Sonreí... ¡listo!']);
+    else if (n.map === 'upstairs') l = pick('reni:up', ['¡Un video bajando la escalera! Despacito... ¡listo!', '¡Acá arriba hay una luz divina! Quiet{o}... ¡listo!', '¡La luz de la ventana está divina! Mirá para acá... ¡listo!', '¡Video de pasillo! Caminá normal... ¡listo!']);
     else l = pick('reni:gift', ['¡Quiet{o} ahí, {name}! ...¡Listo! ¡Salió hermoso!', '¡Ay, qué lindo te queda ese color! Video, video.', '¡Esta luz está divina! Sonreí... ¡listo!', '¡Te encontré! Para el reel del viernes.', '¡No te muevas! Ahí... ¡perfecto!']);
     await say(l, 'reni');
     if (Math.random() < .55){
       const k = RENI_GIFTS[(S.log._reni = (S.log._reni || 0) + 1) % RENI_GIFTS.length];
       S.items[k] = (S.items[k] || 0) + 1; SFX.heal();
-      await say(k === 'mate' ? pick('reni:givemate', ['Y tomá, te cebé uno. Del termo no se le niega a nadie.', 'Por posar tan bien, un mate de regalo.']) : pick('reni:give', ['Te traje algo por posar tan bien. Tomá.', 'Un regalito. Porque sí.', 'Tomá, para que sigas con todo. Y comé algo, ¿eh?']), 'reni');
+      await say(k === 'mate' ? pick('reni:givemate', ['Y tomá, te cebé uno. Del termo no se le niega a nadie.', 'Por posar tan bien, un mate de regalo.', 'Tomá, te cebé un mate. Calentito, como debe ser.', 'Un mate de regalo. Si Fede te lo pide, vos decidís. Yo no vi nada.', 'Te convido uno. El termo está lleno y vos tenés cara de mate.']) : pick('reni:give', ['Te traje algo por posar tan bien. Tomá.', 'Un regalito. Porque sí.', 'Tomá, para que sigas con todo. Y comé algo, ¿eh?', 'Te traje un regalito. No preguntes de dónde. Bueno, de la cocina.', 'Tomá, que te vi medio cansad{o}. ¿Comiste?', 'Esto es para vos. Pero después comé algo de verdad, ¿eh?', 'Un regalito por bancarte mis videos.']), 'reni');
       await say(`Recibiste: ${IT[k].n}.`);
-    } else await say(pick('reni:nogift', ['Hoy no tengo nada para darte, pero el video quedó divino.', 'Te daría algo, pero me lo comí. Perdón. Era un alfajor.', 'La próxima te traigo algo, ¡prometido!']), 'reni');
+    } else await say(pick('reni:nogift', ['Hoy no tengo nada para darte, pero el video quedó divino.', 'Te daría algo, pero me lo comí. Perdón. Era un alfajor.', 'La próxima te traigo algo, ¡prometido!', 'Hoy vengo con las manos vacías, pero el video te quedó hermoso.', 'No te traje nada, pero mañana te traigo algo rico. ¡Prometido!', 'Te iba a dar algo, pero se lo di a Pimi. Ya sabés cómo es.']), 'reni');
     return;
   }
   // de vez en cuando te convida un mate
@@ -1109,7 +1110,7 @@ async function talkMontse(){
    Tato es el contador: lleva los números. Relajado, con reggae tranqui sonando bajito en el parlante de Asteroide; su gracia es que anda en otra
    cosa, a otro ritmo que el resto (contesta tarde, se entera después). No participa mucho de la aventura. */
 const SOFI = {
-  again: ['¿Volviste? ¿Comiste algo?', '¿Todo bien? ¿Precisás algo?', 'Si es por el wifi, ya lo reinicié.'],
+  again: ['¿Volviste? ¿Comiste algo?', '¿Todo bien? ¿Precisás algo?', 'Si es por el wifi, ya lo reinicié.', '¿Volviste? ¿Tomaste agua?', '¡Hola de nuevo! ¿Se te cortó el internet o venís a charlar?', '¿Todo en orden? Si no, lo ordenamos.', '¿Te quedaste con hambre? Hay fruta, ¿eh?'],
   R: {
     lowhp: ['Estás pálid{o}. Comé una fruta y pasá por lo de Lu, ¿sí?', 'Uy, venís sin pilas. Sentate un ratito, que nadie te apura.'],
     lose: [f => `¿${f} te dejó sin energía? Pasa. Tomá agua, comé algo y volvé con otra cabeza.`],
@@ -1141,7 +1142,7 @@ async function talkSofi(){
   if (!S.flags.sofiMet){
     S.flags.sofiMet = true;
     await say(`${saludo()}, {name}! Soy Sofi, de Administración. ¡Bienvenid{o} a la casa!`, 'sofi:feliz');
-    await say('Te cuento cómo funciona esto, cortito: acá se aprende resolviendo. Los problemas aparecen entre las pilas de pendientes de La Base, y cada uno que resolvés te deja experiencia.', 'sofi');
+    await say('Te cuento cómo funciona esto, cortito: acá se aprende resolviendo. Los problemas aparecen entre las pilas de pendientes de La Base, y cada uno que resolvés te deja experiencia: así subís de nivel y llegás preparad{o} a los clientes.', 'sofi');
     await say('Cada persona del equipo te va a enseñar algo. Si no sabés qué hacer, tocá AYUDA. La jornada es de 9 a 18, y si te quedás sin energía, Lu te recarga en Bienestar. ¡Y comé algo!', 'sofi');
     await say('Mirá, así es la casa:', 'sofi');
     await panelInfo('LA CASA', casaHTML()); closePanel();
@@ -1158,7 +1159,7 @@ async function talkSofi(){
   if (qState('sofi_fruta') === 'open'){
     if (!S.flags.tatoFruta){
       if (!(S.items.frutaTato > 0)) S.items.frutaTato = 1;
-      await say(pick('sofi:remind', ['Tato está acá nomás, al lado de la mesa. Hablale fuerte, que con el reggae no escucha mucho.', '¿Y? ¿Comió? ...Todavía no, ¿no? Andá, andá, que si no se le hace de noche.']), 'sofi');
+      await say(pick('sofi:remind', ['Tato está acá nomás, al lado de la mesa. Hablale fuerte, que con el reggae no escucha mucho.', '¿Y? ¿Comió? ...Todavía no, ¿no? Andá, andá, que si no se le hace de noche.', 'Tato está en su silla, con el reggae. Si no te escucha, saludalo con la mano.', 'La fruta para Tato, ¿eh? Que si no, almuerza café.', 'Andá, andá. Tato agradece a su ritmo, pero agradece.']), 'sofi');
       return;
     }
     await say('¿Comió? ¡Gracias! Ahora sí le van a cerrar los números.', 'sofi'); qDone('sofi_fruta');
@@ -1181,7 +1182,7 @@ async function talkSofi(){
 }
 
 const TATO = {
-  again: ['...Uh, ¿estabas ahí? Perdón, estaba en otra.', '¿Me hablabas a mí? Dale, decime.', 'Tranqui, tranqui. ¿Qué precisás?'],
+  again: ['...Uh, ¿estabas ahí? Perdón, estaba en otra.', '¿Me hablabas a mí? Dale, decime.', 'Tranqui, tranqui. ¿Qué precisás?', '¿Eh? Ah, hola. ¿Ya es de tarde?', 'Perdón, estaba con un número. ¿Me decías?', '...Ah, sos vos. Tranqui, pasá.', 'Uy, ¿me hablaste hace mucho? Perdoná.'],
   R: {
     // Tato se entera de todo un rato después
     boss: {explote: 'Me contaron lo de la Clienta Explosiva. ¿Ya pasó? Uh. Bueno, felicitaciones atrasadas.', logo: '¿Don Logo aprobó? ...¿Hace cuánto? Ah, mirá. Igual me alegro.', fantasma: '¿La Clienta Fantasma respondió? Yo todavía le estoy esperando una factura. Pasale el dato.'},
@@ -1290,6 +1291,11 @@ async function talkBoss(key, n){
   else { S.flags['met_' + key] = true; for (const l of intro[key]) await say(l, bossWho(key), {name: d.n}); }
   const fede = NPCS.find(x => x.id === 'fede'), withFede = key === BOSS_ORDER[2] && S.flags.fedeMet && !fede.away;
   if (key === BOSS_ORDER[2] && !S.flags.fantasmaFedeHint){ S.flags.fantasmaFedeHint = true; await say(fede.away ? 'Esta es la más difícil de las tres. Fede ya se fue por hoy, pero mañana te puede acompañar.' : 'Esta es la más difícil de las tres. No tenés que hacerlo sol{o}: Fede puede bajar a acompañarte.'); }
+  const cl = CLIENT_LVL[key], cn = ({fantasma: 'la Clienta Fantasma', explote: 'la Clienta Explosiva'})[key] || d.n, Cn = cn.charAt(0).toUpperCase() + cn.slice(1);
+  if (cl && S.lvl < cl) await say(pick('boss:lvl', [
+    `${Cn} es nivel ${cl} y vos estás en el ${S.lvl}. Cada problema que resolvés en La Base te da experiencia: con unos niveles más, la reunión sale mucho mejor.`,
+    `Ojo: ${cn} es nivel ${cl} y vos, ${S.lvl}. Resolver problemas en La Base y capacitarte con el equipo te sube de nivel. Podés intentarlo igual.`,
+    `Te faltan ${cl - S.lvl} ${cl - S.lvl === 1 ? 'nivel' : 'niveles'} para estar a la altura de ${cn} (nivel ${cl}). Los problemas de La Base dan experiencia; las capacitaciones y las tareas del equipo, también.`]));
   const opts = withFede ? ['¡Arranquemos!', 'Ir con Fede', 'Prepararme antes'] : ['¡Arranquemos!', 'Prepararme antes'];
   let c = await choose(opts, {cancel: opts.length - 1});
   if (withFede && c === 1){
@@ -1298,6 +1304,8 @@ async function talkBoss(key, n){
     PENDING_ALLY = 'fede'; c = 0;
   } else if (withFede && c === 2) c = 1;
   if (c !== 0){ await say(key === 'fantasma' ? pick('fan:later', ['Ah, ¿me vas a hacer esperar a mí? ¡Me encanta! Así me siento importante.', 'Andá, andá. Yo mientras tanto desaparezco un ratito. Es mi especialidad.', 'Perfecto. Yo mientras tanto no respondo ningún mail. Para que estemos parejos.']) : key === 'logo' ? pick('logo:later', ['Andá, andá. Total, yo espero. Siempre espero.', 'Perfecto. Otra vez a esperar. Me encanta esperar. (No me encanta.)', 'Dale. Mientras tanto voy anotando lo que no me gusta. Traje una libreta grande.']) : pick('boss:later', ['¡Te espero! Pero no mucho, que me aburro y se me ocurren ideas.', '¡Dale! Yo mientras pienso en fuegos artificiales. Literales.', 'Andá. Yo voy pensando más ideas. Tengo como cuarenta.']), bossWho(key), {name: d.n}); return; }
+  if (!S.flags['cu_' + key] || Math.random() < .3){ S.flags['cu_' + key] = true;
+    await say(pick('cu:boss', [`Prendés el timer de ClickUp: esta reunión va a la cuenta de ${cn}.`, `Timer de ClickUp en marcha, en la cuenta de ${cn}. Cada minuto con un cliente cuenta.`, `Antes de entrar, ClickUp: el tiempo de esta reunión queda en la cuenta de ${cn}.`])); }
   hideDlg();
   const res = await bossBattle(key, 'boss');
   if (res === 'win'){
@@ -1325,8 +1333,9 @@ async function ending(){
   await say('...¿Qué festejamos? ¡Ah! ¡Bien ahí! Llegué justo.', 'tato');
   await say('¡Foto grupal! ¡Todos juntos! ...¡Listo! Va directo a las redes.', 'reni');
   await say('La programo para las siete, que es cuando más se ve. Y con subtítulos.', 'alejo');
-  await say('Ya la guardé: Agencia_Festejo_Foto_v01. Sin "final".', 'giuli');
+  await say('Ya la guardé: bien nombrada y en su carpeta. Como corresponde.', 'giuli');
   await say('La Gran Presentación fue un éxito. La agencia celebra.');
+  await repasoFinal();
   await say('FIN. ¿O el lunes que viene entra otro brief? Podés seguir jugando, completar la bitácora y llegar al nivel 25: en la Sala del Directorio te espera el Cliente del Año.');
 }
 
@@ -1339,16 +1348,16 @@ async function ending(){
    no se aprueba ni se reprueba, si no sale se explica y se vuelve a probar. */
 const DUO_LESSONS = {
   giuli: [
-    {title: 'Nombrar archivos', lines: [
-      'Primera capacitación: nombrar archivos. Parece una pavada, y es lo que más tiempo le ahorra a todo el equipo.',
-      'La fórmula: Cliente_Proyecto_Pieza_Medida_Versión_Fecha. Por ejemplo: Yerba_Lanzamiento_PostIG_1080x1350_v02_20261016.',
-      'Sin espacios, sin tildes y sin eñes. La fecha al revés, año-mes-día, así los archivos se ordenan solos.',
-      'Y la palabra "final" está prohibida. Lo final no existe: existe v01, v02, v03. Si dice "final_FINAL2", alguien sufrió.'],
-      q: '¿Cuál de estos archivos está bien nombrado?', a: 'Yerba_Lanzamiento_PostIG_1080x1350_v02_20261016.psd', o: ['logo final FINAL2 (copia).ai', 'nuevo diseño post último.psd'],
-      why: 'Fijate que el bueno dice de quién es, qué es, qué medida tiene, qué versión y de cuándo. Sin espacios ni "final".'},
+    {title: 'Orden al trabajar', lines: [
+      'Primera capacitación: el orden. Parece una pavada, y es lo que más tiempo le ahorra a todo el equipo.',
+      'La regla es simple: las cosas se ordenan en el momento de trabajarlas. No "después": después nunca llega.',
+      'Cada archivo, bien nombrado: que cualquiera entienda qué es sin abrirlo. Y guardado en su carpeta, la que corresponde.',
+      'Si un archivo se llama "final_FINAL2 (copia)", nadie sabe cuál es el bueno. Y alguien sufre buscándolo.'],
+      q: '¿Cuándo se ordenan las cosas?', a: 'Al momento de trabajarlas: bien nombradas y en su carpeta', o: ['Los viernes, si sobra tiempo', 'Cuando alguien no encuentra algo'],
+      why: 'El orden se hace mientras trabajás: cada cosa bien nombrada y en su carpeta. Si se deja para después, después nunca llega.'},
     {title: 'Ordenar editables', lines: [
       'Segunda capacitación: ordenar editables. Un editable es para que lo pueda abrir otra persona. Mañana, en un año, o vos medio dormid{o}.',
-      'Una carpeta por proyecto, siempre igual: 01_Brief, 02_Referencias, 03_Editables, 04_Exportados, 05_Entregado.',
+      'Cada editable va en su carpeta, la que corresponde según el orden de carpetas del equipo. Nada suelto en el Escritorio.',
       'Adentro del archivo: capas con nombre y agrupadas, mesas de trabajo nombradas, nada oculto que no sirva.',
       'Y cuando lo pasás, empaquetado: con las tipografías y las imágenes vinculadas. Si al abrirlo aparecen cuadraditos rosas, faltó empaquetar.'],
       q: 'Le pasás un editable a otra persona. ¿Qué no puede faltar?', a: 'Las tipografías y las imágenes vinculadas, todo empaquetado', o: ['Un PNG en baja para que se dé una idea', 'Un audio explicando dónde está cada cosa'],
@@ -1580,11 +1589,11 @@ async function talkMarga(){
     else await say('Bueno, después. Pero no te salvás, ¿eh?', 'marga');
     return;
   }
-  await opener('marga', 'marga', ['¿Otra vez por acá, corazón?', '¡Volviste! ¿Te conté de mis viajes?', 'Pasá, pasá, que ya seco.']);
+  await opener('marga', 'marga', ['¿Otra vez por acá, corazón?', '¡Volviste! ¿Te conté de mis viajes?', 'Pasá, pasá, que ya seco.', '¡Mi vida! ¿Viniste a verme?', 'Cuidado que está mojado, corazón. Pasá por el costado.', '¿Otra vez vos? Qué lindo. ¿Te muestro algo?']);
   // una vez por día te convida algo
-  if (m.margaGift !== gameDay() && Math.random() < .5){ m.margaGift = gameDay(); await say('Tomá, te hice un cafecito. Que con el estómago vacío no se piensa.', 'marga'); S.items.cafe = (S.items.cafe || 0) + 1; SFX.heal(); await say('Recibiste un Café.'); }
+  if (m.margaGift !== gameDay() && Math.random() < .5){ m.margaGift = gameDay(); await say(pick('marga:cafe', ['Tomá, te hice un cafecito. Que con el estómago vacío no se piensa.', 'Mi vida, te traje un cafecito. Calentito, como el de Roma.', 'Corazón, sentate un minuto y tomate este café. El trabajo espera.', 'Te hice un cafecito con azúcar, ¿eh? Marga, sí. Amarga, nunca.']), 'marga'); S.items.cafe = (S.items.cafe || 0) + 1; SFX.heal(); await say('Recibiste un Café.'); }
   const r = Math.random();
-  if (r < .35){ await say(pick('marga:fotoq', ['¿Te muestro una foto nueva de mis nietas?', 'Mirá lo que me mandaron hoy... ¿querés ver?']), 'marga');
+  if (r < .35){ await say(pick('marga:fotoq', ['¿Te muestro una foto nueva de mis nietas?', 'Mirá lo que me mandaron hoy... ¿querés ver?', '¿Te muestro las fotos del cumple de la más chiquita?', 'Ay, corazón, ¿tenés un minutito? Te muestro una foto.']), 'marga');
     if (await choose(['¡A ver!', 'Después'], {cancel: 1}) === 0) await margaFotos(); else await say('Bueno, te la guardo para mañana.', 'marga'); }
   else if (r < .65) await say(pick('marga:viaje', MARGA.viajes), 'marga');
   else await say(pick('marga:lines', MARGA.lines), 'marga');
@@ -1593,7 +1602,7 @@ async function talkMarga(){
 async function margaFotos(){
   await say('Marga te muestra el celular. Tiene como cuarenta fotos de sus nietas. En todas están sonriendo.');
   await say(pick('marga:foto', MARGA.fotos), 'marga');
-  await say(pick('marga:foto2', ['¿Viste qué divinas? Salieron a la abuela.', 'Son lo más lindo que tengo. Bueno, eso y esta casa.', 'Ay, me pongo chocha. Perdoná, mi vida.']), 'marga');
+  await say(pick('marga:foto2', ['¿Viste qué divinas? Salieron a la abuela.', 'Son lo más lindo que tengo. Bueno, eso y esta casa.', 'Ay, me pongo chocha. Perdoná, mi vida.', 'Las quiero llevar a Grecia. Algún día, mi vida.', 'Mirá esa sonrisa. Eso no se compra, corazón.']), 'marga');
 }
 
 /* ================= LOS VALORES DE LA AGENCIA =================
@@ -1815,10 +1824,10 @@ async function quizLoop(who, q, helper){
     await say(q.q, who);
     const opts = [q.a, ...q.o].map(t => ({t, k: Math.random()})).sort((a, b) => a.k - b.k).map(o => o.t);
     const c = await choose(opts, {cancel: null});
-    if (opts[c] === q.a){ await say(pick(who + ':quizok', ['¡Eso! Lo tenés.', '¡Exacto! Así se hace.', 'Perfecto. Eso es lo que hace la diferencia.']), who); return; }
+    if (opts[c] === q.a){ await say(pick(who + ':quizok', ['¡Eso! Lo tenés.', '¡Exacto! Así se hace.', 'Perfecto. Eso es lo que hace la diferencia.', ...((QUIZ_VOICE[who] || {}).ok || [])]), who); return; }
     tries++;
-    if (tries === 1) await say('Casi. ' + q.why, who);
-    else if (tries === 2) await say(pick(who + ':quiz2', ['Esa tampoco. Releé lo que te conté, que está ahí.', 'Mmm, no. Pensalo como si fuera de verdad: ¿qué harías?', 'Tampoco. Pero ya estás más cerca que antes.']), who);
+    if (tries === 1) await say(pick(who + ':quiz1', ['Casi. ', 'Uh, no. ', 'Mmm, no del todo. ', ...((QUIZ_VOICE[who] || {}).one || [])]) + q.why, who);
+    else if (tries === 2) await say(pick(who + ':quiz2', ['Esa tampoco. Releé lo que te conté, que está ahí.', 'Mmm, no. Pensalo como si fuera de verdad: ¿qué harías?', 'Tampoco. Pero ya estás más cerca que antes.', ...((QUIZ_VOICE[who] || {}).no || [])]), who);
     else { await say(`Te la doy: es "${q.a}". Ahora elegila vos, así te queda.`, who); }
     if (tries === 2 && helper) await say('Tranqui: equivocarse es la mitad de aprender.', helper);
   }
@@ -1835,6 +1844,17 @@ async function trainingSession(id){
   await say(nToday < PER_DAY ? pick(T.who + ':trnext1', ['Si querés, más tarde hacemos la que sigue. Hoy entran dos.', 'Practicá un rato y volvé, que hoy podemos hacer una más.']) : pick(T.who + ':trnext', ['Listo por hoy: dos por día, que si no se pisan. Mañana seguimos.', 'Por hoy ya está. Mañana, la que sigue.']), T.who);
   return false;
 }
+/* cada uno festeja y da pistas con su estilo en las preguntas de las capacitaciones */
+const QUIZ_VOICE = {
+  fede: {ok: ['Eso. Ahora mostrame la versión dos. Es chiste: está perfecta.', 'Bien. Así, sin vueltas, como la bombilla.', 'Exacto. Eso es cuidar el proceso.'],
+    no: ['No. Tomate un mate imaginario y volvé a leerla.', 'Tampoco. Pensalo despacio: el agua buena no se apura.'], one: ['No, pero estás cerca. ']},
+  sahi: {ok: ['¡Golazo, crack!', '¡Esa es de Riquelme! Pase perfecto.', '¡Adentro! Así se juega.'],
+    no: ['Uh, la tiraste afuera. Probá de nuevo, que el arco sigue ahí.', 'Esa pegó en el palo. Una más, que sale.'], one: ['¡Uh, en el palo! ']},
+  alejo: {ok: ['Eso. Toma única, sin cortes.', 'Bien. Eso tiene buena luz.'],
+    no: ['Mmm, no. Hacé foco y probá otra vez.', 'Esa quedó fuera de cuadro. Otra.'], one: ['Fuera de foco. ']},
+  giuli: {ok: ['¡Eso! Va directo a la carpeta de lo importante.', 'Bien. Prolijo y en su lugar.'],
+    no: ['No, esa no. Mirala como un afiche: de lejos se entiende.', 'Tampoco. Pero ya estás más cerca, lo veo.'], one: ['Mmm, esa no va en esa carpeta. ']},
+};
 /* Sahi enseña el proceso de campañas desde el nivel 15 */
 async function sahiTraining(){
   const T = TRAININGS.campanas;
@@ -1854,7 +1874,7 @@ async function sahiTraining(){
     return 'done';
   }
   if (c === 1) return 'rally';
-  await say(pick('sahi:trlater', ['Dale, cuando quieras. La campaña no se arma sola, pero espera.', 'Tranqui. Mañana también hay capacitación.']), 'sahi');
+  await say(pick('sahi:trlater', ['Dale, cuando quieras. La campaña no se arma sola, pero espera.', 'Tranqui. Mañana también hay capacitación.', 'Todo bien. Los partidos importantes se preparan con tiempo.']), 'sahi');
   return 'done';
 }
 /* el menú "Capacitaciones": todo lo aprendido, para repasar cuando quieras (sirve como manual para la gente nueva) */
@@ -2001,11 +2021,11 @@ for (const [id, talk] of Object.entries(TRAINING_TALK)) TRAININGS[id].sessions.f
 /* las capacitaciones de Giuli y Alejo, también cortas y con ida y vuelta */
 const DUO_TALK = {
   giuli: [
-    ['Primera capacitación: nombrar archivos. Parece una pavada; es lo que más tiempo nos ahorra.',
-     'La fórmula: Cliente_Proyecto_Pieza_Medida_Versión_Fecha. Por ejemplo: Yerba_Lanzamiento_PostIG_1080x1350_v02_20261016.',
-     'Sin espacios, tildes ni eñes. La fecha al revés, así se ordenan solos.',
-     ['alejo', '¿Y la palabra "final"?'],
-     'Prohibida. Existe v01, v02, v03. "final_FINAL2" es un pedido de ayuda.'],
+    ['Primera capacitación: el orden. Parece una pavada; es lo que más tiempo nos ahorra.',
+     'Las cosas se ordenan al momento de trabajarlas. No "después": después nunca llega.',
+     'Cada archivo bien nombrado, que se entienda qué es sin abrirlo. Y en su carpeta, la que corresponde.',
+     ['alejo', '¿Y si se llama "final_FINAL2 (copia)"?'],
+     'Eso es un pedido de ayuda. Nadie sabe cuál es el bueno.'],
     ['Segunda: ordenar editables. Un editable es para que lo abra otra persona. O vos, en un año, medio dormid{o}.',
      'Capas con nombre y agrupadas, mesas de trabajo nombradas, nada oculto que sobre.',
      'Y cuando lo pasás, empaquetado: con las tipografías y las imágenes vinculadas.',

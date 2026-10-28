@@ -263,5 +263,5 @@ body{font-family:var(--f-ui);padding-left:max(16px, env(safe-area-inset-left, 0p
 .ui b,.dlgName,.panelHead,.chip,.hprow,.clock,.zone,.rolrow,.pdetail h4,.tMenu div,.choice div.sel,.plist li.sel{text-shadow:.14cqw 0 0 currentColor}
 .ui b{color:#5a3a6a}
 .grid > div{text-shadow:.14cqw 0 0 currentColor, 0 .3cqw 0 rgba(0,0,0,.35) !important}
-.toast{left:50%;top:3cqw;transform:translateX(-50%);padding:1cqw 2.6cqw;font-weight:700;z-index:45;white-space:nowrap}
+.toast{left:50%;top:3cqw;transform:translateX(-50%);padding:1cqw 2.6cqw;font-weight:700;z-index:45;width:max-content;max-width:90%;text-align:center;line-height:1.25}
 @media (prefers-reduced-motion: reduce){ .more{animation:none} .fill,.xp i,.fade,.cross{transition:none} }

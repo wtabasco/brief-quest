@@ -402,12 +402,12 @@ async function battleFlow(foe, kind, key){
     // de noche (o si ya se fueron) no hay quien te rescate: te recuperás sol{o} en Bienestar
     const here = id => { const n = NPCS.find(x => x.id === id); return n && !n.away; };
     if (here('fede')){
-      await say(pick('fede:rescue', ['Ey, {name}. ¿Estás bien? Bien ahí que lo intentaste.', '¡Arriba! Te traje hasta acá. Lo intentaste, y eso cuenta.', 'Uf, ese fue fuerte. Pero ya sabés cómo ataca.']), 'fede');
-      await say(pick('fede:rescue2', [`Trabarte con ${foe.name} también es parte de aprender. Pensá qué cambiarías y volvé a intentarlo.`, 'La próxima probá otro tipo de habilidad. Cambia todo.', 'Respirá, recargá y volvé. Así se aprende acá.']), 'fede');
+      await say(pick('fede:rescue', ['Ey, {name}. ¿Estás bien? Bien ahí que lo intentaste.', '¡Arriba! Te traje hasta acá. Lo intentaste, y eso cuenta.', 'Uf, ese fue fuerte. Pero ya sabés cómo ataca.', 'Arriba, {name}. Quedarse sin energía es parte del oficio. Volver, también.', 'Tranqui. Te traje hasta acá. Tomá agua y pensá qué probarías distinto.', 'Ey. Bien ahí que fuiste. Lo que hoy no salió, mañana sale.']), 'fede');
+      await say(pick('fede:rescue2', [`Trabarte con ${foe.name} también es parte de aprender. Pensá qué cambiarías y volvé a intentarlo.`, 'La próxima probá otro tipo de habilidad. Cambia todo.', 'Respirá, recargá y volvé. Así se aprende acá.', 'Mirá de qué tipo es y elegí lo que más le pega. Probar, aprender, repetir.', 'Volvé cuando quieras. La versión dos siempre sale mejor.']), 'fede');
     } else await say('Fede ya se fue por hoy, así que fuiste a recuperarte a Bienestar por tu cuenta. Trabarse también es parte de aprender.');
     await say(`Aprendiste del error: +${xp} de experiencia.`);
     await gainXP(xp, sayN);
-    if (here('lu')) await say(pick('lu:rescue', ['¡Listo, enchufad{o} y cargad{o}! ¡A seguir!', '¡Ya está! Tomá agua antes de salir, que te veo como pasa de uva.', '¡Recuperad{o}! Y tranqui, que a todos nos pasa. A mí me pasa los lunes.']), 'lu:feliz');
+    if (here('lu')) await say(pick('lu:rescue', ['¡Listo, enchufad{o} y cargad{o}! ¡A seguir!', '¡Ya está! Tomá agua antes de salir, que te veo como pasa de uva.', '¡Recuperad{o}! Y tranqui, que a todos nos pasa. A mí me pasa los lunes.', '¡Recargad{o}! Hasta las plantas se marchitan un rato. Después vuelven.', '¡Listo! Ahora salí con la frente en alto y la botella llena.']), 'lu:feliz');
     save(); return 'lose';
   }
   await endBattleUI();
