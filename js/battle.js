@@ -589,8 +589,9 @@ function drawBattle(){
   if (!blink('e')) drawSprite(ctx, spr, ex, ey, sw, sh, 2*RES);
   ctx.restore();
   if (B.ally){ // Fede, al lado tuyo y un poquito atrás
-    const as = personSprite('fede', 'up', 0, true, 'wave'), ak = (as.k || 1) * .9;
-    drawSprite(ctx, as, PPLAT.x - 52 - as.cx*ak - (1 - e2) * 160 + lunge('a'), (as.hdBack ? 172 : 196) - as.foot*ak - lunge('a') * .4, as.width*ak, as.height*ak, 2*RES); }
+    // de espaldas, como en su ficha; un poco más chico y más atrás, y sin salirse por el borde
+    const as = personSprite('fede', 'up', 0, true, 'wave'), ak = (as.k || 1) * .86, ax = Math.max(as.cx*ak + 2, PPLAT.x - 42);
+    drawSprite(ctx, as, ax - as.cx*ak - (1 - e2) * 160 + lunge('a'), (as.hdBack ? 168 : 196) - as.foot*ak - lunge('a') * .4, as.width*ak, as.height*ak, 2*RES); }
   const ps = personSprite('player', 'up', 0, true, 'wave');
   const pk = ps.k || 1, px = PPLAT.x - ps.cx*pk - (1 - e2) * 160 + shake('p') + lunge('p'), py = (ps.hdBack ? 180 : 204) - ps.foot*pk - lunge('p') * .4 + (B.P.sleep > 0 ? 2 : 0);
   if (!blink('p')) drawSprite(ctx, ps, px, py, ps.width*pk, ps.height*pk, 2*RES);

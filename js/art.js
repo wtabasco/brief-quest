@@ -22,7 +22,7 @@ const ART = {
 const ART_IMG = {};
 /* Expresiones de los retratos: say(texto, 'fede:feliz') usa la variante si existe */
 const PORTRAIT_MOODS = {};
-ART.fede = {world: 'assets/sprites/fede-mundo.png', battle: 'assets/sprites/fede-combate.png', cheer: 'assets/sprites/fede-celebra.png', hd: true};
+ART.fede = {world: 'assets/sprites/fede-mundo.png', battle: 'assets/sprites/fede-combate.png', cheer: 'assets/sprites/fede-celebra.png', back: 'assets/sprites/fede-espalda.png', hd: true};
 ART.sahi = {world: 'assets/sprites/sahi-mundo.png', hd: true};
 ART.lu = {world: 'assets/sprites/lu-mundo.png', hd: true};
 ART.agus = {world: 'assets/sprites/agus-mundo.png', hd: true};
