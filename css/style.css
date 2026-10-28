@@ -115,17 +115,17 @@ body{font-family:var(--f-ui);padding-left:max(16px, env(safe-area-inset-left, 0p
   body{padding:0}
   .wrap{gap:0;max-width:none}
   .gba{height:100svh;min-height:560px}
-  /* la pantalla: entre 4:3 y un poco más alta (hasta 1,1 de alto por 1 de ancho), según lo que dejan los controles */
+  /* la pantalla: entre 4:3 y un poco más alta (hasta 1,25 de alto por 1 de ancho), según lo que dejan los controles */
   .shell,.gba.padOpen .shell{flex:none;width:100%;min-width:0;border-radius:0 0 22px 22px;padding:max(6px, env(safe-area-inset-top, 0px)) 6px 8px}
   .bezel{padding:4px;border-radius:4px 4px 12px 12px}
-  .screen{aspect-ratio:auto;height:clamp(calc((100vw - 20px) * .75), calc(100svh - 440px), calc((100vw - 20px) * 1.1))}
+  .screen{aspect-ratio:auto;height:clamp(calc((100vw - 20px) * .8), calc(100svh - 385px), calc((100vw - 20px) * 1.25))}
   .bezel-top{display:none}
   .shellBar{padding:8px 8px 0}
   /* los controles llenan lo que queda y se centran: ni pegados a la pantalla ni contra el borde de abajo */
   .drawer,.drawer.open{flex:1;min-height:0;display:flex;flex-direction:column;width:100%;margin-top:-14px}
   .drawerIn{flex:1;display:flex;flex-direction:column;overflow:visible}
   .pad{flex:1;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;grid-template-areas:"mid mid" "dpad ab";gap:clamp(12px, 3svh, 26px) 6px;align-content:center;
-    border-radius:0 0 54px 54px / 0 0 40px 40px;padding:22px 20px calc(clamp(56px, 12svh, 120px) + env(safe-area-inset-bottom, 0px)) 20px}
+    border-radius:0 0 54px 54px / 0 0 40px 40px;padding:20px 20px calc(clamp(40px, 8svh, 84px) + env(safe-area-inset-bottom, 0px)) 20px}
   .pad .mid{grid-area:mid;flex-direction:row;justify-content:space-between;width:100%;align-self:start}
   .pad .dpad{grid-area:dpad;align-self:end;justify-self:start}
   .pad .ab{grid-area:ab;align-self:center;justify-self:end;margin-bottom:6px}
