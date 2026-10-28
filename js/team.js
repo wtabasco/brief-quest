@@ -3,8 +3,8 @@
 /* ================= COSAS PARA EL EQUIPO: experiencia charlando y ayudando =================
    Para que no todo sea resolver problemas: también se sube de nivel haciendo cosas para la gente. Lo que se
    repasa sale de "The Way We Work" (Cultura y Clientes), los equipos y los rituales, lo que menos aparecía.
-   - Charla de cómo trabajamos con Agus (una vez por día): tres situaciones de todos los días. Cada respuesta
-     buena suma experiencia; si no sale, Agus explica y no pasa nada.
+   - Charla de cómo trabajamos con Fede (una vez por día, en Brasil): tres situaciones de todos los días. Cada
+     respuesta buena suma experiencia; si no sale, Fede explica y no pasa nada.
    - Las ideas de la casa, con Montserrat en la terraza (después de la Gran Presentación, una por día): una
      idea a la que le falta una letra del AEIOU; hay que encontrar cuál.
    - Encargos del equipo: alguien te pide que le lleves algo o le avises algo a otra persona. Al hablar con
@@ -34,16 +34,16 @@ const REPASO = () => [
 function shuffle(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 async function repasoValores(){
   const m = mem(); m.repaso = gameDay();
-  await say(pick('repaso:in', ['Te cuento tres situaciones de todos los días y me decís qué harías. No es un examen: es cómo trabajamos.', 'Tres situaciones. Si no sale, lo charlamos. Para eso estamos.', 'Tres situaciones y un mate. Bueno, el mate es de Fede.']), 'agus:feliz');
+  await say(pick('repaso:in', ['Tres situaciones de todos los días. Vos me decís qué harías. No es un examen: es oficio.', 'Mientras se enfría un poco el agua: tres situaciones. Pensalas como si fueran de verdad, porque lo son.', 'Tres situaciones. La primera respuesta que se te ocurre, después la versión dos.']), 'fede');
   const qs = shuffle(REPASO()).slice(0, 3); let ok = 0;
   for (const q of qs){
-    await say(q.p, 'agus');
+    await say(q.p, 'fede');
     const c = await choose(q.opts, {cancel: null});
-    if (q.opts[c] === q.ok){ ok++; await say(pick('repaso:ok', ['¡Exacto!', 'Eso. Muy bien.', 'Tal cual.', '¡Bien! Se nota que estás prestando atención.']), 'agus:feliz'); }
-    else await say(`Casi. ${q.why}`, 'agus');
+    if (q.opts[c] === q.ok){ ok++; await say(pick('repaso:ok', ['Eso. Así se trabaja acá.', 'Bien. Eso es oficio.', 'Tal cual. Ahora hacelo sin pensarlo.', 'Exacto. Como el agua del mate: nunca hervida.']), 'fede:feliz'); }
+    else await say(`Mmm, no. ${q.why}`, 'fede:serio');
   }
   m.repasoOk = (m.repasoOk || 0) + ok; m.repasos = (m.repasos || 0) + 1;
-  await say(ok === 3 ? '¡Tres de tres! ¿Y cómo te hace sentir eso? (Perdón, se me escapó.)' : ok ? 'Bien. Lo que no salió hoy, mañana sale.' : 'Hoy no salió, y está perfecto: para eso repasamos. Mañana de nuevo.', ok === 3 ? 'agus:risa' : 'agus');
+  await say(ok === 3 ? 'Tres de tres. Muy bien. Mañana te pido la versión dos.' : ok ? 'Bien. Lo que no salió hoy, mañana sale. Probar, aprender, repetir.' : 'Hoy no salió, y está perfecto: para eso lo charlamos. Mañana de nuevo.', ok === 3 ? 'fede:risa' : 'fede');
   if (ok) await gainXP(Math.max(10, Math.floor(need(S.lvl) * .09 * ok)), sayN);
 }
 
@@ -81,10 +81,11 @@ async function teamExtras(n){
       return true;
     }
   }
-  // 2) el repaso de valores con Agus, una vez por día
-  if (n.id === 'agus' && S.flags.foundersMet && m.repaso !== gameDay() && m.repasoAsk !== gameDay()){
+  // 2) la charla de cómo trabajamos con Fede, una vez por día (si no tiene un mate o una ceremonia pendiente)
+  if (n.id === 'fede' && S.flags.fedeMet && m.repaso !== gameDay() && m.repasoAsk !== gameDay()
+      && !(S.lvl >= PROJECT_LVL && !S.flags.senior) && !(qState('fede_mate') === 'open' && (S.items.mate || 0) > 0)){
     m.repasoAsk = gameDay();
-    await say('Antes de charlar: ¿te cuento tres situaciones de todos los días y vemos cómo las resolverías? Suma experiencia.', 'agus');
+    await say('Antes de entrenar: ¿charlamos tres situaciones de todos los días? Así se aprende cómo trabajamos acá. Y suma experiencia.', 'fede');
     const c = await choose(['Dale', 'Ahora no'], {cancel: 1});
     if (c === 0){ await repasoValores(); return true; }
   }

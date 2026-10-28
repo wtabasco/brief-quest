@@ -9,8 +9,8 @@ const QUESTS = {
   clientes:   {giver: 'La agencia', title: 'Los tres clientes', abs: true, goal: 3, count: () => S.bosses,
                desc: () => S.bosses >= 3 ? 'Los tres clientes quedaron conformes.' : `Destrabá ${({fantasma: 'a la Clienta Fantasma', logo: 'a Don Logo', explote: 'a la Clienta Explosiva'})[BOSS_ORDER.find(k => !S.beaten[k]) || 'explote']} en la Sala de Clientes.`},
   // cosas para el equipo (part_team.js): experiencia charlando y ayudando
-  repaso:     {giver: 'Agus', title: 'Repaso del día', abs: true, goal: 1, count: () => mem().repaso === gameDay() ? 1 : 0,
-               desc: () => mem().repaso === gameDay() ? 'Hoy ya repasaste. Mañana, otro.' : 'Una vez por día, Agus te propone un repaso de valores y de cómo trabajamos. Hablale en Guaná: suma experiencia.'},
+  repaso:     {giver: 'Fede', title: 'Cómo trabajamos', abs: true, goal: 1, count: () => mem().repaso === gameDay() ? 1 : 0,
+               desc: () => mem().repaso === gameDay() ? 'Hoy ya charlaste con Fede. Mañana, otra.' : 'Una vez por día, Fede te plantea tres situaciones de todos los días. Hablale en Brasil: suma experiencia.'},
   ideas:      {giver: 'Montserrat', title: 'Las ideas de la casa', abs: true, goal: 5, count: () => Math.min(5, (mem().ideasOk || []).length),
                desc: () => 'Una vez por día, Montserrat te cuenta una idea en la terraza. Encontrá qué letra del AEIOU le falta: Actual, Estratégico, Impactante, Original o Útil.'},
   encargo:    {giver: 'El equipo', title: 'Una mano al equipo', abs: true, goal: 1, count: () => S.errand ? 0 : 1, desc: () => errandDesc()},
