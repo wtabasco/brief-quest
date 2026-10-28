@@ -36,8 +36,8 @@ function placeReni(){
 const npcHere = () => NPCS.filter(n => n.map === CURMAP.id && !n.away);
 const npcAt = (x, y) => NPCS.find(n => n.map === CURMAP.id && !n.away && ((n.x === x && n.y === y) || (n.mv && n.mv.tx === x && n.mv.ty === y)));
 const canWalk = (x, y) => WALK.has(tileAt(x, y)) && !npcAt(x, y);
-/* la Sala del Directorio está cerrada hasta el nivel 30 (incluida su puerta) */
-const vipLocked = (x, y) => CURMAP.id === 'office' && S && S.lvl < 30 && (((zoneAt(x, y) || {}).n === 'Sala del Directorio') || (y === 7 && (x === 23 || x === 24)));
+/* la Sala del Directorio está cerrada hasta el nivel 25 (incluida su puerta) */
+const vipLocked = (x, y) => CURMAP.id === 'office' && S && S.lvl < PROJECT_LVL && (((zoneAt(x, y) || {}).n === 'Sala del Directorio') || (y === 7 && (x === 23 || x === 24)));
 const playerTile = () => G.move ? [G.move.tx, G.move.ty] : [G.x, G.y];
 function emote(n, ch, ms = 1600){ n.emote = {ch, t0: G.t, ms}; }
 function updateNPCs(dt){
@@ -275,7 +275,7 @@ function updateWorld(dt){
       if (G.turnLock && G.t - G.turnLock < 60 && !G.wasMoving) return;
       G.dir = d;
       if (canWalk(tx, ty) && !vipLocked(tx, ty)){ G.move = {fx:G.x, fy:G.y, tx, ty, t:0, dur: held.b ? STEP_RUN : STEP_WALK}; G.stepN++; G.wasMoving = true; }
-      else { G.wasMoving = false; if (vipLocked(tx, ty) && (!G.vipT || G.t - G.vipT > 2500)){ G.vipT = G.t; toast('Sala del Directorio · se abre en el nivel 30', 2200); } if (CURMAP.id === 'office' && tileAt(G.x, G.y) === 'E' && d === 'down'){ warp('outside', 15, 7, 'down'); return; } if (CURMAP.id === 'barbacoa' && tileAt(G.x, G.y) === 'E' && d === 'down'){ warp('outside', 4, 16, 'down'); return; } const st = stairAt(tileAt(tx, ty)); if (st && (!G.stairT || G.t - G.stairT > 1500)){ G.stairT = G.t; dirStack.length = 0; if (st === 'down') goDownstairs(); else climbStairs(); return; } if (!G.bumpT || G.t - G.bumpT > 320){ G.bumpT = G.t; SFX.bump(); } }
+      else { G.wasMoving = false; if (vipLocked(tx, ty) && (!G.vipT || G.t - G.vipT > 2500)){ G.vipT = G.t; toast('Sala del Directorio · se abre en el nivel 25', 2200); } if (CURMAP.id === 'office' && tileAt(G.x, G.y) === 'E' && d === 'down'){ warp('outside', 15, 7, 'down'); return; } if (CURMAP.id === 'barbacoa' && tileAt(G.x, G.y) === 'E' && d === 'down'){ warp('outside', 4, 16, 'down'); return; } const st = stairAt(tileAt(tx, ty)); if (st && (!G.stairT || G.t - G.stairT > 1500)){ G.stairT = G.t; dirStack.length = 0; if (st === 'down') goDownstairs(); else climbStairs(); return; } if (!G.bumpT || G.t - G.bumpT > 320){ G.bumpT = G.t; SFX.bump(); } }
     } else { G.turnLock = 0; G.wasMoving = false; }
   }
 }

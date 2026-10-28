@@ -680,8 +680,8 @@ function buildInterior(id){
     // matafuegos con su cartel
     { const p = Pen(b, 20*32 + 8, 17*32 + 2); p.R(0, 0, 9, 12, '#d8492f'); p.R(1, 1, 7, 3, '#fbf8ef'); p.R(3, 6, 3, 4, '#fbf8ef');
       p.R(12, 8, 8, 20, '#c9302c'); p.R(13, 8, 2, 20, '#e8615a'); p.R(13, 5, 6, 3, '#2a2a2e'); p.R(18, 6, 4, 2, '#2a2a2e'); p.R(12, 26, 8, 2, '#8a1f1c'); }
-    // la puerta de la Sala del Directorio: cerrada (doble hoja de madera oscura con placa dorada) hasta el nivel 30
-    { const door = vipDoorSprite(); PROPS.push({sy: 7*TS + 15, draw: (c, cx, cy) => { if (S && S.lvl < 30) c.drawImage(door, 23*32 - door.m - cx*2, 7*32 - 14 - door.m - cy*2); }}); }
+    // la puerta de la Sala del Directorio: cerrada (doble hoja de madera oscura con placa dorada) hasta el nivel 25
+    { const door = vipDoorSprite(); PROPS.push({sy: 7*TS + 15, draw: (c, cx, cy) => { if (S && S.lvl < PROJECT_LVL) c.drawImage(door, 23*32 - door.m - cx*2, 7*32 - 14 - door.m - cy*2); }}); }
     // el baño (donde antes estaba la cocina): portarrollo, espejo, dispensador de papel y la ventana
     bathWall(b, 1*32, 7*32, 7*32);
   } else if (id === 'upstairs'){

@@ -60,7 +60,7 @@ const LESSON_LVL = {scope:5, reunion:6, archivo:7, wifi:8, feedback:9, bug:10, m
 /* Cómo se consigue cada habilidad (se ve en el menú de Habilidades, para saber qué viene) */
 const SKILL_HOW = {
   brainstorm: 'Llegá al nivel 5.', brief: 'Llegá al nivel 11.', limites: 'Llegá al nivel 8.', concepto: 'Llegá al nivel 14.', pitch: 'Llegá al nivel 18.', historia: 'Llegá al nivel 22.', cabeza: 'Llegá al nivel 26.',
-  prueba: 'Desafío de Fede: volvé a entrenar con él dos veces más. Nivel 6.', mentoria: 'Fede, cuando pases a Project Leader (nivel 30).',
+  prueba: 'Desafío de Fede: volvé a entrenar con él dos veces más. Nivel 6.', mentoria: 'Fede, cuando pases a Project Leader (nivel 25).',
   gambeta: 'Desafío de Sahi: después del primer cliente, resolvé 8 problemas en La Base. Nivel 10.',
   atajo: 'Desafío de Pimi: resolvé 2 Wifi Caído. Nivel 7.', automatizar: 'Desafío de Pimi: resolvé 3 Archivo_final_v7. Nivel 12.',
   respirar: 'Desafío de Agus: poné en práctica su consejo en 3 desafíos. Nivel 5.', afull: 'Desafío de Lía: poné en práctica su consejo en 3 desafíos. Nivel 5.',
@@ -74,7 +74,7 @@ const SKILL_HOW = {
   alcance: 'Resolvé 3 Scopecreep. Nivel 5.', mail: 'Resolvé 3 Reunionauro. Nivel 6.', nombrar: 'Resolvé 3 Archivo_final_v7. Nivel 7.', datos: 'Resolvé 3 Wifi Caído. Nivel 8.',
   defender: 'Resolvé 3 Feedbackón. Nivel 9.', reiniciar: 'Resolvé 3 Bugsito. Nivel 10.', responder: 'Resolvé 3 Mailfantasma. Nivel 12.', mastiempo: 'Resolvé 3 Deadlinito. Nivel 13.',
   carpetas: 'Fede: hacé las cinco capacitaciones de orden de carpetas (desde el principio) y ponelas en práctica en 4 desafíos. Nivel 5.',
-  fases: 'Sahi: hacé las cinco capacitaciones del proceso de campañas (desde el nivel 15) y ponelas en práctica en 8 desafíos. Nivel 17.', campana: 'Presentale la campaña del año al Cliente del Año, en la Sala del Directorio. Nivel 30.', explota: 'Destrabá a la Clienta Explosiva.', argumentar: 'Destrabá a Don Logo.', seguimiento: 'Destrabá a la Clienta Fantasma.'};
+  fases: 'Sahi: hacé las cinco capacitaciones del proceso de campañas (desde el nivel 15) y ponelas en práctica en 8 desafíos. Nivel 17.', campana: 'Presentale la campaña del año al Cliente del Año, en la Sala del Directorio. Nivel 25.', explota: 'Destrabá a la Clienta Explosiva.', argumentar: 'Destrabá a Don Logo.', seguimiento: 'Destrabá a la Clienta Fantasma.'};
 
 const EN = {
   scope:{n:'Scopecreep',t:'CAOS',spr:'scope',k:[1,1,.9,.9],xp:42,lesson:'alcance',d:'Empieza chiquito y en cada turno pide un poquito más.',
@@ -95,16 +95,16 @@ const EN = {
     mv:[{n:'Tic tac',p:20,fx:'tictac',w:2},{n:'Para ayer',p:55,w:1}]},
 };
 const BOSS = {
-  explote:{n:'Clienta Explosiva',t:'CAOS',lvl:16,look:'explote',k:[2.55,1.2,1,1.2],xp:140,lesson:'explota',d:'Pura energía. Quiere algo que explote. No sabe qué. Pero que explote.',
+  explote:{n:'Clienta Explosiva',t:'CAOS',lvl:22,look:'explote',k:[2.55,1.2,1,1.2],xp:140,lesson:'explota',d:'Pura energía. Quiere algo que explote. No sabe qué. Pero que explote.',
     mv:[{n:'Quiero algo que explote',p:55,w:3},{n:'Más disruptivo',p:0,fx:'selfAtk+1 selfSpd+1',w:1},{n:'Que se viralice',p:75,a:75,w:2},{n:'Cambio de último momento',p:25,fx:'reset',w:1}]},
-  logo:{n:'Don Logo',t:'BURO',lvl:12,look:'logo',k:[2.3,1.1,1.15,.9],xp:130,lesson:'argumentar',d:'Se queja del color, la letra, el café y la silla, pero con cariño. Y el logo, para él, siempre es chico.',
+  logo:{n:'Don Logo',t:'BURO',lvl:17,look:'logo',k:[2.3,1.1,1.15,.9],xp:130,lesson:'argumentar',d:'Se queja del color, la letra, el café y la silla, pero con cariño. Y el logo, para él, siempre es chico.',
     mv:[{n:'Logo más grande',p:60,w:3},{n:'No me termina de cerrar',p:0,fx:'foeAtk-1',w:1},{n:'Mi sobrino sabe Photoshop',p:85,a:70,w:2},{n:'Reunión de 2 horas',p:0,a:60,fx:'sleep',w:1}]},
-  fantasma:{n:'Clienta Fantasma',t:'PRES',lvl:8,look:'fantasma',k:[2.2,1.05,1,1],xp:120,lesson:'seguimiento',d:'Desaparece semanas, vuelve con un pedido misterioso y jura que el brief era clarísimo.',
+  fantasma:{n:'Clienta Fantasma',t:'PRES',lvl:10,look:'fantasma',k:[2.2,1.05,1,1],xp:120,lesson:'seguimiento',d:'Desaparece semanas, vuelve con un pedido misterioso y jura que el brief era clarísimo.',
     mv:[{n:'Visto sin responder',p:0,fx:'selfEva+1',w:1},{n:'Eso lo dejé clarísimo',p:90,a:80,w:2},{n:'Tic tac',p:20,fx:'tictac',w:2},{n:'Era obvio, ¿no?',p:50,w:2}]},
   final:{n:'La Gran Presentación',t:'CLI',lvl:20,spr:'final',k:[3,1.2,1.15,1],xp:200,d:'Todo lo que aprendiste, en una sola reunión.',
     mv:[{n:'Pitch imposible',p:80,w:3},{n:'Cambio de último momento',p:25,fx:'reset',w:1},{n:'Todo para ayer',p:100,a:70,w:2},{n:'Logo más grande',p:60,w:2}]},
-  // el cliente más difícil: en la Sala del Directorio, desde el nivel 30. Hay que presentarle la campaña del año
-  anual:{n:'El Cliente del Año',t:'CLI',lvl:34,look:'anual',k:[3.6,1.25,1.2,1.1],xp:400,lesson:'campana',d:'El cliente más grande de la agencia. Viene a escuchar la campaña del año. Ya vio todo, y quiere algo que nunca vio.',
+  // el cliente más difícil: en la Sala del Directorio, desde el nivel 25. Hay que presentarle la campaña del año
+  anual:{n:'El Cliente del Año',t:'CLI',lvl:30,look:'anual',k:[3.6,1.25,1.2,1.1],xp:400,lesson:'campana',d:'El cliente más grande de la agencia. Viene a escuchar la campaña del año. Ya vio todo, y quiere algo que nunca vio.',
     mv:[{n:'Quiero la campaña del año',p:95,w:3},{n:'Esto ya lo vi',p:0,fx:'foeAtk-1',w:1},{n:'Presupuesto recortado',p:0,fx:'foeDef-1',w:1},{n:'Junta de directorio',p:0,a:60,fx:'sleep',w:1},
         {n:'Cambio de estrategia',p:25,fx:'reset',w:1},{n:'Para el lunes',p:115,a:70,w:2},{n:'Pensemos en grande',p:0,fx:'selfAtk+1 selfDef+1',w:1}]},
   fede:{n:'Fede',t:'NOR',lvl:0,look:'fede',k:[1.5,1.0,1.05,1.05],xp:70,d:'Entrenamiento.',
@@ -156,9 +156,10 @@ function stats(){
 }
 const need = L => 12 + L*L*5;
 /* El rol del jugador avanza con el nivel y aparece antes de su nombre: Pasante hasta el 14; en el 15 queda fijo y
-   pasa a Social (Social Manager); en el 30, Project (Project Leader). Al lado del nombre va la versión corta (n);
+   pasa a Social (Social Manager); en el 25, Project (Project Leader). Al lado del nombre va la versión corta (n);
    en los diálogos de los ascensos, el cargo completo (full). Los celebran Agus y Lía (RRHH) y Fede. */
-const ROLES = [{lvl: 1, n: 'Pasante', full: 'Pasante'}, {lvl: 15, n: 'Social', full: 'Social Manager'}, {lvl: 30, n: 'Project', full: 'Project Leader'}];
+const PROJECT_LVL = 25; // a Project Leader (y se abre la Sala del Directorio)
+const ROLES = [{lvl: 1, n: 'Pasante', full: 'Pasante'}, {lvl: 15, n: 'Social', full: 'Social Manager'}, {lvl: PROJECT_LVL, n: 'Project', full: 'Project Leader'}];
 const roleAt = lvl => ROLES.filter(r => lvl >= r.lvl).pop();
 const roleName = (lvl = S.lvl) => fmt(roleAt(lvl).n);
 const fullName = () => `${roleName()} ${S.name}`;

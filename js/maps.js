@@ -8,7 +8,7 @@ const OFFICE_GRID = (() => {
   // Sala de Reuniones: la biblioteca de las fotos (estantes de madera oscura, ventanales en arco, chimenea, mesa larga).
   // N: la tele con soporte de pie, en la punta izquierda de la mesa, mirando a la mesa
   rows(1, 1, ['BBBBWWMMWWBBBBBBBBBBB','.....k.k.k.k.k.k.....','...NTTTTTTTTTTTT.....','...NTTTTTTTTTTTT.....','.....k.k.k.k.k.k.....','.....................']);
-  // La Sala del Directorio (donde antes estaba el estudio): cerrada hasta el nivel 30. Mesa larga de madera oscura,
+  // La Sala del Directorio (donde antes estaba el estudio): cerrada hasta el nivel 25. Mesa larga de madera oscura,
   // la tele con la presentación, bibliotecas y, en la cabecera, el Cliente del Año esperando la campaña del año.
   rows(23,1, ['WWBBYYBBWW','n........n','..kkkkkk..','.NTTTTTT..','.NTTTTTT..','..kkkkkk.P']);
   put(9,7,'..'); put(16,7,'..'); put(23,7,'..');

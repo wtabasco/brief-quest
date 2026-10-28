@@ -34,8 +34,8 @@ const QUESTS = {
                desc: () => (S.flags.lesGiuli || 0) >= 3 ? 'Terminaste las capacitaciones de Giuli.' : `Hasta dos capacitaciones por día con Giuli, en La Base. Próxima: ${DUO_LESSONS.giuli[S.flags.lesGiuli || 0].title}.`},
   alejo_clases:{giver: 'Alejo', title: 'Capacitaciones de redes', abs: true, goal: 3, count: () => S.flags.lesAlejo || 0,
                desc: () => (S.flags.lesAlejo || 0) >= 3 ? 'Terminaste las capacitaciones de Alejo.' : `Hasta dos capacitaciones por día con Alejo, en La Base. Próxima: ${DUO_LESSONS.alejo[S.flags.lesAlejo || 0].title}.`},
-  anual:      {giver: 'La agencia', title: 'La campaña del año', abs: true, minLvl: 30, goal: 1, count: () => S.flags.anual ? 1 : 0,
-               desc: () => S.lvl >= 30 ? 'La Sala del Directorio ya está abierta (en la planta baja, al lado de la Sala de Reuniones). Presentale la campaña del año al Cliente del Año.' : 'Cuando llegues al nivel 30 se abre la Sala del Directorio (en la planta baja, al lado de la Sala de Reuniones). Ahí te espera el Cliente del Año.'},
+  anual:      {giver: 'La agencia', title: 'La campaña del año', abs: true, minLvl: PROJECT_LVL, goal: 1, count: () => S.flags.anual ? 1 : 0,
+               desc: () => S.lvl >= PROJECT_LVL ? 'La Sala del Directorio ya está abierta (en la planta baja, al lado de la Sala de Reuniones). Presentale la campaña del año al Cliente del Año.' : 'Cuando llegues al nivel 25 se abre la Sala del Directorio (en la planta baja, al lado de la Sala de Reuniones). Ahí te espera el Cliente del Año.'},
   fede_carpetas:{giver: 'Fede', title: 'Capacitación: orden de carpetas', abs: true, goal: 5, count: () => S.flags.tr_carpetas || 0,
                desc: () => (S.flags.tr_carpetas || 0) >= 5 ? 'Terminaste las capacitaciones de orden de carpetas.' : `Hasta dos capacitaciones por día con Fede, en Brasil. Próxima: ${TRAININGS.carpetas.sessions[S.flags.tr_carpetas || 0].title}.`},
   fede_carpetas_practica:{giver: 'Fede', title: 'Carpetas en práctica', minLvl: 5, goal: 4, count: () => mem().winsT || 0, desc: () => 'Poné en práctica el orden de carpetas: resolvé 4 desafíos y volvé a ver a Fede, en Brasil.'},
@@ -48,7 +48,7 @@ const QUESTS = {
   bienvenida: {giver: 'Sahi', title: 'Recorrida de bienvenida', abs: true, goal: 3, count: () => welcomeStep(),
                desc: () => welcomeStep() >= 3 ? 'Ya conociste a todos los de la recorrida.' : `Próxima parada: ${WELCOME_NEXT[welcomeStep()]}. Después: ${['Fede, y Agus y Lía', 'Agus y Lía', 'Pimi o Alejo y Giuli'][welcomeStep()]}.`},
   fijo:       {giver: 'Agus y Lía', title: 'Una noticia de RRHH', abs: true, goal: 1, count: () => S.flags.fijo ? 1 : 0, desc: () => 'Llegaste al nivel 15. Agus y Lía te quieren dar una noticia en Guaná, su oficina de la planta alta.'},
-  senior:     {giver: 'Fede', title: 'Charla con Fede', abs: true, goal: 1, count: () => S.flags.senior ? 1 : 0, desc: () => 'Llegaste al nivel 30. Fede te espera en Brasil, su oficina de la planta alta.'},
+  senior:     {giver: 'Fede', title: 'Charla con Fede', abs: true, goal: 1, count: () => S.flags.senior ? 1 : 0, desc: () => 'Llegaste al nivel 25. Fede te espera en Brasil, su oficina de la planta alta.'},
   terraza:    {giver: 'Montserrat', title: 'La Gran Presentación', abs: true, goal: 1, count: () => S.flags.done ? 1 : 0, desc: () => 'Subí a la planta alta por la escalera del hall y, al fondo del pasillo, a la terraza. Montserrat te espera.'},
 };
 const QUEST_ORDER = Object.keys(QUESTS);

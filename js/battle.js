@@ -335,7 +335,7 @@ async function gainXP(n, msg){
     await msg(`¡${before} subió al nivel ${S.lvl}!`);
     // ascensos: el rol cambia apenas llegás al nivel; la celebración es después, con quien corresponde
     if (S.lvl === 15){ SFX.learn(); await msg('¡Quedaste fij{o} en la agencia! Desde hoy sos Social Manager.'); qOpen('fijo'); }
-    if (S.lvl === 30){ SFX.learn(); await msg('¡Ascenso! Desde hoy sos Project Leader.'); qOpen('senior'); qOpen('anual', true); await msg('Y algo más: se abrió la Sala del Directorio, en la planta baja. Te espera el Cliente del Año.'); }
+    if (S.lvl === PROJECT_LVL){ SFX.learn(); await msg('¡Ascenso! Desde hoy sos Project Leader.'); qOpen('senior'); qOpen('anual', true); await msg('Y algo más: se abrió la Sala del Directorio, en la planta baja. Te espera el Cliente del Año.'); }
     if (LEARN_AT[S.lvl]) await learn(LEARN_AT[S.lvl], msg);
   }
   syncBoxes();
@@ -426,7 +426,7 @@ async function wildEncounter(){
 }
 async function bossBattle(key, kind='boss'){
   let d = BOSS[key];
-  const lvl = ({fede: fedeLevel(), fantasma: Math.max(9, S.lvl + 1), logo: Math.max(14, S.lvl + 2), explote: Math.max(19, S.lvl + 2), final: Math.max(24, S.lvl + 3), anual: Math.max(34, S.lvl + 4)})[key] || d.lvl;
+  const lvl = ({fede: fedeLevel(), fantasma: 10, logo: 17, explote: 22, final: Math.max(24, S.lvl + 3), anual: 30})[key] || d.lvl; // los clientes tienen nivel fijo; la Gran Presentación crece con vos
   // con Fede de compañero, la reunión es más larga: el cliente aguanta más
   if (PENDING_ALLY) d = Object.assign({}, d, {k: [d.k[0] * 1.2, d.k[1], d.k[2], d.k[3]]});
   if (key === 'fede'){

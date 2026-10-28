@@ -187,7 +187,7 @@ function skillDetail(id){
 }
 function statsHTML(){
   const st = stats();
-  const next = S.lvl < 15 ? 'En el nivel 15 quedás fij{o} y pasás a Social Manager.' : S.lvl < 30 ? 'En el nivel 30 pasás a Project Leader.' : 'Sos Project Leader: ahora también te toca enseñar.';
+  const next = S.lvl < 15 ? 'En el nivel 15 quedás fij{o} y pasás a Social Manager.' : S.lvl < PROJECT_LVL ? 'En el nivel 25 pasás a Project Leader.' : 'Sos Project Leader: ahora también te toca enseñar.';
   return `<div class="stat"><span>Nombre</span><b>${S.name}</b><span>Cargo</span><b>${roleAt(S.lvl).full}</b><span>Nivel</span><b>${S.lvl}</b><span>Energía</span><b>${S.hp}/${st.max}</b>
   <span>Ataque</span><b>${st.atk}</b><span>Defensa</span><b>${st.def}</b><span>Velocidad</span><b>${st.spd}</b>
   <span>Experiencia</span><b>${S.xp}/${need(S.lvl)}</b><span>Clientes</span><b>${S.bosses}/3</b></div><div class="k" style="margin-top:1.2cqw">${fmt(next)}</div>` +

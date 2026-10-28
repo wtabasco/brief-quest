@@ -138,7 +138,7 @@ const FEDE = {
 };
 async function talkFede(){
   const m = mem(); let firstTime = false;
-  if (S.flags.fedeMet && S.lvl >= 30 && !S.flags.senior){ await seniorCeremony(); return; }
+  if (S.flags.fedeMet && S.lvl >= PROJECT_LVL && !S.flags.senior){ await seniorCeremony(); return; }
   if (!S.flags.fedeMet){
     S.flags.fedeMet = true; S.flags.typesHint = true;
     await say(`${saludo()}, {name}! Soy Fede, director de contenido. Bienvenid{o} a la parte divertida.`, 'fede:feliz');
@@ -193,7 +193,7 @@ async function talkFede(){
 
 /* ================= ASCENSOS =================
    Nivel 15: quedás fijo y pasás de Pasante a Social Manager; te lo dan Agus (RRHH) y Lía en Guaná.
-   Nivel 30: Project Leader; te lo da Fede en Brasil, y te enseña "Mentoría". */
+   Nivel 25: Project Leader; te lo da Fede en Brasil, y te enseña "Mentoría". */
 async function fijoCeremony(me){
   if (me === 'lia'){
     await say('¡{name}! ¡Vení, vení! ¡Agus, decíselo vos, que si no lo digo mal!', 'lia:feliz');
@@ -216,7 +216,7 @@ async function fijoCeremony(me){
 }
 async function seniorCeremony(){
   await say('{name}. Sentate. ...Bueno, en Brasil no hay sillas. Quedate parad{o}.', 'fede:risa');
-  await say('Nivel 30. Desde hoy sos Project Leader. ¿Sabés qué cambia?', 'fede');
+  await say('Nivel 25. Desde hoy sos Project Leader. ¿Sabés qué cambia?', 'fede');
   await say('Un Project Leader dirige, motiva y representa al equipo. Es el puente entre lo que necesita el cliente y nuestra forma de hacer las cosas. Liderar y encantar.', 'fede');
   await say('Tres frentes: tu equipo (organización, liderazgo, procesos), tus clientes (comunicación, objetivos, venta activa) y los presupuestos. Y liderás con el ejemplo: no pedís nada que no cumplas.', 'fede');
   await say('Y acordate: R = R. Relaciones es igual a resultados. Un buen vínculo con el cliente y con tu equipo hace que todo fluya.', 'fede:feliz');
@@ -831,8 +831,8 @@ const SAHI = {
     {d: 6, t: 'El dulce de leche es argentino. Bueno, acá dicen que es uruguayo. Hagamos las paces: es del Río de la Plata.'},
     {d: 1, t: 'El brief llegó a las seis de la tarde para mañana a las nueve. Es como un córner en el minuto 93: hay que cabecearlo igual.'},
     {d: 2, t: 'Acá nadie juega solo. El que gambetea también tiene que pasarla.'},
-    {if: () => S.lvl >= 15 && S.lvl < 30, t: '¡Quedaste fij{o}, crack! Ya tenés la camiseta de titular. Cuidala.'},
-    {if: () => S.lvl >= 30, t: '¿Project Leader? Eso es capitán, crack. Cinta en el brazo y todo.'},
+    {if: () => S.lvl >= 15 && S.lvl < PROJECT_LVL, t: '¡Quedaste fij{o}, crack! Ya tenés la camiseta de titular. Cuidala.'},
+    {if: () => S.lvl >= PROJECT_LVL, t: '¿Project Leader? Eso es capitán, crack. Cinta en el brazo y todo.'},
     {d: 7, t: 'Tato me preguntó cómo había salido Boca. Del domingo pasado. Del otro domingo. Se lo conté igual: los buenos partidos se cuentan dos veces.'},
     {d: 3, t: 'El jueves hay after en el patio. Yo llevo la pelota y Pimi la comida. Bueno, Pimi se come la comida.'},
     'Fede dice que el ping pong despeja la cabeza. A mí me despeja la cabeza y la agenda.',
@@ -1071,7 +1071,7 @@ const MONTSE = {
     'Los jueves, cuando hay after en el patio, me asomo desde acá. Nadie me ve. Yo los veo a todos.',
     'Esta casa es de todos los que la cuidan. Por eso la cuidan tan bien.',
     'Sofi cuida esta casa como si fuera suya. A veces mejor que yo. ¡Ja!',
-    {if: () => S.lvl >= 30, t: 'Project Leader en mi casa. Me gusta cómo suena. Ahora cuidá a los que llegan, como te cuidaron a vos.'},
+    {if: () => S.lvl >= PROJECT_LVL, t: 'Project Leader en mi casa. Me gusta cómo suena. Ahora cuidá a los que llegan, como te cuidaron a vos.'},
     'Un buen equipo vale más que una buena idea. Pero tener las dos es mejor.', 'Los clientes difíciles enseñan más que los fáciles. No se lo digas a ellos.', 'El secreto es escuchar más de lo que hablás. Y tener siempre galletitas.',
     'En mis tiempos el "ctrl+z" era una goma de borrar. Y funcionaba igual.', 'Nunca presentes una idea en la que no creés. Se nota en los ojos.', 'Una agencia es su gente. Lo demás son computadoras.',
     'Cuando todos opinan, alguien tiene que decidir. Ojalá que sea quien escuchó a todos.', 'Si una reunión no tiene objetivo, el objetivo es salir de la reunión.',
@@ -1327,7 +1327,7 @@ async function ending(){
   await say('La programo para las siete, que es cuando más se ve. Y con subtítulos.', 'alejo');
   await say('Ya la guardé: Agencia_Festejo_Foto_v01. Sin "final".', 'giuli');
   await say('La Gran Presentación fue un éxito. La agencia celebra.');
-  await say('FIN. ¿O el lunes que viene entra otro brief? Podés seguir jugando, completar la bitácora y llegar al nivel 30: en la Sala del Directorio te espera el Cliente del Año.');
+  await say('FIN. ¿O el lunes que viene entra otro brief? Podés seguir jugando, completar la bitácora y llegar al nivel 25: en la Sala del Directorio te espera el Cliente del Año.');
 }
 
 
@@ -1524,7 +1524,7 @@ async function lvlGate(n){
     `Lo hiciste, y lo vi. Pero esto se aprende con más camino: nivel ${QUESTS[id].minLvl}. Seguí resolviendo, que ya llega.`]), who);
 }
 
-/* ================= EL CLIENTE DEL AÑO (Sala del Directorio, desde el nivel 30) =================
+/* ================= EL CLIENTE DEL AÑO (Sala del Directorio, desde el nivel 25) =================
    El cliente más difícil de la agencia. Hay que presentarle la campaña del año: todo lo aprendido, en una reunión. */
 async function talkAnual(n){
   const d = BOSS.anual;
@@ -2065,7 +2065,7 @@ function casaHTML(){
   return '<div style="font-size:2.5cqw;line-height:1.18;display:grid;grid-template-columns:1fr 1fr;gap:2.4cqw">' +
     col('<div class="k">Planta baja</div>', row('El Hall', 'la entrada'), row('La Base', 'los pendientes (de ahí salen los problemas), con Alejo y Giuli'),
       row('Sala de Reuniones', 'la biblioteca'), row('Bienestar', 'Lu, para recargar energía'), row('Archivos X', 'el lab de Pimi'), row('Baño', 'al lado de La Base'),
-      row('Sala de Clientes', 'los clientes'), row('Sala del Directorio', 'cerrada hasta el nivel 30')) +
+      row('Sala de Clientes', 'los clientes'), row('Sala del Directorio', 'cerrada hasta el nivel 25')) +
     col('<div class="k">Planta alta</div>', row('Brasil', 'Fede'), row('Guaná', 'Agus y Lía'), row('Asteroide', 'Sofi y Tato'), row('Al fondo', 'la escalera a la terraza (con tarjeta)'),
       '<div class="k">Afuera</div>', row('El Patio', 'Sahi y el ping pong'), row('La Barbacoa', 'la cocina, donde suele estar Marga'),
       '<div class="k">Y por toda la casa</div>', row('Reni', 'grabando contenido')) + '</div>';
