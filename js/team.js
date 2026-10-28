@@ -159,13 +159,33 @@ function nextStep(){
   if (!S.flags.anual) return `Presentale la campaña del año al Cliente del Año (nivel ${CLIENT_LVL.anual}), en la Sala del Directorio (planta baja).`;
   return S.lvl < 30 ? `Seguí creciendo hasta el nivel 30: ayudá al equipo y charlá con Fede y Montserrat. Estás en el ${S.lvl}.` : '¡Llegaste lejísimos! Ayudá al equipo y completá la bitácora.';
 }
+/* El cartelito "AHORA" no queda fijo: aparece unos segundos cuando cambia el próximo paso (y al empezar el día).
+   Para verlo cuando quieras está el botón AYUDA (o la tecla H, o "Ayuda" en el menú de START). */
 function drawTrackHUD(){
   const el = $('nowstep'); if (!el) return;
-  const show = !!S && G.mode === 'world' && $('title').hidden && !G.trans;
+  const can = !!S && G.mode === 'world' && $('title').hidden && !G.trans && !G.busy;
+  if (can && (!drawTrackHUD.t || G.t - drawTrackHUD.t > 700)){
+    drawTrackHUD.t = G.t; const t = nextStep();
+    if (drawTrackHUD.last !== t){ const first = drawTrackHUD.last === undefined; drawTrackHUD.last = t; if (!first || isFreshStart()){ el.innerHTML = `<b>AHORA</b> ${fmt(t)}`; drawTrackHUD.until = G.t + 6500; } }
+  }
+  const show = can && G.t < (drawTrackHUD.until || 0);
   if (el.hidden === show) el.hidden = !show;
-  if (!show) return;
-  if (!drawTrackHUD.t || G.t - drawTrackHUD.t > 600){ drawTrackHUD.t = G.t; const t = nextStep(); if (el.dataset.t !== t){ el.dataset.t = t; el.innerHTML = `<b>AHORA</b> ${fmt(t)}`; } }
 }
-/* tocar el cartelito abre Tareas */
+const isFreshStart = () => !!S && welcomeStep() === 0;
+/* AYUDA: qué hacer ahora, las tareas en curso y cómo se juega */
+function helpHTML(){
+  const open = QUEST_ORDER.filter(id => qState(id) === 'open' && !['objetivo', 'repaso', 'ideas'].includes(id)).slice(0, 3);
+  const qs = open.map(id => { const [a, b] = qProg(id); return `<div>· <b>${QUESTS[id].title}</b> (${a}/${b}) — ${QUESTS[id].desc()}</div>`; }).join('');
+  return `<div style="font-size:2.55cqw;line-height:1.22;display:flex;flex-direction:column;gap:.55cqw"><h4>Ahora</h4><div>${fmt(nextStep())}</div>` + (qs ? `<h4 style="margin-top:.8cqw">En curso</h4>${qs}` : '') +
+    `</div>`;
+}
+async function helpPanel(){ const p = panelInfo('AYUDA', helpHTML()); $('panelHint').textContent = 'B: volver · Todas tus tareas: START → Tareas'; await p; }
+async function helpScreen(){
+  if (!S || G.busy || G.mode !== 'world' || !$('dlg').hidden || !$('title').hidden) return;
+  G.busy = true; const prev = CLOSE_BTN; CLOSE_BTN = 'help';
+  try { await helpPanel(); } finally { CLOSE_BTN = prev; closePanel(); G.busy = false; }
+}
+(() => { const b = $('helpBtn'); if (b) b.addEventListener('click', e => { e.preventDefault(); unlockAudio(); if (H.length && CLOSE_BTN === 'help') press('help'); else helpScreen(); }); })();
+/* tocar el cartelito abre la ayuda */
 (() => { const el = $('nowstep'); if (!el) return;
-  el.addEventListener('click', async () => { if (!S || G.busy || G.mode !== 'world' || !$('dlg').hidden) return; G.busy = true; try { await questScreen(); } finally { closePanel(); G.busy = false; } }); })();
+  el.addEventListener('click', () => helpScreen()); })();

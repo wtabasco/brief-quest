@@ -2,14 +2,15 @@
 "use strict";
 /* ================= MENÚ DE PAUSA ================= */
 async function pauseMenu(){
-  G.busy = true; let toTitle = false, goHome = false;
+  G.busy = true; let toTitle = false, goHome = false; const prevClose = CLOSE_BTN; CLOSE_BTN = 'start';
   try {
     while (true){
       // "La agencia" (propósito, roles, cómo trabajamos y el plano de la casa) aparece cuando ya conociste a Sofi
-      const casa = !!S.flags.sofiMet, home = canGoHome(), opts = ['Tareas','Habilidades','Capacitaciones','Mochila','Bitácora','Estado'].concat(casa ? ['La agencia'] : [], home ? ['Irte a casa'] : [], ['Guardar','Salir al inicio','Cerrar']);
+      const casa = !!S.flags.sofiMet, home = canGoHome(), opts = ['Ayuda', 'Tareas','Habilidades','Capacitaciones','Mochila','Bitácora','Estado'].concat(casa ? ['La agencia'] : [], home ? ['Irte a casa'] : [], ['Guardar','Salir al inicio','Cerrar']);
       let r = await choose(opts, {tall: true});
+      if (r === 0){ await helpPanel(); closePanel(); continue; } if (r > 0) r--; // "Ayuda" va primero
       // "Irte a casa" (después de las 18): cerrás el día y arranca el siguiente
-      if (home){ const hi = opts.indexOf('Irte a casa'); if (r === hi){ const c = await choose(['Sí, me voy a casa', 'Me quedo un rato más']); if (c === 0){ goHome = true; break; } continue; } if (r > hi) r--; }
+      if (home){ const hi = opts.indexOf('Irte a casa') - 1; if (r === hi){ const c = await choose(['Sí, me voy a casa', 'Me quedo un rato más']); if (c === 0){ goHome = true; break; } continue; } if (r > hi) r--; }
       if (casa){ if (r === 6){ await agenciaScreen(); closePanel(); continue; } if (r > 6) r--; }
       if (r === 0) await questScreen();
       else if (r === 1) await skillsScreen();
@@ -22,7 +23,7 @@ async function pauseMenu(){
       else break;
       closePanel();
     }
-  } finally { closePanel(); hideDlg(); G.busy = false; }
+  } finally { CLOSE_BTN = prevClose; closePanel(); hideDlg(); G.busy = false; }
   if (toTitle) await backToTitle();
   if (goHome) await endDay(true);
 }

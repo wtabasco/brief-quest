@@ -7,7 +7,7 @@ const popH = fn => { const i = H.lastIndexOf(fn); if (i >= 0) H.splice(i, 1); };
 const dirStack = [];
 const held = {b:false};
 const KEYMAP = {ArrowUp:'up',KeyW:'up',ArrowDown:'down',KeyS:'down',ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',
-  Enter:'a',Space:'a',KeyZ:'a',KeyX:'b',Escape:'b',Backspace:'b',KeyM:'start',KeyN:'select',KeyQ:'l',KeyE:'r'};
+  Enter:'a',Space:'a',KeyZ:'a',KeyX:'b',Escape:'b',Backspace:'b',KeyM:'start',KeyN:'select',KeyQ:'l',KeyE:'r',KeyH:'help'};
 const isDir = b => b==='up'||b==='down'||b==='left'||b==='right';
 function syncSnd(){ const b = $('sndToggle'); if (b){ b.setAttribute('aria-pressed', String(!muted)); b.setAttribute('aria-label', muted ? 'Sonido apagado' : 'Sonido encendido'); } }
 function toggleMute(){ muted = !muted; try { localStorage.setItem('briefquest.muted', muted ? '1' : '0'); } catch(e){} syncSnd(); toast(muted ? 'Sonido apagado' : 'Sonido encendido'); }

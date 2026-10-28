@@ -80,6 +80,8 @@ function sayPage(text, opt){
   });
 }
 async function says(lines, who){ for (const l of lines) await say(l, who); }
+/* el botón que abrió el menú también lo cierra (L la bitácora, R las habilidades, START la pausa) */
+let CLOSE_BTN = null;
 function listWidget(el, items, {cols=1, cancel=-1, start=0, render, onMove}={}){
   return new Promise(res => {
     let sel = clamp(start, 0, items.length-1);
@@ -108,7 +110,7 @@ function listWidget(el, items, {cols=1, cancel=-1, start=0, render, onMove}={}){
       else if (b === 'up' && cols === 1) sel = items.length - 1;
       else if (b === 'down' && cols === 1) sel = 0;
       else if (b === 'a'){ pick(); return; }
-      else if (b === 'b' && cancel !== null){ SFX.sel(); popH(h); res(cancel); return; }
+      else if ((b === 'b' || (CLOSE_BTN && b === CLOSE_BTN)) && cancel !== null){ SFX.sel(); popH(h); res(cancel); return; }
       else return;
       SFX.blip(); draw();
     };
@@ -164,7 +166,7 @@ function panelList({title, rows, detail, start=0, hint='A: elegir · B: volver',
       if (b === 'up' && n){ sel = (sel - 1 + n) % n; SFX.blip(); draw(); }
       else if (b === 'down' && n){ sel = (sel + 1) % n; SFX.blip(); draw(); }
       else if (b === 'a' && n){ SFX.sel(); popH(h); res(sel); }
-      else if (b === 'b'){ SFX.sel(); popH(h); res(-1); }
+      else if (b === 'b' || (CLOSE_BTN && b === CLOSE_BTN)){ SFX.sel(); popH(h); res(-1); }
     };
     panelList.redraw = draw;
     pushH(h); draw();
@@ -176,7 +178,7 @@ function panelInfo(title, html){
     $('panelTitle').textContent = title; $('panelExtra').textContent = ''; $('panelHint').textContent = 'A o B: volver';
     $('panelBody').classList.add('solo'); $('panelList').innerHTML = ''; $('panelList').style.display = 'none';
     const D = $('panelDetail'); D.hidden = false; D.innerHTML = html;
-    const h = b => { if (b === 'a' || b === 'b'){ SFX.sel(); popH(h); $('panelList').style.display = ''; $('panelBody').classList.remove('solo'); res(); } };
+    const h = b => { if (b === 'a' || b === 'b' || (CLOSE_BTN && b === CLOSE_BTN)){ SFX.sel(); popH(h); $('panelList').style.display = ''; $('panelBody').classList.remove('solo'); res(); } };
     pushH(h);
   });
 }

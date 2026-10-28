@@ -155,10 +155,11 @@ function worldPress(btn){
   if (btn === 'start') pauseMenu();
   else if (btn === 'l') quickOpen('log');
   else if (btn === 'r') quickOpen('skills');
+  else if (btn === 'help') helpScreen();
 }
 async function quickOpen(which){
-  G.busy = true;
-  try { if (which === 'log') await logScreen(); else await skillsScreen(); } finally { closePanel(); G.busy = false; }
+  G.busy = true; const prev = CLOSE_BTN; CLOSE_BTN = which === 'log' ? 'l' : 'r';
+  try { if (which === 'log') await logScreen(); else await skillsScreen(); } finally { CLOSE_BTN = prev; closePanel(); G.busy = false; }
 }
 /* cualquier escalón sirve: en el hall toda la escalera sube; arriba, todo el hueco baja. La 'U' del pasillo de arriba va a la terraza */
 function stairAt(t){ if (t === 'U') return 'up'; if (t === 'v') return 'down'; if (t === 'y') return CURMAP.id === 'office' ? 'up' : CURMAP.id === 'upstairs' ? 'down' : null; return null; }

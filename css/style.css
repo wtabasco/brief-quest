@@ -38,6 +38,7 @@ body{font-family:var(--f-ui);padding-left:max(16px, env(safe-area-inset-left, 0p
 .toggle:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
 .bar-r{display:flex;gap:8px;align-items:center}
 .toggle.snd{background:var(--sand);gap:6px;padding:8px 12px}
+.toggle.help{background:var(--orange);color:#1c1408;padding:8px 12px}
 .toggle.snd .ico{display:inline-block;width:12px;height:10px;background:linear-gradient(#1c2b20,#1c2b20) 0 3px/4px 4px no-repeat;position:relative}
 .toggle.snd .ico::before{content:"";position:absolute;left:3px;top:0;border-right:6px solid #1c2b20;border-top:5px solid transparent;border-bottom:5px solid transparent}
 .toggle.snd[aria-pressed="false"]{background:#6b7a70;color:#e9efe9}
