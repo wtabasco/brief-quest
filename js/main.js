@@ -123,7 +123,7 @@ let last = performance.now();
 function frame(now){
   const dt = Math.min(50, now - last); last = now; G.t += dt;
   playMusic(wantedMusic());
-  updateWorld(dt); tickClock(dt); drawClockHUD();
+  updateWorld(dt); tickClock(dt); drawClockHUD(); drawTrackHUD();
   if (G.mode === 'battle' && B) drawBattle();
   else if (G.mode === 'world' && S){ drawWorld(); if (G.mini) drawMini(); }
   else drawTitleBG();

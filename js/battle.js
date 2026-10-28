@@ -426,7 +426,7 @@ async function wildEncounter(){
 }
 async function bossBattle(key, kind='boss'){
   let d = BOSS[key];
-  const lvl = ({fede: fedeLevel(), fantasma: 10, logo: 17, explote: 22, final: Math.max(24, S.lvl + 3), anual: 27})[key] || d.lvl; // los clientes tienen nivel fijo; la Gran Presentación crece con vos
+  const lvl = ({fede: fedeLevel(), fantasma: CLIENT_LVL.fantasma, logo: CLIENT_LVL.logo, explote: CLIENT_LVL.explote, final: Math.max(24, S.lvl + 3), anual: CLIENT_LVL.anual})[key] || d.lvl; // los clientes tienen nivel fijo; la Gran Presentación crece con vos
   // con Fede de compañero, la reunión es más larga: el cliente aguanta más
   if (PENDING_ALLY) d = Object.assign({}, d, {k: [d.k[0] * 1.2, d.k[1], d.k[2], d.k[3]]});
   if (key === 'fede'){
@@ -589,9 +589,9 @@ function drawBattle(){
   if (!blink('e')) drawSprite(ctx, spr, ex, ey, sw, sh, 2*RES);
   ctx.restore();
   if (B.ally){ // Fede, al lado tuyo y un poquito atrás
-    // de espaldas, como en su ficha; un poco más chico y más atrás, y sin salirse por el borde
-    const as = personSprite('fede', 'up', 0, true, 'wave'), ak = (as.k || 1) * .86, ax = Math.max(as.cx*ak + 2, PPLAT.x - 42);
-    drawSprite(ctx, as, ax - as.cx*ak - (1 - e2) * 160 + lunge('a'), (as.hdBack ? 168 : 196) - as.foot*ak - lunge('a') * .4, as.width*ak, as.height*ak, 2*RES); }
+    // de espaldas, como en su ficha; de tu tamaño (es un poco más alto), un poco más atrás y sin salirse por el borde
+    const as = personSprite('fede', 'up', 0, true, 'wave'), ak = (as.k || 1) * 1.04, ax = Math.max(as.cx*ak + 2, PPLAT.x - 46);
+    drawSprite(ctx, as, ax - as.cx*ak - (1 - e2) * 160 + lunge('a'), (as.hdBack ? 174 : 196) - as.foot*ak - lunge('a') * .4, as.width*ak, as.height*ak, 2*RES); }
   const ps = personSprite('player', 'up', 0, true, 'wave');
   const pk = ps.k || 1, px = PPLAT.x - ps.cx*pk - (1 - e2) * 160 + shake('p') + lunge('p'), py = (ps.hdBack ? 180 : 204) - ps.foot*pk - lunge('p') * .4 + (B.P.sleep > 0 ? 2 : 0);
   if (!blink('p')) drawSprite(ctx, ps, px, py, ps.width*pk, ps.height*pk, 2*RES);

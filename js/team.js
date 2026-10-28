@@ -131,3 +131,41 @@ async function montseIdea(){
     await say('Mañana te traigo otra. Las ideas no se acaban; la paciencia, a veces.', 'montse');
   }
 }
+
+/* ================= EL PRÓXIMO PASO, SIEMPRE A LA VISTA =================
+   Un cartelito abajo a la izquierda dice qué hacer ahora y dónde (también arriba de todo en Tareas).
+   Prioridad: la recorrida, las noticias que te esperan, las tareas cumplidas para cobrar, el encargo en curso y
+   después el objetivo del juego (con el nivel que conviene tener para cada cliente). */
+const PLACE = {'Fede': 'Brasil (planta alta)', 'Sahi': 'el patio, en la mesa de ping pong', 'Pimi': 'Archivos X (planta baja)', 'Sofi': 'Asteroide (planta alta)',
+  'Agus': 'Guaná (planta alta)', 'Lía': 'Guaná (planta alta)', 'Agus y Lía': 'Guaná (planta alta)', 'Lu': 'Bienestar (planta baja)', 'Giuli': 'La Base', 'Alejo': 'La Base', 'Montserrat': 'la terraza'};
+const AUTO_Q = ['objetivo', 'clientes', 'repaso', 'ideas', 'encargo', 'bienvenida', 'terraza', 'anual', 'fijo', 'senior', 'pimi_surf'];
+function nextStep(){
+  if (!S) return '';
+  if (welcomeStep() < 3) return `Hablá con ${WELCOME_NEXT[welcomeStep()]}.`;
+  if (S.lvl >= 15 && !S.flags.fijo) return 'Agus y Lía te esperan en Guaná (planta alta): tienen una noticia.';
+  if (S.lvl >= PROJECT_LVL && !S.flags.senior) return 'Fede te espera en Brasil (planta alta).';
+  const ready = QUEST_ORDER.find(id => qState(id) === 'open' && !AUTO_Q.includes(id) && qReady(id));
+  if (ready){ const g = QUESTS[ready].giver; return `¡Cumpliste "${QUESTS[ready].title}"! Volvé a hablar con ${g}${PLACE[g] ? ', en ' + PLACE[g] : ''}.`; }
+  if (S.errand){ const e = errandBy(S.errand.from, S.errand.to); if (e) return `${e.what}.`; }
+  if (!S.flags.done){
+    const k = BOSS_ORDER.find(x => !S.beaten[x]);
+    if (k){ const L = CLIENT_LVL[k], n = ({fantasma: 'la Clienta Fantasma', logo: 'Don Logo', explote: 'la Clienta Explosiva'})[k];
+      return S.lvl < L ? `Preparate para ${n} (nivel ${L}): resolvé problemas en La Base y capacitate con el equipo. Estás en el ${S.lvl}.`
+        : `Destrabá a ${n} en la Sala de Clientes (planta baja).${k === 'explote' ? ' Podés ir con Fede.' : ''}`; }
+    if (!S.flags.card) return 'Agus y Lía te esperan en Guaná (planta alta).';
+    return 'La Gran Presentación: subí a la terraza por la escalera del fondo del pasillo de arriba.';
+  }
+  if (S.lvl < PROJECT_LVL) return `Seguí aprendiendo: en el nivel ${PROJECT_LVL} pasás a Project Leader. Estás en el ${S.lvl}.`;
+  if (!S.flags.anual) return `Presentale la campaña del año al Cliente del Año (nivel ${CLIENT_LVL.anual}), en la Sala del Directorio (planta baja).`;
+  return S.lvl < 30 ? `Seguí creciendo hasta el nivel 30: ayudá al equipo y charlá con Fede y Montserrat. Estás en el ${S.lvl}.` : '¡Llegaste lejísimos! Ayudá al equipo y completá la bitácora.';
+}
+function drawTrackHUD(){
+  const el = $('nowstep'); if (!el) return;
+  const show = !!S && G.mode === 'world' && $('title').hidden && !G.trans;
+  if (el.hidden === show) el.hidden = !show;
+  if (!show) return;
+  if (!drawTrackHUD.t || G.t - drawTrackHUD.t > 600){ drawTrackHUD.t = G.t; const t = nextStep(); if (el.dataset.t !== t){ el.dataset.t = t; el.innerHTML = `<b>AHORA</b> ${fmt(t)}`; } }
+}
+/* tocar el cartelito abre Tareas */
+(() => { const el = $('nowstep'); if (!el) return;
+  el.addEventListener('click', async () => { if (!S || G.busy || G.mode !== 'world' || !$('dlg').hidden) return; G.busy = true; try { await questScreen(); } finally { closePanel(); G.busy = false; } }); })();

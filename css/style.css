@@ -201,6 +201,9 @@ body{font-family:var(--f-ui);padding-left:max(16px, env(safe-area-inset-left, 0p
 .hpnum{font-family:var(--f-label);font-weight:700;font-size:2.8cqw;line-height:1;text-align:right;color:var(--ink)}
 .xp{height:1.1cqw;background:var(--ink);border-radius:.6cqw;overflow:hidden;padding:.25cqw}
 .xp i{display:block;height:100%;background:linear-gradient(#b9e4ff 0 50%,#5a9fd8 50%);width:0;transition:width .6s;border-radius:.3cqw}
+/* el próximo paso, abajo a la izquierda (los diálogos y menús lo tapan cuando aparecen) */
+.nowstep{left:1.5%;bottom:1.5cqw;max-width:64%;padding:.9cqw 2cqw;font-size:2.7cqw;line-height:1.25;z-index:4;cursor:pointer;opacity:.94}
+.nowstep b{color:var(--g-orange, #fe7a02);margin-right:.8cqw;letter-spacing:.06em}
 .zone{left:2.5%;top:2.25cqw;padding:1cqw 3cqw;font-family:var(--f-label);font-weight:700;font-size:3.2cqw;letter-spacing:.08em;z-index:5;color:var(--ink);border-radius:0 .8cqw .8cqw 0;text-transform:uppercase}
 .panel{inset:3%;padding:2.4cqw 3cqw;z-index:35;display:flex;flex-direction:column;gap:1.4cqw}
 .panelHead{font-family:var(--f-label);font-weight:700;font-size:3.5cqw;text-transform:uppercase;color:var(--ink);letter-spacing:.08em;display:flex;justify-content:space-between;gap:2cqw;padding-bottom:1cqw;border-bottom:.35cqw solid var(--ink)}

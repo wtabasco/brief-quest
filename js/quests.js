@@ -76,11 +76,14 @@ function qReopen(id){ S.quests = S.quests || {}; S.qbase = S.qbase || {}; delete
 function qDone(id){ S.quests = S.quests || {}; S.quests[id] = 'done'; toast('Tarea cumplida: ' + QUESTS[id].title, 2200); }
 async function questScreen(){
   S.quests = S.quests || {};
-  const ids = () => QUEST_ORDER.filter(id => S.quests[id] === 'open').concat(QUEST_ORDER.filter(id => S.quests[id] === 'done'));
+  // arriba de todo, el próximo paso (lo mismo que el cartelito de abajo a la izquierda)
+  const ids = () => ['_now'].concat(QUEST_ORDER.filter(id => S.quests[id] === 'open'), QUEST_ORDER.filter(id => S.quests[id] === 'done'));
   const open = QUEST_ORDER.filter(id => S.quests[id] === 'open').length;
   await panelList({title: 'TAREAS', extra: `${open} EN CURSO`,
-    rows: () => ids().map(id => { const [a, b] = qProg(id), done = S.quests[id] === 'done'; return {label: (done ? '✓ ' : '· ') + QUESTS[id].title, right: done ? 'LISTA' : `${a}/${b}`, dim: done}; }),
-    detail: i => { const id = ids()[i], q = QUESTS[id], [a, b] = qProg(id), done = S.quests[id] === 'done';
+    rows: () => ids().map(id => { if (id === '_now') return {label: '★ Ahora', right: ''}; const [a, b] = qProg(id), done = S.quests[id] === 'done'; return {label: (done ? '✓ ' : '· ') + QUESTS[id].title, right: done ? 'LISTA' : `${a}/${b}`, dim: done}; }),
+    detail: i => { const id = ids()[i];
+      if (id === '_now') return `<h4>Tu próximo paso</h4><div>${fmt(nextStep())}</div><div class="k">Debajo, todas tus tareas con su avance.</div>`;
+      const q = QUESTS[id], [a, b] = qProg(id), done = S.quests[id] === 'done';
       return `<h4>${q.title}</h4><div class="k">Te la pidió: ${q.giver}</div><div>${q.desc()}</div>` +
         (done ? '<div class="k">Cumplida.</div>' : `<div class="xp" style="height:2cqw"><i style="width:${(a / b) * 100}%"></i></div><div class="k">${a} de ${b}${qReady(id) ? ' · ¡Volvé a hablar con quien te la pidió!' : ''}</div>` +
           (q.minLvl ? `<div class="k">${S.lvl >= q.minLvl ? `Nivel ${q.minLvl} ✓` : `Pide nivel ${q.minLvl} (estás en el ${S.lvl}).`}</div>` : '')); },
