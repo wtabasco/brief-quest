@@ -95,12 +95,12 @@ const EN = {
     mv:[{n:'Tic tac',p:20,fx:'tictac',w:2},{n:'Para ayer',p:55,w:1}]},
 };
 const BOSS = {
-  explote:{n:'Clienta Explosiva',t:'CAOS',lvl:16,look:'explote',k:[2.55,1.2,1,1.2],xp:140,lesson:'explota',d:'Quiere algo que explote. No sabe qué. Pero que explote.',
+  explote:{n:'Clienta Explosiva',t:'CAOS',lvl:16,look:'explote',k:[2.55,1.2,1,1.2],xp:140,lesson:'explota',d:'Pura energía. Quiere algo que explote. No sabe qué. Pero que explote.',
     mv:[{n:'Quiero algo que explote',p:55,w:3},{n:'Más disruptivo',p:0,fx:'selfAtk+1 selfSpd+1',w:1},{n:'Que se viralice',p:75,a:75,w:2},{n:'Cambio de último momento',p:25,fx:'reset',w:1}]},
-  logo:{n:'Don Logo',t:'BURO',lvl:12,look:'logo',k:[2.3,1.1,1.15,.9],xp:130,lesson:'argumentar',d:'Nada le viene bien: el color, la letra, el café, la silla. Y el logo, para él, siempre es chico.',
-    mv:[{n:'Logo más grande',p:60,w:3},{n:'No me termina de cerrar',p:0,fx:'foeAtk-1',w:1},{n:'Mi sobrino lo hace gratis',p:85,a:70,w:2},{n:'Reunión de 2 horas',p:0,a:60,fx:'sleep',w:1}]},
-  fantasma:{n:'Clienta Fantasma',t:'PRES',lvl:8,look:'fantasma',k:[2.2,1.05,1,1],xp:120,lesson:'seguimiento',d:'Desaparece semanas, vuelve con un pedido que no se entiende y, si algo sale mal, la culpa es de la agencia.',
-    mv:[{n:'Visto sin responder',p:0,fx:'selfEva+1',w:1},{n:'Eso lo dejé clarísimo',p:90,a:80,w:2},{n:'Tic tac',p:20,fx:'tictac',w:2},{n:'La culpa es de ustedes',p:50,w:2}]},
+  logo:{n:'Don Logo',t:'BURO',lvl:12,look:'logo',k:[2.3,1.1,1.15,.9],xp:130,lesson:'argumentar',d:'Se queja del color, la letra, el café y la silla, pero con cariño. Y el logo, para él, siempre es chico.',
+    mv:[{n:'Logo más grande',p:60,w:3},{n:'No me termina de cerrar',p:0,fx:'foeAtk-1',w:1},{n:'Mi sobrino sabe Photoshop',p:85,a:70,w:2},{n:'Reunión de 2 horas',p:0,a:60,fx:'sleep',w:1}]},
+  fantasma:{n:'Clienta Fantasma',t:'PRES',lvl:8,look:'fantasma',k:[2.2,1.05,1,1],xp:120,lesson:'seguimiento',d:'Desaparece semanas, vuelve con un pedido misterioso y jura que el brief era clarísimo.',
+    mv:[{n:'Visto sin responder',p:0,fx:'selfEva+1',w:1},{n:'Eso lo dejé clarísimo',p:90,a:80,w:2},{n:'Tic tac',p:20,fx:'tictac',w:2},{n:'Era obvio, ¿no?',p:50,w:2}]},
   final:{n:'La Gran Presentación',t:'CLI',lvl:20,spr:'final',k:[3,1.2,1.15,1],xp:200,d:'Todo lo que aprendiste, en una sola reunión.',
     mv:[{n:'Pitch imposible',p:80,w:3},{n:'Cambio de último momento',p:25,fx:'reset',w:1},{n:'Todo para ayer',p:100,a:70,w:2},{n:'Logo más grande',p:60,w:2}]},
   // el cliente más difícil: en la Sala del Directorio, desde el nivel 30. Hay que presentarle la campaña del año

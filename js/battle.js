@@ -137,9 +137,9 @@ function pickMove(f){
   return scored[0][0];
 }
 const TAUNTS = {
-  explote: {half: ['"¡Esto todavía no explota!"', '"¡Más fuegos artificiales! ¡MÁS!"'], low: ['"¡Bueno, bueno! ¡Ahora sí está explotando un poco!"']},
-  logo: {half: ['"No sé... no me convence. No sé qué, pero algo no."', '"¿Y si probamos el logo en dorado? ...No, tampoco."', '"Mi sobrino ya lo tendría terminado. Y gratis."', '"Esto no es lo que pedí. Bueno, sí. Pero no así."'], low: ['"Está bien... Pero que conste en actas que no estoy conforme."', '"Bueno. Puede ser. Pero no me convence del todo, eh."']},
-  fantasma: {half: ['"¿No era obvio? Lo puse en el mail. Bueno, en el audio. Bueno, lo pensé."', '"Yo no me equivoqué. El brief lo entendieron mal ustedes."', '(Visto 14:32)', '"Quiero algo distinto. Pero igual. Ustedes saben."'], low: ['"Bueno... puede que no haya sido del todo clara. Puede."', '"Está bien. Pero conste que la idea fue mía."']},
+  explote: {half: ['"¡Esto todavía no explota!"', '"¡Más fuegos artificiales! ¡MÁS!"', '"¿Y si sumamos un caballo? ¡Un caballo explota siempre!"'], low: ['"¡Bueno, bueno! ¡Ahora sí está explotando un poco!"', '"¡Ay, se me pone la piel de gallina!"']},
+  logo: {half: ['"No sé... no me convence. No sé qué, pero algo no."', '"¿Y si probamos el logo en dorado? ...No, tampoco."', '"Mi sobrino dice que lo hace en una tarde. Mi sobrino tiene doce años."', '"Esto no es lo que pedí. Bueno, sí. Pero no así."'], low: ['"Está bien... Pero que conste en actas que no estoy conforme."', '"Bueno. Puede ser. Pero no me convence del todo, eh."']},
+  fantasma: {half: ['"¿No era obvio? Lo puse en el mail. Bueno, en el audio. Bueno, lo pensé."', '"¡Eso lo dejé clarísimo! ¿No? ¿En qué reunión fue?"', '(Visto 14:32)', '"Quiero algo distinto. Pero igual. Ustedes saben."'], low: ['"Bueno... puede que no haya sido del todo clara. Puede."', '"¡Ay, esto me encanta! ¿Era esto lo que pedí? ¡Era esto!"']},
   fede: {half: ['Fede: "Bien. Ahora hacelo más rápido."', 'Fede: "No te relajes ahora, que recién empieza."', 'Fede: "¡Eso! ¡Seguí así!"', 'Fede: "Eso que hiciste, repetilo."', 'Fede: "¡Buena! Ahí está la idea."', 'Fede: "Pará que le doy un sorbo al mate y seguimos."'], low: ['Fede: "¡Así se encara!"', 'Fede: "¡Eso es lo que quería ver!"']},
   final: {half: ['La sala se queda en silencio...', 'Alguien deja de mirar el celular.'], low: ['El cliente sonríe. Se viene el sí.']},
 };

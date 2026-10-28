@@ -1266,10 +1266,10 @@ async function statusBoardLook(){
 
 /* ================= CLIENTES ================= */
 const CLIENT_LINES = {
-  post: {explote: ['Está bien... explotó. Explotó bien. Aprobado.', 'Ahora quiero que la próxima explote más. Pero eso es para la próxima.', 'Les mandé el link a toda mi familia. Explotó en el grupo.'],
-    logo: ['Aprobado, sí. Pero el azul me sigue pareciendo muy azul. Lo dejo asentado.', 'Mi sobrino dijo que está profesional. Yo le dije que está bien. Bien, nomás. Tampoco exageremos.', 'No me quejo. Bueno, me quejo un poco: esta silla sigue siendo incomodísima.', 'Está bien. ...No le digas a nadie que dije que está bien.', '¿Sabés qué es lo peor? Que no encuentro de qué quejarme. Eso también me molesta.'],
-    fantasma: ['Quedó muy bien. Era exactamente lo que les pedí desde el principio. Obvio.', 'Les mando un audio de diez minutos con el feedback. Es todo positivo. Creo.', 'Si alguien pregunta, la idea fue mía. Ustedes la ejecutaron. Bastante bien, para ser ustedes.', '(Visto) ...Bueno, sí, gracias. Pero no te acostumbres.']},
-  back: {explote: '¿Volviste? Bien. Yo sigo queriendo que explote.', logo: 'Volviste. Tardaste. Se me enfrió el café, y encima era feo. ¿El logo ya está más grande?', fantasma: '¿Volviste? Te estaba esperando hace horas. Bueno, recién llego. Pero igual, ¿por qué tardaron tanto?'},
+  post: {explote: ['¡EXPLOTÓ! ¡Les dije que iba a explotar! Bueno, ustedes lo hicieron explotar. ¡Pero yo lo dije!', 'Ahora quiero que la próxima explote más. Con confeti. ¿El confeti explota? Averigüen.', 'Les mandé el link a toda mi familia. Mi tía lloró. De emoción, creo.', '¡Los amo! Profesionalmente. Pero los amo.'],
+    logo: ['Aprobado, sí. Pero el azul me sigue pareciendo muy azul. Lo dejo asentado.', 'Mi sobrino dijo que está profesional. Yo le dije que está bien. Bien, nomás. Tampoco exageremos.', 'Les traje alfajores. No son para festejar, eh. Es que sobraban. Bueno, los compré para ustedes.', 'No me quejo. Bueno, me quejo un poco: esta silla sigue siendo incomodísima.', 'Está bien. ...No le digas a nadie que dije que está bien.', '¿Sabés qué es lo peor? Que no encuentro de qué quejarme. Eso también me molesta.'],
+    fantasma: ['Quedó divino. Era exactamente lo que tenía en la cabeza. Bueno, en la cabeza no lo tenía tan claro, pero quedó igual.', 'Les mando un audio de diez minutos con el feedback. Es todo positivo. Creo. Lo grabé en el ascensor.', 'Contale a todos que la idea fue mía. Bueno, nuestra. Bueno, de ustedes. ¡Pero yo la inspiré!', '(Visto) ...¡Perdón! Lo vi, lo amé y me olvidé de contestar. Lo amé, eh.']},
+  back: {explote: '¡Volviste! ¡Sabía que ibas a volver! Yo sigo queriendo que explote. ¡Que EXPLOTE!', logo: 'Volviste. Tardaste. Se me enfrió el café. Bueno, igual estaba rico. Rico para ser café de reunión. ¿El logo ya está más grande?', fantasma: '¡Ay, volviste! Te estaba esperando hace horas. Bueno, recién llego. Pero mentalmente estaba acá.'},
 };
 /* los clientes con ficha hablan con su retrato (y si no, solo con su nombre) */
 const bossWho = (key, mood) => (typeof PORTRAIT_MOODS !== 'undefined' && PORTRAIT_MOODS[key]) ? key + (mood ? ':' + mood : '') : null;
@@ -1277,14 +1277,14 @@ async function talkBoss(key, n){
   const idx = BOSS_ORDER.indexOf(key), d = BOSS[key];
   if (S.beaten[key]){ await say(pick(key + ':post', CLIENT_LINES.post[key]), bossWho(key, 'serio'), {name: d.n}); return; }
   // un pasante recién llegado no se presenta ante un cliente sin que antes lo presenten en la agencia
-  if (welcomeStep() < 3 && !S.flags['met_' + key]){ await say({explote: '¿Y vos quién sos? ¿Sos de la agencia? Que primero te presenten, y después hablamos de algo que explote.', logo: '¿Y vos quién sos? Nadie me avisó que venía alguien. Típico. Que primero te presenten en la agencia, y después hablamos del logo.', fantasma: '(Visto.) ...¿Y vos quién sos? Yo no trato con cualquiera. Que primero te presenten. Después, si tengo un hueco, te atiendo.'}[key], bossWho(key), {name: d.n}); return; }
+  if (welcomeStep() < 3 && !S.flags['met_' + key]){ await say({explote: '¡Hola, hola! ¿Sos nuev{o}? ¡Me encanta lo nuevo! Pero primero que te presenten en la agencia, y después hablamos de algo que EXPLOTE.', logo: '¿Y vos quién sos? Nadie me avisó que venía alguien. Típico. Bueno, no es tu culpa. Que primero te presenten en la agencia, y después hablamos del logo.', fantasma: '(Visto.) ...¡Ay, perdón, no te había visto! ¿Sos nuev{o}? Que primero te presenten en la agencia. Después te cuento lo que necesito. Bueno, si me acuerdo.'}[key], bossWho(key), {name: d.n}); return; }
   // los clientes van en orden: el próximo es el primero de la lista que todavía no quedó conforme
   const next = BOSS_ORDER.find(k => !S.beaten[k]), nextName = next ? ({fantasma: 'la ', explote: 'la '}[next] || '') + BOSS[next].n : '';
   if (next && idx > BOSS_ORDER.indexOf(next)){ await say(pick('boss:wait', [`Primero tenés pendiente la reunión con ${nextName}.`, `Estoy esperando, pero antes tenés que ver a ${nextName}.`])); return; }
   const intro = {
-    explote: ['Ah, ¿vos sos de la agencia? Perfecto.', 'Quiero algo que EXPLOTE. Que la gente lo vea y diga ¡WOW!', '¿Qué es "algo"? Eso lo tienen que saber ustedes.'],
-    logo: ['Bueno, por fin. Hace veinte minutos que espero. Y esta silla es incomodísima.', 'Vi la propuesta. Está... bien. Supongo. No me cierra el color. Ni la letra. Ni el fondo. Ni el aire que tiene.', 'Y el logo es chiquito. Siempre es chiquito. ¿Lo podemos agrandar? Un poquito. No, más. MÁS.'],
-    fantasma: ['Perdón, estuve a mil. Tres semanas sin contestar, sí. Pero ustedes tampoco insistieron, eh.', 'Ah, por fin aparecen. ¿Cómo va eso? Lo necesito para ayer.', '¿Qué es "eso"? Lo que hablamos. Está clarísimo. Algo como lo de siempre, pero distinto. Ustedes entienden.', 'Y si no sale bien, no es mi problema: el brief fue perfecto.'],
+    explote: ['¡Ah, vos sos de la agencia! ¡Perfecto! ¡Me encanta tu energía! Bueno, todavía no la vi, pero me la imagino.', 'Quiero algo que EXPLOTE. Que la gente lo vea y diga ¡WOW! ¡Fuegos artificiales! ¡Confeti! ¡Un caballo!', '¿Qué es "algo"? No sé. ¡Por eso los contraté! Ustedes son los genios.'],
+    logo: ['Bueno, por fin. Hace veinte minutos que espero. Y esta silla es incomodísima. No es una queja. Bueno, sí.', 'Vi la propuesta. Está... bien. Supongo. No me cierra el color. Ni la letra. Ni el fondo. Ni el aire que tiene. Pero el esfuerzo se nota, eh.', 'Y el logo es chiquito. Siempre es chiquito. ¿Lo podemos agrandar? Un poquito. No, más. MÁS. Ahí. No, un poquito menos.'],
+    fantasma: ['¡Holaaa! Perdón, estuve a mil. Tres semanas sin contestar, sí. Estuve en un retiro. De mails.', '¿Cómo va eso? Lo necesito para ayer. Bueno, para hoy. Bueno, cuando puedan, pero que sea ayer.', '¿Qué es "eso"? Lo que hablamos. Está clarísimo. Algo como lo de siempre, pero distinto. Ustedes entienden.', 'El brief fue perfecto. Lo soñé, lo grabé en un audio y lo mandé. Bueno, creo que lo mandé.'],
   };
   if (S.flags['met_' + key]) await say(CLIENT_LINES.back[key], bossWho(key), {name: d.n});
   else { S.flags['met_' + key] = true; for (const l of intro[key]) await say(l, bossWho(key), {name: d.n}); }
@@ -1297,13 +1297,13 @@ async function talkBoss(key, n){
     await say(pick('fede:ally', ['Vamos juntos. Vos presentás; yo te banco. Si te trabás, acá estoy.', 'Dale. La reunión es tuya: yo pongo el hombro y el mate.']), 'fede');
     PENDING_ALLY = 'fede'; c = 0;
   } else if (withFede && c === 2) c = 1;
-  if (c !== 0){ await say(key === 'fantasma' ? pick('fan:later', ['Ah, ¿me vas a hacer esperar a mí? Interesante.', 'Andá. Total, si se atrasa, la culpa es de ustedes.', 'Perfecto. Yo mientras tanto no respondo ningún mail. Para que estemos parejos.']) : key === 'logo' ? pick('logo:later', ['Andá, andá. Total, yo espero. Siempre espero.', 'Perfecto. Otra vez a esperar. Me encanta esperar. (No me encanta.)', 'Dale. Mientras tanto voy anotando lo que no me gusta. Traje una libreta grande.']) : pick('boss:later', ['Te espero. Pero no mucho.', 'Dale, pero mi tiempo vale oro.', 'Andá. Yo voy pensando más cambios.']), bossWho(key), {name: d.n}); return; }
+  if (c !== 0){ await say(key === 'fantasma' ? pick('fan:later', ['Ah, ¿me vas a hacer esperar a mí? ¡Me encanta! Así me siento importante.', 'Andá, andá. Yo mientras tanto desaparezco un ratito. Es mi especialidad.', 'Perfecto. Yo mientras tanto no respondo ningún mail. Para que estemos parejos.']) : key === 'logo' ? pick('logo:later', ['Andá, andá. Total, yo espero. Siempre espero.', 'Perfecto. Otra vez a esperar. Me encanta esperar. (No me encanta.)', 'Dale. Mientras tanto voy anotando lo que no me gusta. Traje una libreta grande.']) : pick('boss:later', ['¡Te espero! Pero no mucho, que me aburro y se me ocurren ideas.', '¡Dale! Yo mientras pienso en fuegos artificiales. Literales.', 'Andá. Yo voy pensando más ideas. Tengo como cuarenta.']), bossWho(key), {name: d.n}); return; }
   hideDlg();
   const res = await bossBattle(key, 'boss');
   if (res === 'win'){
     S.beaten[key] = true; S.bosses++; logEvent('boss', {foe: key, name: d.n});
     if (key === 'logo') await say('Bueno... está bien. Aprobado. Pero que conste que no estoy del todo conforme. Nunca estoy del todo conforme.', bossWho(key, 'serio'), {name: d.n});
-    if (key === 'fantasma') await say('Ves que cuando me escuchan sale bien. Aprobado. La próxima, entiéndanme a la primera.', bossWho(key, 'feliz'), {name: d.n});
+    if (key === 'fantasma') await say('¡Ay, es exactamente lo que quería! No sabía que lo quería, pero es exactamente eso. ¡Aprobado!', bossWho(key, 'feliz'), {name: d.n});
     await say(`¡Destrabaste a ${({explote: 'la ', fantasma: 'la '})[key] || ''}${d.n}! Clientes conformes: ${S.bosses}/3.`);
     await clientWay(key);
     if (key === BOSS_ORDER[2] && S.flags.allyWin) await say(pick('fede:allywin', ['¿Viste? Solo se llega más rápido; juntos se llega más lejos. Y vos la presentaste.', 'Yo solo cebé mates. La reunión la sacaste adelante vos. Bueno, un poco los dos.']), 'fede:feliz');
@@ -1528,10 +1528,10 @@ async function lvlGate(n){
    El cliente más difícil de la agencia. Hay que presentarle la campaña del año: todo lo aprendido, en una reunión. */
 async function talkAnual(n){
   const d = BOSS.anual;
-  if (S.flags.anual){ await say(pick('anual:post', ['La campaña del año. Así se presenta. Nos vemos el año que viene: vayan pensando.', 'Ya la aprobó el directorio. Y mi familia. Y el directorio de mi familia.', 'Hace años que no me sorprendían. Gracias.']), bossWho('anual', 'feliz')); return; }
+  if (S.flags.anual){ await say(pick('anual:post', ['La campaña del año. Así se presenta. Nos vemos el año que viene: vayan pensando.', 'Ya la aprobó el directorio. Y mi familia. Y el directorio de mi familia.', 'Mandé a enmarcar la presentación. La voy a colgar en el living. Y en el baño.', 'Hace años que no me sorprendían. Gracias.']), bossWho('anual', 'feliz')); return; }
   if (!S.flags.met_anual){
     S.flags.met_anual = true;
-    for (const l of ['Así que vos sos quien llegó hasta acá.', 'Vi todas las campañas de todas las agencias. Todas.', 'Este año quiero algo que nunca vi. La campaña del año. ¿La traés?']) await say(l, bossWho('anual'));
+    for (const l of ['Así que vos sos quien llegó hasta acá. Sentate. No, mejor parate: queda más épico.', 'Vi todas las campañas de todas las agencias. Todas. Algunas dos veces, porque me dormí.', '¿El habano? No lo prendo nunca. Lo uso para señalar. Queda más dramático.', 'Este año quiero algo que nunca vi. La campaña del año. ¿La traés?']) await say(l, bossWho('anual'));
   } else await say(pick('anual:back', ['¿Volviste? Bien. El directorio no espera, pero yo sí. Un ratito.', 'La campaña del año no se improvisa. ¿Ya la tenés?']), bossWho('anual'));
   const c = await choose(['Presentar la campaña del año', 'Prepararme antes'], {cancel: 1});
   if (c !== 0){ await say(pick('anual:later', ['Preparala bien. Yo voy a estar acá, sentado en la cabecera.', 'Andá. Hablá con tu equipo: las mejores campañas nunca son de una sola persona.']), bossWho('anual', 'sorpresa')); return; }
