@@ -1093,7 +1093,14 @@ async function talkMontse(){
   } else {
     const r = reaction('montse', MONTSE.R);
     await say(r || pick('montse:lines', MONTSE.lines), 'montse');
+    if (mem().montseIdea !== gameDay()){
+      if (!qState('ideas')) qOpen('ideas');
+      const ci = await choose(['Escuchar una idea', 'Presentar de nuevo', 'Mirar la ciudad'], {cancel: 2});
+      if (ci === 0){ await montseIdea(); return; }
+      if (ci === 2){ await say(pick('montse:city', ['Linda vista, ¿no? Desde acá los problemas se ven más chicos.', 'Cada ventana es una historia. Algunas son clientes nuestros.']), 'montse'); return; }
+    } else {
     const c = await choose(['Presentar de nuevo', 'Mirar la ciudad']); if (c !== 0){ await say(pick('montse:city', ['Linda vista, ¿no? Desde acá los problemas se ven más chicos.', 'Cada ventana es una historia. Algunas son clientes nuestros.']), 'montse'); return; }
+    }
   }
   hideDlg();
   const res = await bossBattle('final', 'final');

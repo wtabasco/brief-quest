@@ -257,7 +257,7 @@ async function interact(){
   if (!n) return;
   G.busy = true; n.dir = OPP[G.dir];
   n.mv = null; emote(n, moodOf(n), 1500); await sleepMs(380);
-  try { if (await welcomeGate(n)) return; await rainMood(n); if (await picanteTalk(n)) return; await lvlGate(n); await n.talk(n); } finally { hideDlg(); closePanel(); n.emote = null; n.next = G.t + 2500; n.greet = G.t; G.busy = false; noteTalk(n.id); save(); }
+  try { if (await welcomeGate(n)) return; await rainMood(n); if (await picanteTalk(n)) return; if (await teamExtras(n)) return; await lvlGate(n); await n.talk(n); } finally { hideDlg(); closePanel(); n.emote = null; n.next = G.t + 2500; n.greet = G.t; G.busy = false; noteTalk(n.id); save(); }
 }
 function updateWorld(dt){
   if (G.mode !== 'world') return;
