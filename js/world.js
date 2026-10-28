@@ -22,7 +22,6 @@ const NPCS = [
   // Marga limpia de 9 a 12 y va cambiando de lugar cada hora (con el trapeador y el balde)
   {id:'marga', map:'office', x:18, y:22, dir:'down', look:'marga', talk:talkMarga, wander:[17, 21, 19, 23], mood:'foto', mop:true},
   {id:'anual', map:'office', x:31, y:4, dir:'left', look:'anual', talk:talkAnual, still:true, mood:'#'},
-  {id:'repartidor', map:'outside', x:20, y:15, dir:'left', look:'repartidor', talk:talkRepartidor, wander:[18, 13, 26, 17], mood:'?'},
   ...BOSS_ORDER.map(k => ({id:k, map:'office', x:BOSS_POS[k][0], y:BOSS_POS[k][1], dir:'down', look:k, talk:n => talkBoss(k, n), still:true, mood:'#'})),
 ];
 NPCS.forEach(n => { n.home = n.dir; n.hx = n.x; n.hy = n.y; n.next = 1500 + Math.random()*4000; n.mv = null; n.emote = null; n.greet = -1e9; });

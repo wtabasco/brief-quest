@@ -21,6 +21,5 @@ const LOOKS = {
   montse:{hair:'#cfcbc0', style:'bob', shirt:'#1e1e1e', pants:'#1e1e1e', glasses:'#6b3f1f', skin:'#e6b393'},
   explote:{hair:'#fe7a02', style:'spiky', shirt:'#fbfaf4', jacket:'#c2410c', pants:'#1e1e1e', shades:true, tie:'#92c100'},
   logo:{hair:'#8a8a8a', style:'bald', shirt:'#fbfaf4', jacket:'#23345a', pants:'#23345a', mustache:'#8a8a8a', tie:'#fe7a02'},
-  repartidor:{sleeves:'short', skin:'#d9a07a', hair:'#3a2a1e', style:'short', shirt:'#fe7a02', pants:'#3d4a5a', backpack:'#c2410c', mustache:'#3a2a1e'},
   fantasma:{hair:'#141414', style:'long', shirt:'#d9d9d9', jacket:'#4a4a52', pants:'#4a4a52', phone:true, shades:true},
 };

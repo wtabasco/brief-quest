@@ -23,17 +23,14 @@ const rainy = (d = gameDay()) => d > 1 && hash(d, 4242) % 100 < 27;
 const LATE = {lu: .5, pimi: .3, sahi: .25};
 function leaveAt(id){
   if (id === 'fede') return CLOSE + 1;
-  if (id === 'repartidor') return 17*60;
   if (id === 'marga') return 12*60; // Marga trabaja hasta las 12
   const d = gameDay(), p = LATE[id], s = id.charCodeAt(0) * 13 + id.length;
   if (p && hash(d, s) % 100 < p * 100) return WORK_END + 30 + hash(d, s + 99) % 81;
   return WORK_END;
 }
 /* los problemas de la agencia (los desafíos) no se van nunca: son problemas */
-/* el repartidor viene algunos días (siempre el primero) y se va apenas te deja el pedido */
-const deliveryDay = (d = gameDay()) => d === 1 || hash(d, 77) % 100 < 55;
 function shouldBeHere(n){ if (BOSS_ORDER.includes(n.id) || n.id === 'anual') return true;
-  if (n.id === 'repartidor' && (!deliveryDay() || (S && S.flags.repGone === gameDay()))) return false; const m = gameMin(); return m >= DAY_START && m < leaveAt(n.id); }
+  const m = gameMin(); return m >= DAY_START && m < leaveAt(n.id); }
 function onScreen(n){
   if (n.map !== CURMAP.id) return false;
   const {cx, cy} = camera(), [nx, ny] = npcPos(n);
@@ -71,7 +68,6 @@ const RAIN = {
   marga: {mood: 'foto', f: 'marga', t: 'Ay, con esta lluvia se me llena todo de barro. ¡Límpiense los pies, chiquilines! Y vos también, mi vida.'},
   alejo: {mood: 'cam', f: 'alejo', t: 'Día nublado, luz de ventana pareja: es como tener un softbox gigante. Hoy grabamos todo adentro.'},
   giuli: {mood: 'lapiz', f: 'giuli', t: 'Con lluvia me pongo a ordenar carpetas. Es mi forma de meditar. Alejo dice que es raro; él ordena playlists.'},
-  repartidor: {mood: 'lluvia', f: 'repartidor', t: 'Vengo empapado, pero el paquete está seco. Prioridades.'},
 };
 const moodOf = n => (rainy() && RAIN[n.id] && RAIN[n.id].mood) || n.mood || '!';
 async function rainMood(n){
@@ -169,7 +165,7 @@ function drawRain(mapId, cx, cy){
     ctx.fillRect(x - r, y, r * 2 + 1, 1); ctx.fillRect(x - r + 1, y - 1, r * 2 - 1, 1);
   }
 }
-/* paraguas para los que están afuera cuando llueve (Montserrat en la terraza, el repartidor) */
+/* paraguas para los que están afuera cuando llueve (Montserrat en la terraza) */
 function drawUmbrella(c, X, Y, col){
   const cx = X + 15, top = Y - 47;
   c.fillStyle = '#2a2236'; c.fillRect(cx, top + 9, 1, 12); c.fillRect(cx, top - 2, 1, 2);

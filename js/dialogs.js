@@ -1312,23 +1312,6 @@ async function talkBoss(key, n){
   }
 }
 
-/* ================= AFUERA ================= */
-async function talkRepartidor(n){
-  const day = gameDay(), first = !S.flags.package;
-  S.flags.package = true;
-  // cada vez que viene trae un pedido distinto; te lo deja y se va
-  const PED = [['¿Vos sos de la agencia? Tengo un paquete para ustedes. Firmame acá... ahí. Es el café de la semana.', 'cafe', 3, '3 Cafés'],
-    ['¡Buenas! Traigo la fruta de la semana. Sofi la pidió anoche. Firmame acá.', 'fruta', 2, '2 Frutas'],
-    ['Paquete para la agencia: yerba. Dice "URGENTE, PARA FEDE". Lo traje volando.', 'mate', 1, 'un Mate'],
-    ['Una caja de alfajores. No pregunto quién los pidió. Firmame acá, por favor.', 'alfajor', 1, 'un Alfajor'],
-    ['Otra vez yo. Café para la agencia. Ustedes toman más café que mi cuñado.', 'cafe', 2, '2 Cafés']];
-  const [txt, k, q, label] = first ? PED[0] : PED[1 + hash(day, 5) % (PED.length - 1)];
-  await say(txt, null, {name: 'Repartidor'});
-  S.items[k] = (S.items[k] || 0) + q; SFX.heal(); await say(`Recibiste ${label}.`);
-  await say(pick('rep:bye', ['¡Listo! Me voy, que tengo veinte entregas más. ¡Chau!', 'Bueno, me voy volando. ¡Que tengan buen día!', '¡Chau, chau! Si llueve, igual vengo. Lento, pero vengo.']), null, {name: 'Repartidor'});
-  await say('El repartidor se sube a la moto y se va.');
-  S.flags.repGone = day; n.away = true; n.mv = null; n.x = n.hx; n.y = n.hy;
-}
 
 async function ending(){
   await says(['Eso fue Visión. Y un poco de suerte, no te voy a mentir.', 'Ahora disfrutalo, que eso también se entrena.', 'Bienvenid{o} de verdad a la casa, {name}.'], 'montse');
