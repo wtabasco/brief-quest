@@ -1,6 +1,6 @@
 /* Utilidades base, lienzo a resolución de pantalla y rutas de retratos */
 "use strict";
-const PORTRAITS = Object.fromEntries(['fede','sahi','lu','pimi','reni','agus','lia','montse','sofi','tato','alejo','giuli','marga','logo','explote','fantasma'].map(k => [k, `assets/portraits/${k}.png`]));
+const PORTRAITS = Object.fromEntries(['fede','sahi','lu','pimi','reni','agus','lia','montse','sofi','tato','alejo','giuli','marga','logo','explote','fantasma','anual'].map(k => [k, `assets/portraits/${k}.png`]));
 const $ = id => document.getElementById(id);
 const cv = $('cv'), ctx = cv.getContext('2d');
 ctx.imageSmoothingEnabled = false;

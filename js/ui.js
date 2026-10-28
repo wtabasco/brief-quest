@@ -1,7 +1,7 @@
 /* Diálogos, listas, menús, paneles y textos según género */
 "use strict";
 /* ================= DIÁLOGOS Y MENÚS ================= */
-const PEOPLE = {fede:'Fede', sahi:'Sahi', lu:'Lu', pimi:'Pimi', reni:'Reni', agus:'Agus', lia:'Lía', montse:'Montserrat', sofi:'Sofi', tato:'Tato', alejo:'Alejo', giuli:'Giuli', marga:'Marga', logo:'Don Logo', explote:'Clienta Explosiva', fantasma:'Clienta Fantasma'};
+const PEOPLE = {fede:'Fede', sahi:'Sahi', lu:'Lu', pimi:'Pimi', reni:'Reni', agus:'Agus', lia:'Lía', montse:'Montserrat', sofi:'Sofi', tato:'Tato', alejo:'Alejo', giuli:'Giuli', marga:'Marga', anual:'El Cliente del Año', logo:'Don Logo', explote:'Clienta Explosiva', fantasma:'Clienta Fantasma'};
 /* Retratos: se agrandan 4 veces con píxeles exactos y el navegador los achica suave al tamaño de la caja.
    Escalados directo a un tamaño no entero (1,5x en el celular) se perdían rayas finas, como las de la camisa de Alejo. */
 const CRISP = {}, CRISP_OK = {};

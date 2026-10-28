@@ -1528,19 +1528,19 @@ async function lvlGate(n){
    El cliente más difícil de la agencia. Hay que presentarle la campaña del año: todo lo aprendido, en una reunión. */
 async function talkAnual(n){
   const d = BOSS.anual;
-  if (S.flags.anual){ await say(pick('anual:post', ['La campaña del año. Así se presenta. Nos vemos el año que viene: vayan pensando.', 'Ya la aprobó el directorio. Y mi familia. Y el directorio de mi familia.', 'Hace años que no me sorprendían. Gracias.']), null, {name: d.n}); return; }
+  if (S.flags.anual){ await say(pick('anual:post', ['La campaña del año. Así se presenta. Nos vemos el año que viene: vayan pensando.', 'Ya la aprobó el directorio. Y mi familia. Y el directorio de mi familia.', 'Hace años que no me sorprendían. Gracias.']), bossWho('anual', 'feliz')); return; }
   if (!S.flags.met_anual){
     S.flags.met_anual = true;
-    for (const l of ['Así que vos sos quien llegó hasta acá.', 'Vi todas las campañas de todas las agencias. Todas.', 'Este año quiero algo que nunca vi. La campaña del año. ¿La traés?']) await say(l, null, {name: d.n});
-  } else await say(pick('anual:back', ['¿Volviste? Bien. El directorio no espera, pero yo sí. Un ratito.', 'La campaña del año no se improvisa. ¿Ya la tenés?']), null, {name: d.n});
+    for (const l of ['Así que vos sos quien llegó hasta acá.', 'Vi todas las campañas de todas las agencias. Todas.', 'Este año quiero algo que nunca vi. La campaña del año. ¿La traés?']) await say(l, bossWho('anual'));
+  } else await say(pick('anual:back', ['¿Volviste? Bien. El directorio no espera, pero yo sí. Un ratito.', 'La campaña del año no se improvisa. ¿Ya la tenés?']), bossWho('anual'));
   const c = await choose(['Presentar la campaña del año', 'Prepararme antes'], {cancel: 1});
-  if (c !== 0){ await say(pick('anual:later', ['Preparala bien. Yo voy a estar acá, sentado en la cabecera.', 'Andá. Hablá con tu equipo: las mejores campañas nunca son de una sola persona.']), null, {name: d.n}); return; }
+  if (c !== 0){ await say(pick('anual:later', ['Preparala bien. Yo voy a estar acá, sentado en la cabecera.', 'Andá. Hablá con tu equipo: las mejores campañas nunca son de una sola persona.']), bossWho('anual', 'sorpresa')); return; }
   hideDlg();
   const res = await bossBattle('anual', 'final');
   if (res === 'win'){
     S.flags.anual = true; logEvent('boss', {foe: 'anual', name: d.n}); if (qState('anual')) qDone('anual');
     await say('¡Presentaste la campaña del año! El Cliente del Año aplaude de pie.');
-    await say('Nunca vi nada así. Aprobada. Sin cambios. Es la primera vez que digo "sin cambios".', null, {name: d.n});
+    await say('Nunca vi nada así. Aprobada. Sin cambios. Es la primera vez que digo "sin cambios".', bossWho('anual', 'risa'));
     await say('¡Sabía que lo ibas a lograr! ¿Te acordás de tu primer entrenamiento? Mirá hasta dónde llegaste.', 'fede:feliz');
     await say('Esto es lo que pasa cuando alguien aprende de todos. Bienvenid{o} a otro nivel.', 'agus:feliz');
     await say('¡Lo medí! ¡Récord histórico de la agencia! ¡Ya está en el tablero!', 'lia:risa');
