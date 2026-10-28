@@ -141,13 +141,12 @@ async function talkFede(){
   if (S.flags.fedeMet && S.lvl >= PROJECT_LVL && !S.flags.senior){ await seniorCeremony(); return; }
   if (!S.flags.fedeMet){
     S.flags.fedeMet = true; S.flags.typesHint = true;
-    await say(`${saludo()}, {name}! Soy Fede, director de contenido. Bienvenid{o} a la parte divertida.`, 'fede:feliz');
-    await say('Entré como diseñador, después fui Head of Content y ahora dirijo el contenido. O sea: acá se crece. Lo vas a ver.', 'fede');
-    await says([S.flags.sofiMet ? 'Sofi ya te contó cómo es esto, ¿no? Te agrego lo mío: probás, te equivocás y volvés a probar. Lo importante es cómo lo encarás.' : 'Acá se aprende haciendo: probás, te equivocás y volvés a probar. Lo importante es cómo lo encarás.', 'Un dato práctico: cada problema tiene su punto débil. Lo creativo destraba la burocracia, la estrategia ordena el caos, lo técnico arregla bugs y la calma desarma la presión.'], 'fede');
+    await say(`${saludo()}, {name}! Soy Fede, director de contenido. Entré como diseñador y fui creciendo: acá se crece. Bienvenid{o} a la parte divertida.`, 'fede:feliz');
+    await say('Acá se aprende probando y equivocándose. Un dato práctico: cada problema tiene su punto débil. Lo creativo destraba la burocracia, la estrategia ordena el caos, lo técnico arregla bugs y la calma desarma la presión.', 'fede');
     await say('Y lo más importante de todo: ¿me traés un mateee? Por favor. Reni anda siempre con el termo por la agencia. Sin mate pienso a la mitad.', 'fede:risa');
     qReopen('fede_mate'); m.fedeMateAt = m.battles || 0; firstTime = true;
-    await say('Y antes de entrenar, lo primero de todo: ordenar las carpetas. Si no encontrás las cosas, no hay idea que aguante. Te lo enseño de a poco: hasta dos capacitaciones por día.', 'fede');
-    await say('Ah, y después pasá por Guaná, la oficina de al lado: Agus y Lía te quieren conocer.', 'fede');
+    await say('Ahora pasá por Guaná, la oficina de al lado: Agus y Lía te quieren conocer. Y cuando resuelvas tu primer problema en La Base, volvé: te enseño a ordenar las carpetas. Sin orden no hay idea que aguante.', 'fede');
+    return;
   } else {
     await opener('fede', 'fede', FEDE.again);
     let line = reaction('fede', FEDE.R);
@@ -162,7 +161,7 @@ async function talkFede(){
   }
   if (hpPct() < .3){ await say('Así no entrenamos. Andá a ver a Lu y volvé con energía.', 'fede'); return; }
   // la capacitación de orden de carpetas: de lo primero que se aprende en la agencia
-  const tr = trainingNext('carpetas') >= 0 && !trainingToday('carpetas');
+  const tr = trainingNext('carpetas') >= 0 && !trainingToday('carpetas') && wildTotal() > 0; // la primera capacitación, después del primer problema
   const opts = tr ? [`Capacitación: ${TRAININGS.carpetas.sessions[trainingNext('carpetas')].title}`, '¡Entrenemos!', 'Ahora no'] : ['¡Entrenemos!', 'Ahora no'];
   let c = await choose(opts, {cancel: opts.length - 1});
   if (tr && c === 0){
@@ -680,29 +679,25 @@ async function talkFounders(n){
       await say(first ? `${saludo()}, {name}! Soy Agus, directora general. Me ocupo de las personas: que el equipo crezca y esté bien.` : 'Y yo soy Agus, directora general. Me ocupo de las personas: que el equipo crezca y esté bien.', 'agus:feliz');
     };
     const liaHi = async first => {
-      await say(first ? `${saludo()}, {name}! ¡Soy Lía, directora comercial! ¡Ya medí cuánto tardaste en subir la escalera!` : '¡Y yo soy Lía, directora comercial! ¡Ya medí cuánto tardaste en subir la escalera!', 'lia:feliz');
-      await say('¡Diecinueve segundos! ¿Que no hacía falta medirlo? ¡Ja! Ya está en el tablero.', 'lia:risa');
+      await say(`${first ? `${saludo()}, {name}! ¡Soy Lía` : '¡Y yo soy Lía'}, directora comercial! Tardaste diecinueve segundos en subir la escalera. ¿Que no hacía falta medirlo? ¡Ja!`, 'lia:risa');
     };
     if (me === 'lia'){
       await liaHi(true); await agusHi(false);
       await agusValores();
       await say('¡Agus arma los procesos y yo los acelero!', 'lia');
-      await say('Los saltea.', 'agus:risa');
-      await say('¡Los mejoro salteándolos! ¡Con amor! Cada una tiene su manera y juntas funcionamos mejor. Para arrancar, ¿con cuál te identificás más?', 'lia');
+      await say('Los saltea. Con amor, pero los saltea. Para arrancar, ¿con cuál de las dos te identificás más?', 'agus:risa');
     } else {
       await agusHi(true); await liaHi(false); await agusValores();
       await say('Yo armo los procesos y Lía los acelera.', 'agus');
-      await say('¡Los mejoro! A veces salteándolos. ¡Pero con amor!', 'lia');
-      await say('Cada una tiene su manera, y juntas funcionan mejor. Para arrancar, ¿con cuál te identificás más?', 'agus');
+      await say('¡Los mejoro! A veces salteándolos, ¡pero con amor! Para arrancar, ¿con cuál de las dos te identificás más?', 'lia');
     }
     const c = await choose(['Con calma y con proceso (Agus)', 'A full y midiendo todo (Lía)']);
     S.flags.path = c === 1 ? 'lia' : 'agus';
-    if (c === 1) await say('¡Eso! Pero un consejo no sirve si no lo usás. ¡Probalo en tres desafíos y después vemos los números!', 'lia:feliz');
-    else await say('Me gusta. Pero un consejo se aprende en la práctica. Resolvé tres desafíos con mi consejo y volvé.', 'agus:feliz');
+    if (c === 1) await say('¡Eso! Mi consejo te acompaña en tu próximo desafío. ¡Probalo en tres y después vemos los números!', 'lia:feliz');
+    else await say('Me gusta. Mi consejo te acompaña en tu próximo desafío. Probalo en tres y volvé a contarme.', 'agus:feliz');
     qOpen('consejo');
     S.buff = c === 1 ? 'atk' : 'def'; m.lastAdviceBattle = b;
-    await say(`El consejo de ${c === 1 ? 'Lía' : 'Agus'} te va a acompañar en tu próximo desafío.`);
-    await say('Y ahora sí, la casa es tuya. Podés bajar a Archivos X a conocer a Pimi, o a La Base, con Alejo y Giuli. ¡Los dos te van a enseñar un montón!', 'agus:feliz');
+    await say('Ahora la casa es tuya. Bajá a La Base: ahí están Alejo y Giuli, y entre las pilas de pendientes saltan los problemas. ¡Resolvé el primero!', 'agus:feliz');
     if (qState('bienvenida') === 'open') qDone('bienvenida');
     if (!qState('clientes')){ await say('¡Y cuando estés list{o}, los clientes te esperan en la Sala de Clientes, en la planta baja! ¡Yo voy midiendo cómo te va!', 'lia:feliz'); qOpen('clientes'); }
     return;
@@ -1147,13 +1142,11 @@ async function talkSofi(){
     S.flags.sofiMet = true;
     await say(`${saludo()}, {name}! Soy Sofi, de Administración. ¡Bienvenid{o} a la casa!`, 'sofi:feliz');
     await say('Te cuento cómo funciona esto, cortito: acá se aprende resolviendo. Los problemas aparecen entre las pilas de pendientes de La Base, y cada uno que resolvés te deja experiencia.', 'sofi');
-    await say('Cada persona del equipo te va a enseñar algo y te va a proponer desafíos. Si no sabés qué hacer, mirá tus Tareas en START.', 'sofi');
-    await say('La jornada es de 9 a 18, y a las 20 cierra la oficina. Y si te quedás sin energía, Lu te recarga en Bienestar. ¡Comé algo, también!', 'sofi');
+    await say('Cada persona del equipo te va a enseñar algo. Si no sabés qué hacer, tocá AYUDA. La jornada es de 9 a 18, y si te quedás sin energía, Lu te recarga en Bienestar. ¡Y comé algo!', 'sofi');
     await say('Mirá, así es la casa:', 'sofi');
     await panelInfo('LA CASA', casaHTML()); closePanel();
-    await say('La agencia la dirigen tres: Agus, directora general; Lía, directora comercial; y Fede, director de contenido. En los procesos los vas a ver como AZ, LÍ y FD.', 'sofi');
-    await say('Agus y Lía la fundaron en 2010. Fede llegó en 2018 como diseñador y fue creciendo hasta director. Ah, y Montserrat es la dueña de la casona: está en la terraza, y casi nadie llega hasta allá.', 'sofi');
-    S.items.fruta = (S.items.fruta || 0) + 1; m.sofiFruitAt = b; SFX.heal(); await say('Tomá, para que arranques con energía.', 'sofi'); await say('Recibiste una Fruta.');
+    await say('La agencia la dirigen Agus, Lía y Fede: en los procesos los vas a ver como AZ, LÍ y FD. Y Montserrat es la dueña de la casona: está en la terraza, y casi nadie llega hasta allá.', 'sofi');
+    S.items.fruta = (S.items.fruta || 0) + 1; m.sofiFruitAt = b; SFX.heal(); await say('Tomá una fruta, para que arranques con energía.', 'sofi'); await say('Recibiste una Fruta.');
     await say(S.flags.tatoMet ? 'A Tato ya lo conociste, ¿no? El contador, el del reggae. Bueno: ahora pasá por Brasil, la primera oficina de este piso, que Fede te quiere conocer.' : 'Él es Tato, el contador. Saludalo, que con el reggae no te va a ver. Y después pasá por Brasil, la primera oficina de este piso: Fede te quiere conocer.', 'sofi');
     return;
   }
@@ -1615,13 +1608,11 @@ const VALORES = [
 const PROPOSITO = 'Creamos estrategias de comunicación que generan un impacto positivo en el crecimiento de nuestros clientes, las personas y el planeta.';
 const valoresHTML = () => '<div style="font-size:2.5cqw;line-height:1.16;display:flex;flex-direction:column;gap:.35cqw">' + `<div class="k">Propósito</div><div>${PROPOSITO}</div><div class="k" style="margin-top:.4cqw">Valores</div>` + VALORES.map(([n, d]) => `<div><b>${n}.</b> ${d}</div>`).join('') + '</div>';
 async function agusValores(){
-  await say('Te cuento de dónde venimos. Con Lía fundamos la agencia en 2010, cuando el marketing digital recién empezaba a florecer.', 'agus');
-  await say('¡El nombre es de un condimento japonés! ¡Éramos una agencia chiquita pero picante! ¡Hoy crecimos y somos todavía más picantes!', 'lia:risa');
-  await say('Y esto es lo que nos une: creamos estrategias de comunicación que generan un impacto positivo en el crecimiento de nuestros clientes, las personas y el planeta.', 'agus');
-  await say('Ningún gran desafío de la agencia se logra sin que se junten dos o más roles. Por eso, además del propósito, tenemos cinco valores. Los vas a ver en todo lo que hacemos.', 'agus');
+  await say('Con Lía fundamos la agencia en 2010, cuando el marketing digital recién empezaba.', 'agus');
+  await say('¡El nombre es un condimento japonés: chiquita pero picante! ¡Hoy, todavía más picante!', 'lia:risa');
+  await say('Esto es lo que nos une: un propósito y cinco valores. Los vas a ver en todo lo que hacemos.', 'agus');
   await panelInfo('PROPÓSITO Y VALORES', valoresHTML()); closePanel();
-  await say('No son un cartel en la pared: son cómo trabajamos. Cuando dudes qué hacer, volvé a ellos.', 'agus:feliz');
-  await say('¡Y la hoja está colgada en La Base, en el tablero negro! La miro todos los días. Bueno, la mido.', 'lia:risa');
+  await say('¡No son un cartel en la pared! Bueno, sí: está en el tablero negro de La Base. ¡Pero sobre todo son cómo trabajamos!', 'lia:risa');
   S.flags.valores = true;
 }
 async function valuesLook(){

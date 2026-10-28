@@ -82,7 +82,7 @@ async function teamExtras(n){
     }
   }
   // 2) la charla de cómo trabajamos con Fede, una vez por día (si no tiene un mate o una ceremonia pendiente)
-  if (n.id === 'fede' && S.flags.fedeMet && m.repaso !== gameDay() && m.repasoAsk !== gameDay()
+  if (n.id === 'fede' && S.flags.fedeMet && trainingNext('carpetas') !== 0 && m.repaso !== gameDay() && m.repasoAsk !== gameDay()
       && !(S.lvl >= PROJECT_LVL && !S.flags.senior) && !(qState('fede_mate') === 'open' && (S.items.mate || 0) > 0)){
     m.repasoAsk = gameDay();
     await say('Antes de entrenar: ¿charlamos tres situaciones de todos los días? Así se aprende cómo trabajamos acá. Y suma experiencia.', 'fede');
@@ -144,6 +144,8 @@ function nextStep(){
   if (welcomeStep() < 3) return `Hablá con ${WELCOME_NEXT[welcomeStep()]}.`;
   if (S.lvl >= 15 && !S.flags.fijo) return 'Agus y Lía te esperan en Guaná (planta alta): tienen una noticia.';
   if (S.lvl >= PROJECT_LVL && !S.flags.senior) return 'Fede te espera en Brasil (planta alta).';
+  if (wildTotal() === 0) return 'Resolvé tu primer problema: caminá entre las pilas de pendientes de La Base (planta baja).';
+  if (trainingNext('carpetas') === 0 && !trainingToday('carpetas')) return 'Fede te espera en Brasil (planta alta) con tu primera capacitación: orden de carpetas.';
   const ready = QUEST_ORDER.find(id => qState(id) === 'open' && !AUTO_Q.includes(id) && qReady(id));
   if (ready){ const g = QUESTS[ready].giver; return `¡Cumpliste "${QUESTS[ready].title}"! Volvé a hablar con ${g}${PLACE[g] ? ', en ' + PLACE[g] : ''}.`; }
   if (S.errand){ const e = errandBy(S.errand.from, S.errand.to); if (e) return `${e.what}.`; }
@@ -208,6 +210,7 @@ const HITOS = [
 const wildTotal = () => Object.keys(EN).reduce((n, k) => n + ((S.log[k] && S.log[k].beaten) || 0), 0);
 async function hitoCheck(msg){
   const n = wildTotal(), m = mem(); m.hitos = m.hitos || [];
+  if (n === 1 && !m.firstWin){ m.firstWin = true; await msg('¡Tu primer problema resuelto! Fede te espera en Brasil (planta alta) con tu primera capacitación.', 2400); }
   const h = HITOS.find(([k]) => n >= k && !m.hitos.includes(k)); if (!h) return;
   m.hitos.push(h[0]);
   await msg(`${PEOPLE[h[1]]}: "${h[2]}"`, 2600);
