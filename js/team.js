@@ -156,10 +156,10 @@ function nextStep(){
     if (!S.flags.card) return 'Agus y Lía te esperan en Guaná (planta alta): tienen algo grande para vos.';
     if (S.lvl < PROJECT_LVL){ const p = PLAN_Q.find(q => qState(q) === 'open');
       return p ? `Camino al Cliente del Año (nivel ${PROJECT_LVL}): ${QUESTS[p].desc()} Estás en el ${S.lvl}.` : `Seguí resolviendo problemas hasta el nivel ${PROJECT_LVL}: ahí te espera el Cliente del Año. Estás en el ${S.lvl}.`; }
-    return teamTipsStep() || `Presentale la campaña del año al Cliente del Año (nivel ${CLIENT_LVL.anual}), en la Sala del Directorio (planta baja).`;
+    return teamTipsStep() || `Presentale la campaña del año al Cliente del Año, en la Sala del Directorio (planta baja).`;
   }
   if (!S.flags.anual && teamTipsStep()) return teamTipsStep();
-  if (!S.flags.anual) return `Presentale la campaña del año al Cliente del Año (nivel ${CLIENT_LVL.anual}), en la Sala del Directorio (planta baja).`;
+  if (!S.flags.anual) return `Presentale la campaña del año al Cliente del Año, en la Sala del Directorio (planta baja).`;
   return S.lvl < 30 ? `Seguí creciendo hasta el nivel 30: ayudá al equipo y charlá con Fede. Estás en el ${S.lvl}.` : '¡Llegaste lejísimos! Ayudá al equipo y completá la bitácora.';
 }
 /* El cartelito "AHORA" no queda fijo: aparece unos segundos cuando cambia el próximo paso (y al empezar el día).
@@ -223,7 +223,7 @@ async function levelUnlocks(L, msg){
   const out = [];
   const k = BOSS_ORDER.find(x => !S.beaten[x]);
   if (k && recShown(k) && L === REC_LVL[k]) out.push(`¡Ya tenés el nivel para ${({fantasma: 'la Clienta Fantasma', logo: 'Don Logo', explote: 'la Clienta Explosiva'})[k]}! Te espera en la Sala de Clientes.`);
-  if (S.bosses >= 3 && L === CLIENT_LVL.anual && !S.flags.anual) out.push('Ya estás a la altura del Cliente del Año. Te espera en la Sala del Directorio.');
+  if (S.bosses >= 3 && recShown('anual') && L === REC_LVL.anual && !S.flags.anual) out.push('Ya estás a la altura del Cliente del Año. Te espera en la Sala del Directorio.');
   for (const id of Object.keys(TRAININGS)) { const T = TRAININGS[id]; if (T.minLvl === L && trainingNext(id) === 0) out.push(`${PEOPLE[T.who]} ya te puede dar la capacitación "${T.title}".`); }
   const ready = QUEST_ORDER.filter(id => qState(id) === 'open' && QUESTS[id].minLvl === L && qCountOk(id));
   for (const id of ready) out.push(`Ya podés volver con ${QUESTS[id].giver}: cumpliste "${QUESTS[id].title}".`);
@@ -232,7 +232,7 @@ async function levelUnlocks(L, msg){
 /* lo que se puede hacer hoy para sumar experiencia, además de los problemas de La Base */
 function xpIdeas(){
   const L = [];
-  for (const id of Object.keys(TRAININGS)){ const T = TRAININGS[id]; if (S.lvl >= T.minLvl && trainingNext(id) >= 0 && !trainingToday(id)) L.push(`Capacitación con ${PEOPLE[T.who]}: ${T.title}.`); }
+  for (const id of Object.keys(TRAININGS)){ const T = TRAININGS[id]; if (S.lvl >= T.minLvl && trainingNext(id) >= 0 && !trainingToday(id) && !(id === 'carpetas' && wildTotal() === 0)) L.push(`Capacitación con ${PEOPLE[T.who]}: ${T.title}.`); }
   for (const who of ['giuli', 'alejo']) if (S.flags.foundersMet && duoNext(who) >= 0 && !duoToday(who)) L.push(`Capacitación de ${who === 'giuli' ? 'diseño con Giuli' : 'redes con Alejo'}, en La Base.`);
   if (S.flags.fedeMet && mem().repaso !== gameDay()) L.push('La charla de cómo trabajamos con Fede, en Brasil.');
   if (!S.errand && welcomeStep() >= 3) L.push('Charlá con el equipo: a veces te piden una mano.');
