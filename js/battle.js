@@ -405,7 +405,7 @@ async function battleFlow(foe, kind, key){
     const d = EN[key] || BOSS[key];
     // después de la Gran Presentación ya sos de la casa: cada problema te enseña un poco más (el camino al 30 no se hace eterno)
     // los problemas de La Base rinden un poco más (para que el camino entre clientes no se haga largo) y más todavía después de la Gran Presentación
-    await gainXP(Math.floor(d.xp * foe.lvl / 5 * (kind === 'wild' ? (S.flags.done ? 1.5 : 1.3) : 1)), bsay);
+    await gainXP(Math.floor(d.xp * foe.lvl / 5 * (kind === 'wild' ? (S.flags.done ? 2 : 1.7) : 1)), bsay);
     if (kind === 'wild') await wayQuote(key, bsay);
     if (kind === 'wild') await hitoCheck(bsay);
     if (d.lesson && !S.skills.includes(d.lesson)){
