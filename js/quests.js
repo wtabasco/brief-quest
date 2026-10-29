@@ -11,6 +11,7 @@ const QUESTS = {
   // cosas para el equipo (part_team.js): experiencia charlando y ayudando
   repaso:     {giver: 'Fede', title: 'Cómo trabajamos', abs: true, goal: 1, count: () => mem().repaso === gameDay() ? 1 : 0,
                desc: () => mem().repaso === gameDay() ? 'Hoy ya charlaste con Fede. Mañana, otra.' : 'Una vez por día, Fede te plantea tres situaciones de todos los días. Hablale en Brasil: suma experiencia.'},
+  secundaria: {giver: 'El equipo', get title(){ return S && S.side && SIDE[S.side.id] ? 'Secundaria: ' + SIDE[S.side.id].title : 'Misión secundaria'; }, abs: true, goal: 1, count: () => (S.side ? (sideReady() ? 1 : 0) : 1), desc: () => sideDesc()},
   encargo:    {giver: 'El equipo', title: 'Una mano al equipo', abs: true, goal: 1, count: () => S.errand ? 0 : 1, desc: () => errandDesc()},
   fede_prueba:{giver: 'Fede', title: 'Volver a entrenar', minLvl: 6, goal: 2, count: () => mem().spars || 0, desc: () => 'Entrená con Fede dos veces más, salga como salga. Lo que cuenta es volver.'},
   consejo:    {giver: 'Agus y Lía', title: 'Poner en práctica el consejo', minLvl: 5, goal: 3, count: () => mem().adviceWins || 0, desc: () => `Resolvé 3 desafíos con un consejo de ${S.flags.path === 'lia' ? 'Lía' : 'Agus'} activo.`},

@@ -100,6 +100,8 @@ async function teamExtras(n){
     if (await choose(['Dale', 'Ahora no'], {cancel: 1}) === 0){ await repasoFinal(); return true; }
     return false;
   }
+  // después del final: más personalidad, más repasitos y misiones secundarias
+  if (S.flags.done && await postGame(n)) return true;
   // 3) un repasito de lo importante: propósito, valores o tipos
   if (repasitoReady(n, m)){ await repasito(n); return true; }
   // 4) alguien te pide una mano
@@ -136,7 +138,7 @@ const IDEAS = [
 const PLACE = {'Fede': 'Brasil (planta alta)', 'Sahi': 'el patio, en la mesa de ping pong', 'Pimi': 'Archivos X (planta baja)', 'Sofi': 'Asteroide (planta alta)',
   'Agus': 'Guaná (planta alta)', 'Lía': 'Guaná (planta alta)', 'Agus y Lía': 'Guaná (planta alta)', 'Lu': 'Bienestar (planta baja)', 'Giuli': 'La Base', 'Alejo': 'La Base'};
 const placeOf = g => PLACE[g];
-const AUTO_Q = ['objetivo', 'clientes', 'repaso', 'encargo', 'bienvenida', 'anual', 'anual_equipo', 'fijo', 'senior', 'pimi_surf'];
+const AUTO_Q = ['secundaria', 'objetivo', 'clientes', 'repaso', 'encargo', 'bienvenida', 'anual', 'anual_equipo', 'fijo', 'senior', 'pimi_surf'];
 function nextStep(){
   if (!S) return '';
   if (welcomeStep() < 3) return `Hablá con ${WELCOME_NEXT[welcomeStep()]}.`;
@@ -158,9 +160,10 @@ function nextStep(){
       return p ? `Camino al Cliente del Año (nivel ${PROJECT_LVL}): ${QUESTS[p].desc()} Estás en el ${S.lvl}.` : `Seguí resolviendo problemas hasta el nivel ${PROJECT_LVL}: ahí te espera el Cliente del Año. Estás en el ${S.lvl}.`; }
     return teamTipsStep() || `Presentale la campaña del año al Cliente del Año, en la Sala del Directorio (planta baja).`;
   }
+  if (S.flags.anual && sideStep()) return sideStep();
   if (!S.flags.anual && teamTipsStep()) return teamTipsStep();
   if (!S.flags.anual) return `Presentale la campaña del año al Cliente del Año, en la Sala del Directorio (planta baja).`;
-  return S.lvl < 30 ? `Terminaste la inducción: el juego está completo. Si querés seguir, subí hasta el nivel 30 (estás en el ${S.lvl}) y completá la bitácora.` : '¡Terminaste la inducción y llegaste al nivel 30! Si querés, completá la bitácora.';
+  return S.lvl < 30 ? `Terminaste la inducción: el juego está completo. Si querés seguir, charlá con el equipo (te piden misiones secundarias), subí hasta el nivel 30 (estás en el ${S.lvl}) y completá la bitácora.` : '¡Terminaste la inducción y llegaste al nivel 30! Si querés, completá la bitácora.';
 }
 /* El cartelito "AHORA" no queda fijo: aparece unos segundos cuando cambia el próximo paso (y al empezar el día).
    Para verlo cuando quieras está el botón AYUDA (o la tecla H, o "Ayuda" en el menú de START). */
@@ -236,6 +239,7 @@ function xpIdeas(){
   for (const who of ['giuli', 'alejo']) if (S.flags.foundersMet && duoNext(who) >= 0 && !duoToday(who)) L.push(`Capacitación de ${who === 'giuli' ? 'diseño con Giuli' : 'redes con Alejo'}, en La Base.`);
   if (S.flags.fedeMet && mem().repaso !== gameDay()) L.push('La charla de cómo trabajamos con Fede, en Brasil.');
   if (!S.errand && welcomeStep() >= 3) L.push('Charlá con el equipo: a veces te piden una mano.');
+  if (S.flags.done && !S.side) L.unshift('Charlá con el equipo: después de la inducción te piden misiones secundarias y te cuentan más de ellos.');
   return L.slice(0, 3);
 }
 
@@ -317,13 +321,14 @@ const REP_MAX = 2; // como mucho dos por día
 function repasitoReady(n, m){
   const v = REP_VOICE[n.id]; if (!v || !S.flags.valores) return false;
   if (m.repDay !== gameDay()){ m.repDay = gameDay(); m.repToday = 0; }
-  if (m.repToday >= REP_MAX || (m.battles || 0) - (m.repAt ?? -99) < 4 || talksFor(n.id) < 2) return false;
+  const post = !!S.flags.done;
+  if (m.repToday >= REP_MAX + (post ? 2 : 0) || (m.battles || 0) - (m.repAt ?? -99) < (post ? 2 : 4) || talksFor(n.id) < 2) return false;
   // si te espera una recompensa o una ceremonia con esa persona, primero lo importante
   const nm = PEOPLE[n.id] || '';
   if (QUEST_ORDER.some(id => qState(id) === 'open' && !AUTO_Q.includes(id) && qReady(id) && String(QUESTS[id].giver || '').includes(nm))) return false;
   if ((n.id === 'agus' || n.id === 'lia') && S.lvl >= 15 && !S.flags.fijo) return false;
   if (n.id === 'fede' && S.lvl >= PROJECT_LVL && !S.flags.senior) return false;
-  return Math.random() < .3;
+  return Math.random() < (S.flags.done ? .4 : .3);
 }
 async function repasito(n){
   const m = mem(), v = REP_VOICE[n.id], who = n.id;
@@ -429,5 +434,135 @@ function stuckNow(step){
   if (m.stuckStep !== key){ m.stuckStep = key; m.stuckAt = {b, now}; return false; }
   const s = m.stuckAt || (m.stuckAt = {b, now});
   if (b - s.b >= STUCK_BATTLES || now - s.now >= STUCK_MIN){ m.stuckAt = {b, now}; return true; }
+  return false;
+}
+
+/* ================= DESPUÉS DEL FINAL: seguir conociendo al equipo =================
+   Terminada la inducción, el juego sigue: los personajes cuentan mucho más de sí mismos (charlas con su personalidad,
+   POST), los repasitos aparecen más seguido y hay misiones bien secundarias (SIDE) para seguir sumando experiencia. */
+const POST = {
+  fede: [['¿Sabés qué es lo que más me gusta de este laburo? Que nunca está terminado. Siempre hay una versión dos.', 'Hasta con el mate: lo cebo hace años y todavía le encuentro la vuelta. El agua nunca hervida, ¿eh? Esas cosas.'],
+    ['Cuando llegué en 2018 era diseñador. Pensaba que lo importante era que el diseño quedara lindo.', 'Después entendí que lo importante es que el equipo crezca. Lo lindo viene solo cuando el equipo está bien.'],
+    ['Te cuento algo: la bolsa de boxeo no es para pelear. Es para pensar.', 'Le doy un rato y la idea aparece. No sé por qué. Prueba y error, supongo.'],
+    ['¿Viste que pido mate todo el tiempo? No es solo por el mate. Bueno, un poco sí.', 'Es la excusa para que alguien suba, charlemos dos minutos y me cuente cómo viene. La ronda es eso.']],
+  sahi: [['Che, ¿sabés por qué tengo la camiseta en la silla? Cábala, crack.', 'La vez que no la traje se cayó el wifi, Don Logo pidió el logo más grande y perdió Boca. Todo el mismo día. No arriesgo más.'],
+    ['Extraño Buenos Aires, posta. Las medialunas, el ruido, el colectivo lleno.', 'Pero acá tengo el patio, la mesa de ping pong y a ustedes. Es como tener la Bombonera en casa, pero más tranqui.'],
+    ['¿Sabés qué es ser creativo? Es como Riquelme: ve el pase antes que nadie.', 'No corre más que el resto: piensa antes. Eso intento con cada idea. A veces sale un caño, a veces sale al lateral.'],
+    ['El otro día le enseñé a Lu a pegarle de revés. Ella me enseñó a tararear Morat.', 'Ahora yo tarareo en el ping pong y ella le pega de revés. Intercambio cultural, le dicen.']],
+  lu: [['¿Sabés cuál es mi secreto para tener energía? Dormir. No hay otro. Ocho horas. Bueno, siete y media.', 'Y agua. Y cantar. Y bailar en la cocina cuando nadie mira. Bueno, cuando Marga mira, que se ríe.'],
+    ['Sahi me dijo que "re cringe" ya no se usa. ¿Cómo que no se usa? ¡Si lo acabo de aprender!', 'Bueno, lo sigo usando igual. Si es cringe que lo use, mejor: lo uso con más ganas.'],
+    ['Una vez armé una pausa activa en La Base. Todos estirando, hasta Tato.', 'Bueno, Tato estiró cuando ya habíamos terminado. Pero estiró, que es lo que importa.'],
+    ['♪ Na-na-naaa... ♪ ¿Te gusta? La inventé recién. Es sobre el cafecito de Marga.', 'Tiene dos estrofas y un estribillo que dice "cafecito" muchas veces. Un hit, no lo dudes.']],
+  pimi: [['El finde fui a Rocha. Olas buenas. Me caí como veinte veces.', 'Pero la veintiuno salió. Con la pauta pasa igual: probás, medís, ajustás. Tranqui.'],
+    ['¿Sabés por qué estoy tan tranqui cuando se prende fuego todo? Porque si me pongo nervioso, se prende más.', 'Respiro, como un alfajor y arranco. En ese orden.'],
+    ['Con Lía tenemos un grupo, "Clics". Nos mandamos números a la noche.', 'Ella con signos de exclamación. Yo con un pulgar. Nos entendemos perfecto.'],
+    ['Estoy pensando una automatización que avise cuando hay medialunas en la cocina.', 'Todavía no existe. Pero sería mi mejor innovación. Sahi ya la quiere.']],
+  reni: [['¿Comiste? En serio te pregunto. Siempre te veo de acá para allá.', 'Vení, tomá un mate. Y contame cómo estás, que en el chat no se nota.'],
+    ['Te cuento un chisme de los buenos: Tato llegó a horario el martes. Toda la agencia lo comentó.', 'Él no se enteró de que lo comentamos. Obvio.'],
+    ['El reel del festejo tiene un montón de vistas. ¿Lo viste? Salís re bien.', 'Lo grabé con el celu y la luz de la ventana. No hace falta más: hace falta mirar bien.'],
+    ['Me encanta grabar al equipo cuando no se da cuenta. Ahí sale lo lindo.', 'Fede pensando con el mate, Sahi con los jueguitos, Lu cantando. La agencia es eso.']],
+  agus: [['¿Te cuento algo? Cuando arrancamos con Lía, en 2010, éramos dos y una idea.', 'Ella quería salir a vender ya. Yo quería armar el proceso primero. Hicimos las dos cosas. Así seguimos.'],
+    ['Como psicóloga te digo: a veces un "ok" es solo un "ok".', 'Y a veces es un "ok." con punto. Ese ya hay que charlarlo. ¿Y cómo te hace sentir eso? Perdón, me salió.'],
+    ['Lo que más me gusta de RRHH no son los procesos. Bueno, me encantan los procesos.', 'Pero lo que más me gusta es ver a alguien crecer. Como vos: de pasante hasta acá.'],
+    ['¿Sabés cuál es el mejor teambuilding? El mate de la mañana. No lo planifica nadie.', 'Bueno, yo lo planifico un poco. Pero que no se note.']],
+  lia: [['¿Sabés cuántos mates toma Fede por día? ¡Lo medí! ¡Catorce! ¡Promedio de la semana!', '¿Que para qué lo medí? ¡Para saberlo! ¡Ja! Bueno, también para comprar más yerba.'],
+    ['¡Somos minoría, pero medimos todo! Pimi y yo, contra todo el equipo de branding.', 'Ellos dicen "se siente bien". Yo digo "¿cuánto bien?". ¡Y nos queremos igual!'],
+    ['¡A mí los procesos me cuestan! ¡Lo admito! Agus los sigue al pie de la letra.', 'Yo quiero salir a hablar con el cliente ya. Entre las dos, la agencia anda. ¡Es la fórmula!'],
+    ['¡Lo que más me gusta es la primera reunión con un cliente nuevo! ¡Es como el primer día de clases!', '¡Escuchar qué necesita, pensar cómo medirlo y salir corriendo a hacerlo! Bueno, caminando. Agus me frena.']],
+  sofi: [['¿Comiste? Te dejé una manzana en la mesa de Asteroide. La roja, no la verde, que esa es de Tato.', 'Bueno, Tato no se va a dar cuenta. Pero por las dudas.'],
+    ['Soporte técnico me contestó un ticket. ¿Sabés de cuándo era? Del cumpleaños de Lía.', 'Del de este año, eh. Por suerte ya lo había arreglado yo. Les dije gracias igual. Con cariño.'],
+    ['Me gusta que la casa esté linda. Las plantas regadas, la fruta, las compus andando.', 'Nadie se da cuenta cuando todo funciona. Y está bien: esa es la idea.'],
+    ['Tato y yo somos un buen equipo. Yo me acuerdo de las cosas y él de los números.', 'Entre los dos, nos acordamos de todo. Bueno, casi.']],
+  tato: [['¿Vos estuviste en el festejo? ...Ah, el festejo era tuyo. Felicitaciones atrasadas. Otra vez.', 'Igual de la torta me acuerdo. De eso sí.'],
+    ['El reggae va un poquito atrás del tiempo. Por eso nunca me apuro.', 'Los números tampoco se apuran. Somos tres: el reggae, los números y yo. Tranquilos.'],
+    ['Hoy vine con dos medias distintas. Sofi se dio cuenta. Yo, recién cuando me lo dijo.', 'Igual el balance cerró perfecto. Eso sí.'],
+    ['¿Te conté que tengo una lista de reggae de catorce horas? ...¿Sí? ¿Te lo conté?', 'Bueno, ahora tiene quince. Le agregué una. La misma, dos veces. Sin querer.']],
+  alejo: [['Ayer revelé un rollo. Treinta y seis fotos. Salieron doce.', 'Las otras veinticuatro son de mi dedo. Igual me gustan: tienen textura.'],
+    ['Para mí cada reel es una peli corta: comienzo, conflicto y final.', 'Giuli dice que exagero. Después me pide que le arme la playlist para diseñar.']],
+  giuli: [['Tengo una libreta solo de letras que veo por la calle. Carteles viejos, etiquetas, menús.', 'Alejo me saca fotos mientras las dibujo. Somos una dupla rara, pero funciona.'],
+    ['Lo que más me gusta del diseño es cuando nadie nota que está ahí.', 'Si todo se entiende fácil, el diseño hizo su trabajo. Como el orden de carpetas: nadie lo aplaude, todos lo usan.']],
+  marga: [['Mi vida, ¿te mostré las fotos de mis nietas? Esta es la más chiquita. Esta la grande, en el acto.', 'Y esta soy yo en Venecia. Bueno, es una góndola. Yo estoy atrás, ¿me ves?'],
+    ['Corazón, ¿sabés hace cuánto estoy en la agencia? Desde que eran poquitos.', 'Los vi crecer a todos. Ahora te veo crecer a vos. Me pone contenta.'],
+    ['El año que viene quiero ir a Grecia. Las casitas blancas con el mar azul.', 'Ya junté folletos. Mi nieta me ayuda a buscar los pasajes en el celular.']],
+};
+const POST_MOOD = {fede: 'fede:feliz', sahi: 'sahi:risa', lu: 'lu:risa', agus: 'agus:feliz', lia: 'lia:risa'};
+async function postTalk(n){
+  const L = POST[n.id]; if (!L) return false;
+  const i = pick('post:' + n.id, L.map((_, k) => k));
+  const who = POST_MOOD[n.id] || n.id;
+  for (const t of L[i]) await say(t, who);
+  return true;
+}
+/* misiones secundarias: una por vez, cada una de alguien del equipo y con su estilo */
+const SIDE = {
+  sahi_revancha: {who: 'sahi', title: 'La revancha de Sahi', what: 'Sacale un punto a Sahi en el peloteo (mesa de ping pong del patio)', goal: 1, n: () => mem().ppWins || 0,
+    ask: 'Che, crack, quiero la revancha. Un peloteo, en la mesa del patio. Si me sacás un punto, te debo un dulce de leche del Río de la Plata.', done: '¡Me la sacaste otra vez! Bueno, la revancha de la revancha queda para el jueves. Tomá, lo prometido.'},
+  lu_pausa: {who: 'lu', title: 'Pausa activa', what: 'Resolvé 3 problemas en La Base y volvé con Lu a estirar', goal: 3, n: () => wildTotal(),
+    ask: '¡Te propongo algo! Resolvé tres problemas en La Base y después venís y estiramos juntos. ¡Pausa activa ganada!', done: '¡Arriba los brazos! ¡Respirá! ♪ Na-na-naaa ♪ ¡Ahora sí, como nuev{o}!'},
+  pimi_tool: {who: 'pimi', title: 'La herramienta nueva de Pimi', what: 'Resolvé 2 problemas técnicos (Wifi Caído o Bugsito) para probar la herramienta de Pimi', goal: 2, n: () => beatCount('wifi') + beatCount('bug'),
+    ask: 'Estoy probando una herramienta nueva. ¿Me ayudás? Resolvé dos problemas técnicos y me contás cómo anduvo. Tranqui.', done: 'Anduvo bien. La dejo. Gracias por probarla. Tomá, la mitad de mi alfajor. La mitad grande.'},
+  reni_reel: {who: 'reni', title: 'Un reel del equipo', what: 'Charlá con 3 personas del equipo para el reel de Reni', goal: 3, n: () => mem().postChats || 0,
+    ask: 'Estoy armando un reel del equipo. ¿Me das una mano? Charlá con tres personas, que yo voy grabando de lejos. Ni se dan cuenta.', done: '¡Quedó divino! Salís re natural. Ya está subido. ¿Comiste, igual? Tomá un mate.'},
+  tato_factura: {who: 'tato', title: 'La factura perdida', what: 'Tato perdió una factura. Preguntale a Sofi, en Asteroide, y llevásela', goal: 1, n: () => S.flags.facturaOk ? 1 : 0, step: true,
+    ask: 'Che, ¿no viste una factura? Era de... algo. La tenía acá. ¿Le preguntás a Sofi? Ella siempre sabe dónde están mis cosas.', done: '¡Mi factura! ¿Dónde estaba? ...¿En mi escritorio? Ah, mirá. Gracias. Te debo una. Me lo anoto. ...Acá.'},
+  giuli_ref: {who: 'giuli', title: 'Referencias para Giuli', what: 'Resolvé 4 problemas en La Base para la libreta de referencias de Giuli', goal: 4, n: () => wildTotal(),
+    ask: 'Estoy armando una libreta de referencias con los problemas de La Base. Resolvé cuatro y contame cómo eran. Para dibujarlos.', done: 'Ya los dibujé. Quedaron re lindos. El Bugsito es mi favorito. Gracias por las referencias.'},
+  alejo_toma: {who: 'alejo', title: 'Una toma para Alejo', what: 'Resolvé 2 problemas de caos (Scopecreep o Feedbackón): Alejo quiere filmar cómo se destraban', goal: 2, n: () => beatCount('scope') + beatCount('feedback'),
+    ask: 'Quiero filmar cómo se destraba el caos. Resolvé dos de caos, Scopecreep o Feedbackón, y yo filmo. Toma única, como en el cine.', done: 'Toma única. Bueno, tres tomas. Pero quedó como si fuera una. Gracias.'},
+  fede_v2: {who: 'fede', title: 'La versión dos', what: 'Entrená una vez más con Fede, en Brasil', goal: 1, n: () => mem().spars || 0,
+    ask: 'Ya sos Project Leader, ¿y? Siempre hay una versión dos. Entrenemos una vez más, salga como salga.', done: 'Eso. La versión dos siempre es mejor que la uno. Y la tres, mejor que la dos. Tomá, cebate uno.'},
+  lia_record: {who: 'lia', title: 'El récord de Lía', what: 'Resolvé 5 problemas en La Base: Lía los quiere en su tablero', goal: 5, n: () => wildTotal(),
+    ask: '¡Te tengo un objetivo medible! ¡Cinco problemas resueltos y los subo al tablero! ¡Quiero ver la curva!', done: '¡Cinco! ¡La curva sube! ¡Lo mido, lo celebro y lo mejoro! ¡Ja!'},
+  sofi_wifi: {who: 'sofi', title: 'Antes que soporte técnico', what: 'Resolvé 1 Wifi Caído antes de que conteste soporte técnico', goal: 1, n: () => beatCount('wifi'),
+    ask: 'Se cayó el wifi de nuevo. Ya mandé el ticket a soporte técnico. ¿Lo resolvés antes de que contesten? No es difícil, eh.', done: '¡Gracias! Soporte técnico todavía no leyó el ticket. Ya les voy a avisar que no hace falta. Con cariño.'},
+  marga_fotos: {who: 'marga', title: 'Las fotos de Lisboa', what: 'Volvé a hablar con Marga para ver las fotos de su viaje (está de 9 a 12)', goal: 1, n: () => S.flags.margaFotos ? 1 : 0, here: true,
+    ask: 'Corazón, ¿me das un ratito? Te quiero mostrar las fotos de Lisboa. Dejo el trapeador y volvé a hablarme, que las busco en el celu.', done: 'Mirá, este es el tranvía. Y esta soy yo comiendo un pastelito. Y acá, otra vez el tranvía, pero desde el otro lado. ¡Gracias por mirar, corazón!'},
+};
+const SIDE_MAX = 3; // por día
+function sideProg(){ const s = S.side; if (!s || !SIDE[s.id]) return 0; return Math.max(0, SIDE[s.id].n() - (s.base || 0)); }
+function sideReady(){ const s = S.side; return !!(s && SIDE[s.id] && sideProg() >= SIDE[s.id].goal); }
+function sideDesc(){ const s = S.side, d = s && SIDE[s.id]; if (!d) return 'Charlá con el equipo: cada tanto alguien te pide algo.';
+  return `${d.what}. Te lo pidió ${PEOPLE[d.who]}.` + (d.goal > 1 ? ` (${Math.min(d.goal, sideProg())}/${d.goal})` : '') + (sideReady() ? ` ¡Listo! Volvé con ${PEOPLE[d.who]}.` : ''); }
+function sideStep(){ const s = S.side, d = s && SIDE[s.id]; if (!d) return null;
+  if (sideReady()) return `¡Cumpliste "${d.title}"! Volvé con ${PEOPLE[d.who]}${placeOf(d.who) ? ', en ' + placeOf(d.who) : ''}.`;
+  return `Misión secundaria: ${d.what}${d.goal > 1 ? ` (${Math.min(d.goal, sideProg())}/${d.goal})` : ''}.`; }
+async function postGame(n){
+  if (!S.flags.done) return false;
+  const m = mem(), today = gameDay();
+  if (m.sideDay !== today){ m.sideDay = today; m.sideToday = 0; }
+  if (S.side && n.id !== SIDE[S.side.id]?.who) m.postChats = (m.postChats || 0) + 1;
+  // pasos especiales de algunas misiones
+  if (S.side && S.side.id === 'tato_factura' && n.id === 'sofi' && !S.flags.facturaOk){
+    await say('¿La factura de Tato? Está en su escritorio, abajo del parlante. Como siempre. Tomá, llevásela.', 'sofi');
+    await say('Y decile que la próxima la deje en la carpeta. Que tiene una carpeta. Con su nombre.', 'sofi');
+    S.flags.facturaOk = true; toast('Tenés la factura de Tato'); return true;
+  }
+  if (S.side && S.side.id === 'marga_fotos' && n.id === 'marga' && !S.flags.margaFotos) S.flags.margaFotos = true;
+  // cobrar la misión
+  if (S.side && SIDE[S.side.id].who === n.id && sideReady()){
+    const d = SIDE[S.side.id]; S.side = null; S.flags.facturaOk = false; S.flags.margaFotos = false;
+    await say(d.done, POST_MOOD[n.id] || n.id);
+    m.sides = (m.sides || 0) + 1;
+    await gainXP(Math.max(15, Math.floor(need(S.lvl) * .2)), sayN);
+    if (qState('secundaria') === 'open') qDone('secundaria');
+    return true;
+  }
+  // los repasitos, más seguido (repasitoReady lo afloja después del final)
+  if (repasitoReady(n, m)){ await repasito(n); return true; }
+  // una misión nueva (una por vez, hasta tres por día)
+  if (!S.side && m.sideToday < SIDE_MAX && Math.random() < .45){
+    const opts = Object.keys(SIDE).filter(id => SIDE[id].who === n.id);
+    if (opts.length){
+      const id = opts[pick('side:' + n.id, opts.map((_, i) => i))], d = SIDE[id];
+      await say(d.ask, POST_MOOD[n.id] || n.id);
+      const c = await choose(['¡Dale!', 'Ahora no'], {cancel: 1});
+      if (c === 0){ S.side = {id, base: d.n()}; S.flags.facturaOk = false; S.flags.margaFotos = false; m.sideToday++;
+        if (d.here && n.id === 'marga'){ S.side.base = 0; }
+        qReopen('secundaria'); return true; }
+      await say('Tranqui, cuando quieras.', n.id); return true;
+    }
+  }
+  // charlas con más personalidad
+  if (Math.random() < .5 && await postTalk(n)) return true;
   return false;
 }
