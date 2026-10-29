@@ -49,6 +49,9 @@ const fresh = (id, ev) => !!ev && mem().ack[id + ':' + ev.type] !== ev.id && Dat
 const ack = (id, ev) => { if (ev) mem().ack[id + ':' + ev.type] = ev.id; };
 const seenCount = () => Object.keys(EN).concat(BOSS_ORDER, ['anual']).filter(k => S.log[k]).length;
 /* Reacción a lo último que te pasó. Devuelve una frase o null y la marca como comentada. */
+/* las clientas llevan artículo: "con la Clienta Fantasma" (y si la frase arranca con el nombre, va en mayúscula) */
+const artName = n => /^Clienta /.test(n || '') ? 'la ' + n : (n || '');
+const capFirst = t => typeof t === 'string' && t ? t[0].toUpperCase() + t.slice(1) : t;
 function reaction(id, R){
   const m = mem();
   if (R.lowhp && hpPct() < .35 && pickChance(id + 'hp', .85)) return pick(id + ':lowhp', R.lowhp);
@@ -58,10 +61,10 @@ function reaction(id, R){
     if (R.loseP != null && Math.random() > R.loseP) return null;
     // si te ganó quien está hablando, habla en primera persona (nunca "perder contra Fede" dicho por Fede)
     if (m.lastLose.foe === id) return R.loseMe ? pick(id + ':loseMe', R.loseMe) : null;
-    return pick(id + ':lose', R.lose.map(f => () => f(m.lastLose.name, m.lastLose.foe)));
+    return capFirst(pick(id + ':lose', R.lose.map(f => () => f(artName(m.lastLose.name), m.lastLose.foe))));
   }
   if (R.boss && fresh(id, m.lastBoss)){ ack(id, m.lastBoss); const f = R.boss[m.lastBoss.foe]; return typeof f === 'function' ? f() : f; }
-  if (R.run && fresh(id, m.lastRun) && Math.random() < .6){ ack(id, m.lastRun); return pick(id + ':run', R.run.map(f => () => f(m.lastRun.name))); }
+  if (R.run && fresh(id, m.lastRun) && Math.random() < .6){ ack(id, m.lastRun); return capFirst(pick(id + ':run', R.run.map(f => () => f(artName(m.lastRun.name))))); }
   if (R.streak && m.stats.streak >= 3 && fresh(id, m.lastWin) && Math.random() < .5){ ack(id, m.lastWin); return pick(id + ':streak', R.streak); }
   if (R.level && (m.lvlSeen[id] ?? S.lvl) < S.lvl){ return pick(id + ':level', R.level); }
   return null;
@@ -1038,7 +1041,7 @@ async function talkReni(n){
   if (S.reniGift){
     S.reniGift = false;
     let l;
-    if (m.lastWin && fresh('reni', m.lastWin)){ ack('reni', m.lastWin); l = `¡Te grabé resolviendo a ${m.lastWin.name}! Saliste re concentrad{o}. Va para las stories.`; }
+    if (m.lastWin && fresh('reni', m.lastWin)){ ack('reni', m.lastWin); l = `¡Te grabé resolviendo a ${artName(m.lastWin.name)}! Saliste re concentrad{o}. Va para las stories.`; }
     else if (n.map === 'outside') l = pick('reni:out', ['¡Mirá estas aves del paraíso! Van para el reel. Vos también: ¡posá!', '¡Qué luz hay en el patio! Quedate quiet{o}... ¡grabando!', '¡Con la casona de fondo! Sonreí... ¡listo!', '¡La fuente de fondo queda espectacular! Quiet{o}... ¡listo!', '¡Con las guirnaldas atrás! Sonreí... ¡listo!']);
     else if (n.map === 'upstairs') l = pick('reni:up', ['¡Un video bajando la escalera! Despacito... ¡listo!', '¡Acá arriba hay una luz divina! Quiet{o}... ¡listo!', '¡La luz de la ventana está divina! Mirá para acá... ¡listo!', '¡Video de pasillo! Caminá normal... ¡listo!']);
     else l = pick('reni:gift', ['¡Quiet{o} ahí, {name}! ...¡Listo! ¡Salió hermoso!', '¡Ay, qué lindo te queda ese color! Video, video.', '¡Esta luz está divina! Sonreí... ¡listo!', '¡Te encontré! Para el reel del viernes.', '¡No te muevas! Ahí... ¡perfecto!']);

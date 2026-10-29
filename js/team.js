@@ -55,7 +55,7 @@ const ERRANDS = [
   {from: 'sahi', to: 'giuli', ask: 'Che, ¿le preguntás a Giuli qué le pareció mi idea? Pero preguntale a ella, eh: se habla con, no se habla de.', give: 'Me encanta que pregunte. Decile que es original, pero le falta lo estratégico. Que lo charlamos.', what: 'Preguntale a Giuli por la idea de Sahi'},
   {from: 'fede', to: 'lia', ask: 'Avisale a Lía que la pieza para el cliente sale el jueves, no el martes. Mejor escalar a tiempo que prometer y no cumplir.', give: '¡Jueves! ¡Anotado! ¡Gracias por avisar temprano! ¡Así sí se puede planificar!', what: 'Avisale a Lía que la pieza sale el jueves'},
   {from: 'agus', to: 'lu', ask: '¿Le preguntás a Lu si arma la pausa activa del jueves? El clima de la oficina lo cuidamos entre todos.', give: '¡Obvio! ♪ Ya tengo la playlist y todo ♪ Decile a Agus que cuente conmigo.', what: 'Preguntale a Lu por la pausa activa'},
-  {from: 'sofi', to: 'tato', ask: '¿Le recordás a Tato que el viernes es Picante y hay torta por los cumpleaños del mes? Si no, se entera el lunes.', give: '¿Torta? ¿El viernes? ...Ah, Picante. Bien. Gracias por avisar. ¿Ya pasó? Ah, no, todavía.', what: 'Recordale a Tato lo del Picante'},
+  {from: 'sofi', to: 'tato', ask: '¿Le recordás a Tato que el viernes es Picante y hay torta por los cumpleaños del mes? Si no, se entera el lunes.', give: '¿Torta? ¿El viernes? ...Ah, Picante. Bien. Gracias por avisar. ¿Ya pasó? Ah, no, todavía.', what: 'Recordale a Tato lo de la Picante'},
   {from: 'pimi', to: 'sofi', ask: 'Avisale a Sofi que se volvió a caer el wifi de arriba. Ella lo arregla antes de que soporte técnico conteste. Yo le mando el aviso; no dejo a nadie colgado.', give: '¡Ay, otra vez! Ya voy. A soporte le abro un ticket igual, para la colección. ¿Y vos, comiste algo?', what: 'Avisale a Sofi que se cayó el wifi de arriba'},
   {from: 'giuli', to: 'lia', ask: '¿Le llevás las piezas nuevas a Lía? Son AEIOU: actuales, estratégicas, impactantes, originales y útiles. Quiere medir cómo rinden.', give: '¡Ya las cargo en el tablero! ¡En tres minutos tengo los primeros números! ¿Que no hacía falta? ¡Ja!', what: 'Llevale las piezas nuevas a Lía'},
   {from: 'reni', to: 'sahi', ask: '¿Le preguntás a Sahi si podemos grabar el peloteo para el aniversario? El 21 de octubre se viene con todo.', give: '¡Obvio, crack! Y si hay Awards, me postulo a "mejor gambeta". Posta.', what: 'Preguntale a Sahi por el video del aniversario'},
@@ -107,7 +107,7 @@ async function teamExtras(n){
   if (!S.errand && m.errandsToday < ERRAND_MAX && talksFor(n.id) > 1 && Math.random() < .4){
     const opts = ERRANDS.filter(e => e.from === n.id && metNpc(e.to));
     if (opts.length){
-      const e = opts[rnd(opts.length)];
+      const e = opts[pick('errand:' + n.id, opts.map((_, i) => i))];
       await say(e.ask, n.id);
       const c = await choose(['Dale, ya voy', 'Ahora no puedo'], {cancel: 1});
       if (c === 0){ S.errand = {from: e.from, to: e.to}; m.errandsToday++; qReopen('encargo'); return true; }
@@ -398,6 +398,7 @@ function teamTipOpen(){ if (S.lvl >= PROJECT_LVL && (S.bosses || 0) >= 3 && !S.f
 async function teamTip(n){
   teamTipOpen();
   if (qState('anual_equipo') !== 'open' || !TEAM_TIPS[n.id] || (mem().tips || []).includes(n.id)) return false;
+  if (n.id === 'fede' && !S.flags.senior) return false; // primero la charla de Project Leader
   const m = mem(); m.tips = (m.tips || []).concat(n.id);
   const [t, mood] = TEAM_TIPS[n.id];
   await say(t, mood);

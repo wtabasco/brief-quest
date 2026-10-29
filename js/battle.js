@@ -150,7 +150,7 @@ const WILD_INTRO = {
   mail: ['"Asunto: (sin asunto)"', '"Te reenvío el hilo de 47 mensajes."', '"Esta reunión podría haber sido yo."'], deadline: ['"Tic, tac, tic, tac..."', '"¿Era para hoy o para ayer?"', '"¡El brief llegó! Lo necesitan para ayer."'],
 };
 function fxAnim(kind, who, ms){ B.fx = {kind, who, t0:G.t, ms}; return sleepMs(ms); }
-function nameOf(u){ return u.isP ? fullName() : (B.kind === 'wild' ? `${u.name} salvaje` : u.name); }
+function nameOf(u){ return u.isP ? fullName() : u.name; }
 const STATN = {atk:'ataque', def:'defensa', spd:'velocidad', eva:'evasión'};
 
 async function doMove(u, t, m, id){
@@ -165,7 +165,7 @@ async function doMove(u, t, m, id){
   const targetsFoe = m.p > 0 || fx.some(f => f.startsWith('foe') || f === 'sleep' || f === 'reset');
   if (targetsFoe){
     const acc = (m.a || 100) / 100 / stg(t.st.eva);
-    if (Math.random() > acc){ await bsay('¡Pero falló!', 900); return; }
+    if (Math.random() > acc){ await bsay(pick('b:miss', ['No llegó. Quedó en el aire.', 'Se fue al costado.', 'Ni lo registró.']), 900); return; }
   }
   if (m.p > 0){
     let power = m.p;
@@ -185,9 +185,9 @@ async function doMove(u, t, m, id){
       if (t.hp <= 0) break;
     }
     if (hits > 1) await bsay(`¡Pegó ${hits} veces!`, 800);
-    if (crits) await bsay('¡Golpe crítico!', 800);
-    if (eff > 1) await bsay('¡Es muy efectivo!', 900);
-    if (eff < 1) await bsay('No es muy efectivo...', 900);
+    if (crits) await bsay(pick('b:crit', ['¡En el punto justo!', '¡Justo donde dolía!']), 800);
+    if (eff > 1) await bsay(pick('b:eff', ['¡Le pegó de lleno! Ese tipo es su punto débil.', '¡Justo lo que necesitaba! Le pega fuerte.', '¡Ese tipo lo destraba!']), 900);
+    if (eff < 1) await bsay(pick('b:weak', ['Le hace poco: no es el tipo que lo destraba.', 'Rebotó. Probá con otro tipo.']), 900);
     if (t.hp <= 0) return;
     if (!t.isP && B.kind !== 'wild'){
       const tt = TAUNTS[t.key], r = t.hp / t.max;
@@ -201,7 +201,7 @@ async function doMove(u, t, m, id){
       await fxAnim('buff', (mm[1] === 'self' ? u : t).isP ? 'p' : 'e', 500);
       const tg = mm[1] === 'self' ? u : t, k = mm[2].toLowerCase(), d = +mm[3], before = tg.st[k];
       tg.st[k] = clamp(before + d, -6, 6);
-      const who = tg.isP ? `La ${STATN[k]} de ${fullName()}` : `La ${STATN[k]} de ${tg.name}`;
+      const who = `${k === 'atk' ? 'El' : 'La'} ${STATN[k]} de ${tg.isP ? fullName() : tg.name}`;
       if (tg.st[k] === before) await bsay(`${who} no puede ${d > 0 ? 'subir' : 'bajar'} más.`);
       else { if (d > 0) SFX.heal(); await bsay(`${who} ${d > 0 ? (d > 1 ? 'subió mucho' : 'subió') : 'bajó'}.`, 900); }
       continue;
@@ -248,7 +248,7 @@ async function runBattle(foe, kind){
   B.enter = G.t;
   await sleepMs(500);
   $('ebox').hidden = false;
-  if (kind === 'wild'){ await bsay(`¡Apareció un ${foe.name} salvaje!`, 1100); const wi = WILD_INTRO[foe.key]; if (wi && Math.random() < .55) await bsay(`${foe.name}: ${wi[rnd(wi.length)]}`, 1200); }
+  if (kind === 'wild'){ await bsay(pick('b:wild', [`¡Saltó un ${foe.name} de las pilas de pendientes!`, `¡Entre los pendientes apareció un ${foe.name}!`, `¡Un ${foe.name} te frena el paso!`]), 1100); const wi = WILD_INTRO[foe.key]; if (wi && Math.random() < .55) await bsay(`${foe.name}: ${wi[rnd(wi.length)]}`, 1200); }
   else if (kind === 'spar') await bsay('¡Entrenamiento con Fede!', 1200);
   else await bsay(`¡${foe.name} quiere una reunión!`, 1200);
   $('pbox').hidden = false;
@@ -348,7 +348,7 @@ async function learn(id, msg){
   await msg(`¡${fullName()} aprendió ${SK[id].n}!`);
   const r = equipNew(id);
   if (r && r.out) await msg(r.swap ? `${SK[id].n} entra a tu set: es tu primera habilidad ${TYPES[SK[id].t].n.toLowerCase()} activa. ${SK[r.out].n} queda en tu repertorio.` : `${SK[id].n} reemplaza a ${SK[r.out].n} en tu set: es del mismo tipo (${TYPES[SK[id].t].n.toLowerCase()}) y más fuerte. ${SK[r.out].n} queda en tu repertorio.`);
-  else if (!r) await msg('La nueva quedó en tu repertorio: podés activarla desde el menú, en Habilidades.');
+  else if (!r) await msg(pick('learn:repo', [`${SK[id].n} queda en tu repertorio: tu set ya tiene algo más fuerte de ese tipo.`, `${SK[id].n} va al repertorio. Si la querés usar, activala en Habilidades.`, `${SK[id].n} queda guardada en tu repertorio.`]));
   return true;
 }
 /* El set de 4 habilidades se arma por tipo: una creativa, una de estrategia, una técnica y una de calma, así siempre
@@ -399,7 +399,7 @@ async function battleFlow(foe, kind, key){
   if (res === 'win'){
     if (kind === 'spar' && ART_IMG['fede|cheer']){ B.cheer = G.t; SFX.win(); await sleepMs(500); }
     else { SFX.faint(); B.faint = G.t; await sleepMs(650); }
-    await bsay(kind === 'wild' ? `¡${foe.name} salvaje quedó resuelto!` : kind === 'spar' ? '¡Entrenamiento completo! Fede quedó conforme.' : `¡${foe.name} quedó conforme!`, 1100);
+    await bsay(kind === 'wild' ? `¡${foe.name} quedó resuelto!` : kind === 'spar' ? '¡Entrenamiento completo! Fede quedó conforme.' : `¡${capFirst(artName(foe.name))} quedó conforme!`, 1100);
     SFX.win();
     S.log[key].beaten++;
     const d = EN[key] || BOSS[key];
@@ -412,7 +412,7 @@ async function battleFlow(foe, kind, key){
       const need = kind === 'wild' ? LESSON_NEED : 1;
       const ll = kind === 'wild' ? (LESSON_LVL[key] || 0) : 0;
       if (S.log[key].beaten >= need && S.lvl < ll) await bsay(`Ya entendiste a ${foe.name}. Su lección (${SK[d.lesson].n}) la aprendés cuando llegues al nivel ${ll} y lo vuelvas a resolver.`, 1800);
-      else if (S.log[key].beaten >= need){ await bsay(`Resolver ${foe.name.startsWith('El ') ? 'al ' + foe.name.slice(3) : 'a ' + foe.name} te dejó una lección...`, 1200); await learn(d.lesson, bsay); }
+      else if (S.log[key].beaten >= need){ await bsay(`Resolver ${foe.name.startsWith('El ') ? 'al ' + foe.name.slice(3) : 'a ' + artName(foe.name)} te dejó una lección...`, 1200); await learn(d.lesson, bsay); }
       else await bsay(`Ya le estás agarrando la mano a ${foe.name}. Resolvelo ${need - S.log[key].beaten === 1 ? 'una vez más' : (need - S.log[key].beaten) + ' veces más'} y aprendés ${SK[d.lesson].n}.`, 1600);
     }
     if (kind === 'wild' && Math.random() < .1){ const k = Math.random() < .7 ? 'cafe' : 'alfajor'; S.items[k] = (S.items[k]||0) + 1; await bsay(`Encontraste un ${IT[k].n} entre los pendientes.`); }
@@ -438,7 +438,7 @@ async function battleFlow(foe, kind, key){
     const here = id => { const n = NPCS.find(x => x.id === id); return n && !n.away; };
     if (here('fede')){
       await say(pick('fede:rescue', ['Ey, {name}. ¿Estás bien? Bien ahí que lo intentaste.', '¡Arriba! Te traje hasta acá. Lo intentaste, y eso cuenta.', 'Uf, ese fue fuerte. Pero ya sabés cómo ataca.', 'Arriba, {name}. Quedarse sin energía es parte del oficio. Volver, también.', 'Tranqui. Te traje hasta acá. Tomá agua y pensá qué probarías distinto.', 'Ey. Bien ahí que fuiste. Lo que hoy no salió, mañana sale.']), 'fede');
-      await say(pick('fede:rescue2', [`Trabarte con ${foe.name} también es parte de aprender. Pensá qué cambiarías y volvé a intentarlo.`, 'La próxima probá otro tipo de habilidad. Cambia todo.', 'Respirá, recargá y volvé. Así se aprende acá.', 'Mirá de qué tipo es y elegí lo que más le pega. Probar, aprender, repetir.', 'Volvé cuando quieras. La versión dos siempre sale mejor.']), 'fede');
+      await say(pick('fede:rescue2', [`Trabarte con ${artName(foe.name)} también es parte de aprender. Pensá qué cambiarías y volvé a intentarlo.`, 'La próxima probá otro tipo de habilidad. Cambia todo.', 'Respirá, recargá y volvé. Así se aprende acá.', 'Mirá de qué tipo es y elegí lo que más le pega. Probar, aprender, repetir.', 'Volvé cuando quieras. La versión dos siempre sale mejor.']), 'fede');
     } else await say('Fede ya se fue por hoy, así que fuiste a recuperarte a Bienestar por tu cuenta. Trabarse también es parte de aprender.');
     await say(`Aprendiste del error: +${xp} de experiencia.`);
     await gainXP(xp, sayN);
