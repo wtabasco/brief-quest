@@ -14,37 +14,35 @@ function crispSrc(src){
     catch(e){ res(src); } }; im.onerror = () => res(src); im.src = src; });
 }
 const CRISP_ON = (() => { try { return matchMedia('(pointer: coarse)').matches; } catch(e){ return false; } })(); // solo en el celular; en la compu, como siempre
-/* cambia la imagen sin que se vea un instante la anterior: hasta que la nueva está lista, el retrato queda oculto */
-function setPic(img, url){
-  if (img.getAttribute('src') === url){ img.style.visibility = ''; return; }
-  img.style.visibility = 'hidden';
-  img.onload = img.onerror = () => { if (img.getAttribute('src') === url) img.style.visibility = ''; };
-  img.src = url;
-  if (img.complete && img.naturalWidth) img.style.visibility = '';
+/* Retratos listos de antemano: cada imagen se decodifica una vez y queda guardada. Al hablar, la caja recién cambia
+   cuando la cara nueva ya está lista, así nunca se ve (ni un instante) la del último con quien hablaste. */
+const PIC_WARM = [], PIC_READY = {};
+function picReady(url){
+  if (PIC_READY[url]) return PIC_READY[url];
+  return PIC_READY[url] = new Promise(res => { const im = new Image(); PIC_WARM.push(im);
+    const ok = () => res(url); im.onload = () => (im.decode ? im.decode().then(ok, ok) : ok()); im.onerror = ok; im.src = url; });
 }
-function crispPortrait(img, src){
-  if (!CRISP_ON){ setPic(img, src); return; }
-  img.dataset.want = src;
-  if (CRISP_OK[src]){ setPic(img, CRISP_OK[src]); return; }
-  setPic(img, src);
-  crispSrc(src).then(u => { if (img.dataset.want === src && u !== src){ const im = new Image(); im.onload = () => { if (img.dataset.want === src) img.src = u; }; im.src = u; } });
-}
-/* en la compu, deja decodificados todos los retratos (así el primero de cada uno no tarda) */
-const PIC_WARM = [];
-setTimeout(() => { if (CRISP_ON) return; try { const all = Object.values(PORTRAITS).concat(typeof PORTRAIT_MOODS !== 'undefined' ? Object.values(PORTRAIT_MOODS).flatMap(m => Object.values(m)) : []);
-  all.forEach(u => { const im = new Image(); im.src = u; if (im.decode) im.decode().catch(() => {}); PIC_WARM.push(im); }); } catch(e){} }, 1200);
-/* precarga los retratos para que la primera vez ya aparezcan bien */
-setTimeout(() => { if (!CRISP_ON) return; try { Object.values(PORTRAITS).forEach(crispSrc); if (typeof PORTRAIT_MOODS !== 'undefined') Object.values(PORTRAIT_MOODS).forEach(m => Object.values(m).forEach(crispSrc)); } catch(e){} }, 1500);
+/* deja preparados todos los retratos al cargar (en el celular, los agrandados) */
+setTimeout(() => { try { const all = Object.values(PORTRAITS).concat(typeof PORTRAIT_MOODS !== 'undefined' ? Object.values(PORTRAIT_MOODS).flatMap(m => Object.values(m)) : []);
+  all.forEach(u => CRISP_ON ? crispSrc(u).then(picReady) : picReady(u)); } catch(e){} }, 800);
 function hideDlg(){ $('dlg').hidden = true; }
-/* prepara la caja de diálogo (retrato con expresión y nombre) */
-function prepDlg(who, opt){
+/* prepara la caja de diálogo (retrato con expresión y nombre): espera a que el retrato esté listo y recién ahí
+   cambian juntos el retrato, el nombre y la caja */
+async function prepDlg(who, opt){
   const dlg = $('dlg'), pic = $('dlgPic'), nm = $('dlgName');
-  dlg.hidden = false; dlg.classList.toggle('battle', G.mode === 'battle');
   const [wk, mood] = (who || '').split(':');
   const src = (mood && typeof PORTRAIT_MOODS !== 'undefined' && PORTRAIT_MOODS[wk] && PORTRAIT_MOODS[wk][mood]) || PORTRAITS[wk];
-  if (wk && src){ crispPortrait(pic, src); pic.hidden = false; } else pic.hidden = true;
+  let url = null;
+  if (wk && src){
+    if (CRISP_ON && !CRISP_OK[src]) await Promise.race([crispSrc(src), sleepMs(300)]);
+    url = (CRISP_ON && CRISP_OK[src]) || src;
+    await Promise.race([picReady(url), sleepMs(800)]);
+  }
+  if (url){ if (pic.getAttribute('src') !== url) pic.src = url; pic.hidden = false; } else pic.hidden = true;
   nm.textContent = wk ? (PEOPLE[wk] || wk) : (opt.name || '');
   nm.hidden = !nm.textContent;
+  dlg.classList.toggle('battle', G.mode === 'battle');
+  dlg.hidden = false;
 }
 /* si el texto no entra en la caja, se parte en páginas (mejor después de un punto) */
 function fitsDlg(text){ const tx = $('dlgText'), body = tx.parentElement; tx.textContent = text; return tx.offsetTop - body.offsetTop + tx.scrollHeight <= body.clientHeight + 1; }
@@ -60,7 +58,7 @@ function paginate(text){
   return pages.length ? pages : [text];
 }
 async function say(text, who=null, opt={}){
-  prepDlg(who, opt);
+  await prepDlg(who, opt);
   const pages = paginate(fmt(text));
   for (const pg of pages) await sayPage(pg, opt);
 }
