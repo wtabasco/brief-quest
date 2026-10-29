@@ -46,7 +46,7 @@ const SK = {
   nombrar:{n:'Nombrar bien',t:'TEC',p:55,a:100,pp:15,fx:'selfSpd+1',d:'Lección de Archivo_final_v7. Daña y sube tu velocidad.'},
   reiniciar:{n:'Reiniciar',t:'TEC',p:0,a:100,pp:6,fx:'heal35',d:'Lección de Bugsito. Apagar y prender. Recuperás energía.'},
   datos:{n:'Datos del celu',t:'TEC',p:50,a:100,pp:15,pri:1,d:'Lección de Wifi Caído. Ataca primero.'},
-  responder:{n:'Responder en el día',t:'CAL',p:60,a:100,pp:12,d:'Lección de Mailfantasma. La bandeja vacía es poder.'},
+  responder:{n:'Responder en el día',t:'CAL',p:60,a:100,pp:12,d:'Lección de Fantasmail. La bandeja vacía es poder.'},
   mastiempo:{n:'Pedir más tiempo',t:'CAL',p:40,a:100,pp:12,fx:'foeSpd-1',d:'Lección de Deadlinito. Daña y baja la velocidad del rival.'},
   explota:{n:'Idea que explota',t:'CRE',p:90,a:95,pp:8,d:'Lección de la Clienta Explosiva.'},
   argumentar:{n:'Argumentar',t:'EST',p:85,a:95,pp:8,d:'Lección de Don Logo. Con datos, cualquier discusión se ordena.'},
@@ -71,7 +71,7 @@ const SKILL_HOW = {
   redes: 'Alejo: terminá sus capacitaciones de redes y ponelas en práctica en 6 desafíos. Nivel 11.',
   dupla: 'Giuli y Alejo: completá la práctica con los dos. Nivel 15.',
   alcance: 'Resolvé 3 Scopecreep. Nivel 5.', mail: 'Resolvé 3 Reunionauro. Nivel 6.', nombrar: 'Resolvé 3 Archivo_final_v7. Nivel 7.', datos: 'Resolvé 3 Wifi Caído. Nivel 8.',
-  defender: 'Resolvé 3 Feedbackón. Nivel 9.', reiniciar: 'Resolvé 3 Bugsito. Nivel 10.', responder: 'Resolvé 3 Mailfantasma. Nivel 12.', mastiempo: 'Resolvé 3 Deadlinito. Nivel 13.',
+  defender: 'Resolvé 3 Feedbackón. Nivel 9.', reiniciar: 'Resolvé 3 Bugsito. Nivel 10.', responder: 'Resolvé 3 Fantasmail. Nivel 12.', mastiempo: 'Resolvé 3 Deadlinito. Nivel 13.',
   carpetas: 'Fede: hacé las cinco capacitaciones de orden de carpetas (desde el principio) y ponelas en práctica en 4 desafíos. Nivel 5.',
   fases: 'Sahi: hacé las cinco capacitaciones del proceso de campañas (desde el nivel 15) y ponelas en práctica en 8 desafíos. Nivel 17.', campana: 'Presentale la campaña del año al Cliente del Año, en la Sala del Directorio. Nivel 25.', explota: 'Destrabá a la Clienta Explosiva.', argumentar: 'Destrabá a Don Logo.', seguimiento: 'Destrabá a la Clienta Fantasma.'};
 
@@ -88,7 +88,7 @@ const EN = {
     mv:[{n:'Cambio de último momento',p:25,fx:'reset',w:1},{n:'¿Y si probamos en rojo?',p:45,w:2}]},
   bug:{n:'Bugsito',t:'BUG',spr:'bug',k:[.9,1.2,.9,1.1],xp:50,lesson:'reiniciar',d:'En tu compu no aparece. En la del cliente, siempre.',
     mv:[{n:'Funciona en mi compu',p:35,fx:'foeSpd-1',w:2},{n:'Pantallazo azul',p:75,a:65,w:1}]},
-  mail:{n:'Mailfantasma',t:'PRES',spr:'mail',k:[1,1,1,1.1],xp:52,lesson:'responder',d:'Asunto: RE: RE: RE: RE: Urgente (sin texto).',
+  mail:{n:'Fantasmail',t:'PRES',spr:'mail',k:[1,1,1,1.1],xp:52,lesson:'responder',d:'Asunto: RE: RE: RE: RE: Urgente (sin texto).',
     mv:[{n:'RE: RE: RE: Urgente',p:45,w:2},{n:'Copia a todos',p:0,fx:'foeDef-1',w:1}]},
   deadline:{n:'Deadlinito',t:'PRES',spr:'deadline',k:[1,1.1,1,1.2],xp:56,lesson:'mastiempo',d:'Cuanto más dura el desafío, más fuerte pega.',
     mv:[{n:'Tic tac',p:20,fx:'tictac',w:2},{n:'Para ayer',p:55,w:1}]},
