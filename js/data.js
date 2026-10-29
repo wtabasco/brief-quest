@@ -157,8 +157,7 @@ const need = L => 12 + L*L*5;
 /* El rol del jugador avanza con el nivel y aparece antes de su nombre: Pasante hasta el 14; en el 15 queda fijo y
    pasa a Social (Social Manager); en el 25, Project (Project Leader). Al lado del nombre va la versión corta (n);
    en los diálogos de los ascensos, el cargo completo (full). Los celebran Agus y Lía (RRHH) y Fede. */
-const CLIENT_LVL = {fantasma: 10, logo: 17, explote: 22, anual: 27}; // los clientes tienen nivel fijo
-const FINAL_LVL = {min: 22, up: 1}; // la Gran Presentación crece con vos
+const CLIENT_LVL = {fantasma: 10, logo: 17, explote: 22, anual: 25}; // los clientes tienen nivel fijo
 const PROJECT_LVL = 25; // a Project Leader (y se abre la Sala del Directorio)
 const ROLES = [{lvl: 1, n: 'Pasante', full: 'Pasante'}, {lvl: 15, n: 'Social', full: 'Social Manager'}, {lvl: PROJECT_LVL, n: 'Project', full: 'Project Leader'}];
 const roleAt = lvl => ROLES.filter(r => lvl >= r.lvl).pop();

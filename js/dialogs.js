@@ -47,7 +47,7 @@ const sinceTalk = id => Date.now() - (mem().lastTalk[id] || 0);
 const talks = id => mem().talks[id] || 0;
 const fresh = (id, ev) => !!ev && mem().ack[id + ':' + ev.type] !== ev.id && Date.now() - ev.at < 20 * 60e3;
 const ack = (id, ev) => { if (ev) mem().ack[id + ':' + ev.type] = ev.id; };
-const seenCount = () => Object.keys(EN).concat(BOSS_ORDER, ['final']).filter(k => S.log[k]).length;
+const seenCount = () => Object.keys(EN).concat(BOSS_ORDER, ['anual']).filter(k => S.log[k]).length;
 /* Reacción a lo último que te pasó. Devuelve una frase o null y la marca como comentada. */
 function reaction(id, R){
   const m = mem();
@@ -714,16 +714,27 @@ async function talkFounders(n){
   }
   if (S.bosses >= 3 && !S.flags.card){
     if (me === 'lia'){
-      await say('¡{name}! ¡Los tres clientes quedaron conformes! ¡Ahora viene lo más grande: la Gran Presentación!', 'lia:feliz');
-      await say('Es en la Sala de Reuniones, la biblioteca de la planta baja. Viene todo el equipo. Te esperamos ahí.', 'agus:feliz');
+      await say('¡{name}! ¡Los tres clientes quedaron conformes! ¡Ahora viene el más grande: el Cliente del Año!', 'lia:feliz');
+      await say('Lo atiende un Project Leader, así que te espera cuando llegues al nivel 25, en la Sala del Directorio. Para llegar, te armamos un plan.', 'agus:feliz');
+      await say('¡Cuatro desafíos! ¡Cada uno que cumplas, vení a contarnos y suma experiencia! ¡Están en Tareas!', 'lia');
     } else {
-      await say('{name}, los tres clientes quedaron conformes. Ahora viene lo más grande: la Gran Presentación.', 'agus:feliz');
-      await say('¡En la Sala de Reuniones, la biblioteca de abajo! ¡Viene todo el equipo! ¡Te esperamos ahí!', 'lia:feliz');
+      await say('{name}, los tres clientes quedaron conformes. Ahora viene el más grande: el Cliente del Año.', 'agus:feliz');
+      await say('¡Lo atiende un Project Leader! ¡Te espera cuando llegues al nivel 25, en la Sala del Directorio! ¡Y para llegar, te armamos un plan!', 'lia:feliz');
+      await say('Cuatro desafíos. Cada vez que cumplas uno, vení a contarnos: suma experiencia. Los tenés en Tareas.', 'agus');
     }
     S.flags.card = true; SFX.learn();
-    if (qState('tarjeta')) qDone('tarjeta'); qOpen('terraza'); return;
+    if (qState('tarjeta')) qDone('tarjeta'); for (const id of PLAN_Q) qOpen(id); return;
   }
-  if (S.flags.card && !S.flags.done){ await presentation(me); return; }
+  // el plan: cada desafío cumplido suma experiencia
+  { const id = PLAN_Q.find(q => qState(q) === 'open' && qReady(q));
+    if (id){
+      await say(pick(me + ':plan', me === 'lia' ? ['¡Cumpliste "' + QUESTS[id].title + '"! ¡Lo anoto en el tablero!', '¡Otro desafío del plan, listo! ¡Así se avanza: medible y a tiempo!'] : ['Cumpliste "' + QUESTS[id].title + '". Se nota el camino que hiciste.', 'Otro desafío del plan. Paso a paso, como tiene que ser.']), me === 'lia' ? 'lia:feliz' : 'agus:feliz');
+      qDone(id); await gainXP(Math.max(60, Math.floor(need(S.lvl) * .35)), sayN);
+      const left = PLAN_Q.filter(q => qState(q) !== 'done').length;
+      if (!left) await say(S.lvl >= PROJECT_LVL ? 'Plan completo. Ya sos Project Leader: el Cliente del Año te espera en la Sala del Directorio.' : `Plan completo. Ahora seguí resolviendo problemas hasta el nivel ${PROJECT_LVL}: ahí te espera el Cliente del Año.`, me === 'lia' ? 'lia' : 'agus');
+      return;
+    }
+  }
   if (S.bosses >= 2 && !qState('consejo2') && qState('consejo') === 'done'){
     await say('Ya pasaste por dos clientes. Creemos que estás para probar el otro camino también.', me);
     await say(S.flags.path === 'lia' ? 'Probá mi consejo, el de la calma, en tres desafíos y vemos qué aprendés.' : '¡Probá mi consejo, el de ir a full, en tres desafíos y medimos qué aprendés!', S.flags.path === 'lia' ? 'agus' : 'lia');
@@ -749,7 +760,7 @@ async function talkFounders(n){
   if (me === 'lia' && !S.liaKpi && started && b - (m.kpiAskAt ?? -99) >= 2){ m.kpiAskAt = b; await kpiOffer(); noteTalk('founders'); return; }
   // la campaña a cuatro manos: la primera vez apenas cumpliste el consejo, después cada tanto
   if (qState('consejo') === 'done' && b - (m.duoAt ?? -99) >= 3 && (m.duoAt == null || Math.random() < .45)){ await duoCampaign(me); noteTalk('founders'); return; }
-  if (S.bosses >= 1 && !qState('tarjeta') && Math.random() < .5){ await say(me === 'lia' ? '¡Cuando destrabes a los tres clientes, vení a vernos! ¡Te tenemos preparada la Gran Presentación!' : 'Cuando destrabes a los tres clientes, vení a vernos. Te tenemos preparada la Gran Presentación.', me); qOpen('tarjeta'); return; }
+  if (S.bosses >= 1 && !qState('tarjeta') && Math.random() < .5){ await say(me === 'lia' ? '¡Cuando destrabes a los tres clientes, vení a vernos! ¡Te tenemos preparado algo grande!' : 'Cuando destrabes a los tres clientes, vení a vernos. Te tenemos preparado algo grande.', me); qOpen('tarjeta'); return; }
   if (me === 'agus' && talks('agus') >= 2 && b - (m.dinAt ?? -99) >= 3 && Math.random() < .4){ await agusDinamica(); noteTalk('founders'); return; }
   if (me === 'lia' && b >= 3 && b - (m.boardAt ?? -99) >= 4 && Math.random() < .5){
     await say(pick('lia:boardask', ['¡Te actualicé el tablero! ¿Lo querés ver?', '¡Tengo números nuevos tuyos! ¿Los vemos?', '¡Pará, pará! Antes de seguir: ¿viste cómo vienen tus números?']), 'lia:feliz');
@@ -1048,50 +1059,10 @@ async function talkReni(n){
   await say(pick('reni:no', RENI.no), 'reni');
 }
 
-/* ================= LA GRAN PRESENTACIÓN =================
-   En la Sala de Reuniones (la biblioteca de la planta baja), con todo el equipo. Cuando destrabás a los tres
-   clientes, Agus y Lía bajan a esperarte ahí (al lado de la mesa, en la punta sin silla); también se arranca desde
-   la tele de la punta de la mesa. Después de la presentación vuelven a Guaná. */
-const FOUNDERS_HOME = {agus: [14, 4, 'right', 'upstairs'], lia: [20, 4, 'left', 'upstairs']};
-const FOUNDERS_SALA = {agus: [18, 3, 'left', 'office'], lia: [18, 4, 'left', 'office']};
-function placeFounders(force){
-  if (!S) return;
-  const sala = S.flags.card && !S.flags.done;
-  for (const id of ['agus', 'lia']){
-    const n = NPCS.find(x => x.id === id), [x, y, d, map] = (sala ? FOUNDERS_SALA : FOUNDERS_HOME)[id];
-    if (n.map === map && n.hx === x && n.hy === y) continue;
-    if (!force && n.map === CURMAP.id && onScreen(n)) continue;
-    Object.assign(n, {map, x, y, hx: x, hy: y, dir: d, home: d, mv: null});
-  }
-}
-async function presentation(me){
-  if (!S.flags.done){
-    if (me === 'tv') await say('La tele de la sala ya tiene tu presentación cargada. El equipo se va acomodando alrededor de la mesa.');
-    else if (!S.flags.gpIntro){
-      S.flags.gpIntro = true;
-      if (me === 'lia'){
-        await say('¡Llegó el momento! ¡La Gran Presentación! ¡Viene todo el equipo y yo tengo el cronómetro listo! ¡Ja!', 'lia:feliz');
-        await say('Respirá hondo. Todo lo que aprendiste ya está en vos: con el equipo, con los clientes y con los procesos.', 'agus:feliz');
-      } else {
-        await say('Llegó el momento: la Gran Presentación. Todo lo que aprendiste ya está en vos: con el equipo, con los clientes y con los procesos.', 'agus:feliz');
-        await say('¡Viene todo el equipo! ¡La tele ya está prendida y yo tengo el cronómetro listo! ¡Ja!', 'lia:feliz');
-      }
-    } else await say(pick(me + ':gpback', me === 'lia' ? ['¡Volviste! ¿Ahora sí? ¡La sala está lista!', '¡Acá estamos! ¡El equipo ya se está sentando!'] : ['¿Ahora sí? Tranqui, te esperamos lo que haga falta.', 'Acá estamos. Cuando quieras, arrancamos.']), me === 'lia' ? 'lia:feliz' : 'agus');
-    const c = await choose(['¡Arranquemos!', 'Prepararme antes'], {cancel: 1});
-    if (c !== 0){
-      if (me === 'tv') await say('Dejás la presentación lista en la tele. Cuando vuelvas, arrancamos.');
-      else await say(pick(me + ':gpwait', me === 'lia' ? ['¡Dale! ¡Pero no tardes, que el cronómetro ya está corriendo! ¡Ja! Mentira.', '¡Andá, preparate! ¡Acá te esperamos!'] : ['Bien. Prepararse también es parte del trabajo. Acá te esperamos.', 'Andá tranqui. La sala no se va a ningún lado.']), me);
-      return;
-    }
-  } else {
-    await say('La tele todavía tiene tu presentación. ¿La das de nuevo?');
-    if (await choose(['Presentar de nuevo', 'Ahora no'], {cancel: 1}) !== 0) return;
-  }
-  hideDlg();
-  const res = await bossBattle('final', 'final');
-  if (res === 'win' && !S.flags.done){ S.flags.done = true; qDone('terraza'); if (qState('objetivo') === 'open') qDone('objetivo'); await ending(); qOpen('anual'); placeFounders(); }
-  else if (res === 'win') await say('Impecable. Como siempre que se prepara bien.', 'agus:feliz');
-}
+/* ================= EL PLAN HACIA EL CLIENTE DEL AÑO =================
+   Cuando destrabás a los tres clientes, Agus y Lía te dan cuatro desafíos (en Tareas). Cada uno cumplido, al
+   contárselo, suma experiencia. El Cliente del Año (nivel 25) es el cierre del juego. */
+const PLAN_Q = ['plan_base', 'plan_fede', 'plan_equipo', 'plan_repaso'];
 
 /* ================= SOFI Y TATO: ASTEROIDE (Administración, planta alta) =================
    Sofi se ocupa de la oficina: cuida a todos, que la casa esté linda, que haya fruta, que anden las compus y el
@@ -1311,9 +1282,6 @@ async function talkBoss(key, n){
 
 
 async function ending(){
-  await say('Eso fue la Gran Presentación. Bienvenid{o} de verdad a la casa, {name}.', 'agus:feliz');
-  await say('¡Y lo medí: la sala entera aplaudió! ¡Récord de aplausos! ¡Ja!', 'lia:risa');
-  await say('¿Viste? Lo importante es todo lo que aprendiste para llegar hasta acá.', 'fede');
   await repasoFinal(true);
   await say('¡Golazo, crack! ¡Esto se festeja con asado!', 'sahi');
   await say('Con calma...', 'agus:feliz');
@@ -1325,8 +1293,8 @@ async function ending(){
   await say('¡Foto grupal! ¡Todos juntos! ...¡Listo! Va directo a las redes.', 'reni');
   await say('La programo para las siete, que es cuando más se ve. Y con subtítulos.', 'alejo');
   await say('Ya la guardé: bien nombrada y en su carpeta. Como corresponde.', 'giuli');
-  await say('La Gran Presentación fue un éxito. La agencia celebra.');
-  await say('FIN. ¿O el lunes que viene entra otro brief? Podés seguir jugando, completar la bitácora y llegar al nivel 25: en la Sala del Directorio te espera el Cliente del Año.');
+  await say('La campaña del año fue un éxito. La agencia celebra.');
+  await say('FIN. ¿O el lunes que viene entra otro brief? Podés seguir jugando: completar la bitácora y llegar al nivel 30.');
 }
 
 
@@ -1527,6 +1495,9 @@ async function lvlGate(n){
    El cliente más difícil de la agencia. Hay que presentarle la campaña del año: todo lo aprendido, en una reunión. */
 async function talkAnual(n){
   const d = BOSS.anual;
+  if (!S.flags.anual && (S.bosses || 0) < 3){ await say('¿Ya te ocupaste de los otros tres clientes? Primero ellos. Yo soy el postre. Bueno, el plato principal. Bueno, el banquete.', bossWho('anual')); return; }
+  teamTipOpen();
+  if (!S.flags.anual && !teamTipsDone()){ await say(pick('anual:solo', ['¿Viniste sol{o}? La campaña del año nunca es de una sola persona. Hablá con tu equipo, que cada uno algo te va a decir. Te espero.', 'Antes de presentarme nada: ¿qué dice tu equipo? Todos. Hasta el que se entera tarde. Andá y volvé.']), bossWho('anual', 'serio')); return; }
   if (S.flags.anual){ await say(pick('anual:post', ['La campaña del año. Así se presenta. Nos vemos el año que viene: vayan pensando.', 'Ya la aprobó el directorio. Y mi familia. Y el directorio de mi familia.', 'Mandé a enmarcar la presentación. La voy a colgar en el living. Y en el baño.', 'Hace años que no me sorprendían. Gracias.']), bossWho('anual', 'feliz')); return; }
   if (!S.flags.met_anual){
     S.flags.met_anual = true;
@@ -1534,6 +1505,7 @@ async function talkAnual(n){
   } else await say(pick('anual:back', ['¿Volviste? Bien. El directorio no espera, pero yo sí. Un ratito.', 'La campaña del año no se improvisa. ¿Ya la tenés?']), bossWho('anual'));
   const c = await choose(['Presentar la campaña del año', 'Prepararme antes'], {cancel: 1});
   if (c !== 0){ await say(pick('anual:later', ['Preparala bien. Yo voy a estar acá, sentado en la cabecera.', 'Andá. Hablá con tu equipo: las mejores campañas nunca son de una sola persona.']), bossWho('anual', 'sorpresa')); return; }
+  if (!S.flags.anual) S.buff = 'equipo';
   hideDlg();
   const res = await bossBattle('anual', 'final');
   if (res === 'win'){
@@ -1543,6 +1515,7 @@ async function talkAnual(n){
     await say('¡Sabía que lo ibas a lograr! ¿Te acordás de tu primer entrenamiento? Mirá hasta dónde llegaste.', 'fede:feliz');
     await say('Esto es lo que pasa cuando alguien aprende de todos. Bienvenid{o} a otro nivel.', 'agus:feliz');
     await say('¡Lo medí! ¡Récord histórico de la agencia! ¡Ya está en el tablero!', 'lia:risa');
+    if (!S.flags.done){ S.flags.done = true; if (qState('objetivo') === 'open') qDone('objetivo'); await ending(); }
   }
 }
 

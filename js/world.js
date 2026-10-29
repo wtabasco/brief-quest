@@ -189,7 +189,6 @@ async function houseThing(ch, tx){
   G.busy = true;
   try {
     if (ch === 'J'){ await liaBoardLook(); return; }
-    if (ch === 'N' && tx < 22 && S.flags.card){ await presentation('tv'); return; }
     if (ch === 'base14'){ await valuesLook(); return; }
     if (ch === 'H' && (zoneAt(tx, 2) || {}).n === 'Brasil'){ await statusBoardLook(); return; }
     if (ch === 'c'){ // la cafetera de Agus y Lía convida un café cada tanto

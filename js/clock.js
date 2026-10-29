@@ -38,7 +38,6 @@ function onScreen(n){
 }
 /* nadie aparece ni desaparece delante tuyo: se van (o llegan) cuando no los estás mirando */
 function updatePresence(force){
-  placeFounders(force);
   for (const n of NPCS){
     const want = shouldBeHere(n);
     if (want === !n.away) continue;
@@ -51,7 +50,7 @@ function placeDay(){
   const s = NPCS.find(n => n.id === 'sahi');
   if (rainy()) Object.assign(s, {map: 'barbacoa', x: 12, y: 3, hx: 12, hy: 3, dir: 'down', home: 'down', pingpong: false});
   else Object.assign(s, {map: 'outside', x: 4, y: 8, hx: 4, hy: 8, dir: 'down', home: 'down', pingpong: true});
-  placeReni(); placeFounders(true);
+  placeReni();
 }
 
 /* el humor de cada uno cuando llueve: lo dicen la primera vez que hablás con ellos ese día */

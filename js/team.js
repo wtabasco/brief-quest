@@ -71,6 +71,8 @@ async function teamExtras(n){
   if (!S || welcomeStep() < 3) return false;
   const m = mem();
   if (!qState('repaso')) qOpen('repaso', true);
+  // 0) antes del Cliente del Año, el consejo de cada uno (la colaboración)
+  if (await teamTip(n)) return true;
   // 1) cumplir un encargo
   if (S.errand && S.errand.to === n.id){
     const e = errandBy(S.errand.from, S.errand.to); S.errand = null;
@@ -133,9 +135,8 @@ const IDEAS = [
    después el objetivo del juego (con el nivel que conviene tener para cada cliente). */
 const PLACE = {'Fede': 'Brasil (planta alta)', 'Sahi': 'el patio, en la mesa de ping pong', 'Pimi': 'Archivos X (planta baja)', 'Sofi': 'Asteroide (planta alta)',
   'Agus': 'Guaná (planta alta)', 'Lía': 'Guaná (planta alta)', 'Agus y Lía': 'Guaná (planta alta)', 'Lu': 'Bienestar (planta baja)', 'Giuli': 'La Base', 'Alejo': 'La Base'};
-// mientras te esperan para la Gran Presentación, Agus y Lía están en la Sala de Reuniones
-const placeOf = g => /Agus|Lía/.test(g) && S.flags.card && !S.flags.done ? 'la Sala de Reuniones (planta baja)' : PLACE[g];
-const AUTO_Q = ['objetivo', 'clientes', 'repaso', 'encargo', 'bienvenida', 'terraza', 'anual', 'fijo', 'senior', 'pimi_surf'];
+const placeOf = g => PLACE[g];
+const AUTO_Q = ['objetivo', 'clientes', 'repaso', 'encargo', 'bienvenida', 'anual', 'anual_equipo', 'fijo', 'senior', 'pimi_surf'];
 function nextStep(){
   if (!S) return '';
   if (welcomeStep() < 3) return `Hablá con ${WELCOME_NEXT[welcomeStep()]}.`;
@@ -151,10 +152,12 @@ function nextStep(){
     if (k){ const L = CLIENT_LVL[k], n = ({fantasma: 'la Clienta Fantasma', logo: 'Don Logo', explote: 'la Clienta Explosiva'})[k];
       return S.lvl < L ? `Preparate para ${n} (nivel ${L}): resolvé problemas en La Base y capacitate con el equipo. Estás en el ${S.lvl}.`
         : `Destrabá a ${n} en la Sala de Clientes (planta baja).${k === 'explote' ? ' Podés ir con Fede.' : ''}`; }
-    if (!S.flags.card) return 'Agus y Lía te esperan en Guaná (planta alta).';
-    return 'La Gran Presentación: Agus y Lía te esperan en la Sala de Reuniones (planta baja).';
+    if (!S.flags.card) return 'Agus y Lía te esperan en Guaná (planta alta): tienen algo grande para vos.';
+    if (S.lvl < PROJECT_LVL){ const p = PLAN_Q.find(q => qState(q) === 'open');
+      return p ? `Camino al Cliente del Año (nivel ${PROJECT_LVL}): ${QUESTS[p].desc()} Estás en el ${S.lvl}.` : `Seguí resolviendo problemas hasta el nivel ${PROJECT_LVL}: ahí te espera el Cliente del Año. Estás en el ${S.lvl}.`; }
+    return teamTipsStep() || `Presentale la campaña del año al Cliente del Año (nivel ${CLIENT_LVL.anual}), en la Sala del Directorio (planta baja).`;
   }
-  if (S.lvl < PROJECT_LVL) return `Seguí aprendiendo: en el nivel ${PROJECT_LVL} pasás a Project Leader. Estás en el ${S.lvl}.`;
+  if (!S.flags.anual && teamTipsStep()) return teamTipsStep();
   if (!S.flags.anual) return `Presentale la campaña del año al Cliente del Año (nivel ${CLIENT_LVL.anual}), en la Sala del Directorio (planta baja).`;
   return S.lvl < 30 ? `Seguí creciendo hasta el nivel 30: ayudá al equipo y charlá con Fede. Estás en el ${S.lvl}.` : '¡Llegaste lejísimos! Ayudá al equipo y completá la bitácora.';
 }
@@ -217,7 +220,7 @@ async function levelUnlocks(L, msg){
   const out = [];
   const k = BOSS_ORDER.find(x => !S.beaten[x]);
   if (k && L === CLIENT_LVL[k]) out.push(`¡Ya tenés el nivel para ${({fantasma: 'la Clienta Fantasma', logo: 'Don Logo', explote: 'la Clienta Explosiva'})[k]}! Te espera en la Sala de Clientes.`);
-  if (S.flags.done && L === CLIENT_LVL.anual && !S.flags.anual) out.push('Ya estás a la altura del Cliente del Año. Te espera en la Sala del Directorio.');
+  if (S.bosses >= 3 && L === CLIENT_LVL.anual && !S.flags.anual) out.push('Ya estás a la altura del Cliente del Año. Te espera en la Sala del Directorio.');
   for (const id of Object.keys(TRAININGS)) { const T = TRAININGS[id]; if (T.minLvl === L && trainingNext(id) === 0) out.push(`${PEOPLE[T.who]} ya te puede dar la capacitación "${T.title}".`); }
   const ready = QUEST_ORDER.filter(id => qState(id) === 'open' && QUESTS[id].minLvl === L && qCountOk(id));
   for (const id of ready) out.push(`Ya podés volver con ${QUESTS[id].giver}: cumpliste "${QUESTS[id].title}".`);
@@ -341,7 +344,7 @@ async function repasito(n){
   }
 }
 
-/* ---- El repaso final: al terminar la Gran Presentación, lo importante de todo lo aprendido ---- */
+/* ---- El repaso final: al terminar el juego (el Cliente del Año), lo importante de todo lo aprendido ---- */
 const REPASO_FINAL = () => [
   {who: 'agus', intro: 'Primero, lo que nos une: el propósito y los valores.', title: 'PROPÓSITO Y VALORES', html: valoresHTML()},
   {who: 'fede', intro: 'Después, cómo trabajamos. Esto se nota todos los días, con el equipo y con los clientes.', title: 'CÓMO TRABAJAMOS', html: H_([
@@ -376,4 +379,46 @@ async function repasoFinal(ending){
   await repasoFinalPages();
   await say('¡Y lo tenés siempre a mano: en START, La agencia, Repaso final! ¡Repasalo, que lo voy a medir! ¡Ja! Bueno, un poquito.', 'lia:risa');
   await say(ending ? 'Ahora sí: ¡a festejar!' : 'Con todo esto, ya sos parte de la casa de verdad.', 'agus:feliz');
+}
+
+/* ---- Antes del Cliente del Año: el consejo de todo el equipo ----
+   Con la ayuda de todos se puede con cualquier desafío (la colaboración). Cuando sos Project Leader y ya destrabaste
+   a los tres clientes, se abre la tarea: hablás con cada uno y te deja un consejo. Sin eso, el Cliente del Año te
+   manda a buscar a tu equipo; con eso, entrás a la reunión con todo el equipo encima (ataque, defensa y velocidad). */
+const TEAM_TIPS = {
+  fede: ['La campaña del año se arma como el mate: en ronda. Escuchá a todos antes de presentar. Y llevá la versión dos, ¿eh?', 'fede:feliz'],
+  sahi: ['Che, nadie gana un partido solo. Ni Riquelme. Andá con todo el equipo en la cabeza, crack.', 'sahi:feliz'],
+  lu: ['¡Dormí bien la noche antes y tomá agua! ¡Y si te ponés nervios{o}, tarareá algo! Funciona, te lo juro.', 'lu:risa'],
+  pimi: ['Tranqui. Llevá los números claros: si el dato está, la idea se defiende sola.', 'pimi'],
+  reni: ['Mirá a los ojos. Hablá tranquil{o}. Y comé algo antes, ¿eh? Con hambre no se presenta.', 'reni'],
+  agus: ['Antes de entrar, respirá. Y acordate: no vas sol{o}. Llevás lo que aprendiste de cada uno de nosotros.', 'agus:feliz'],
+  lia: ['¡Abrí con un número! ¡Uno solo, que impacte! ¡Y cerrá con cómo lo vamos a medir! ¡Ja!', 'lia:feliz'],
+  sofi: ['Te dejé el proyector andando y el wifi reiniciado. Soporte técnico no contestó, pero ya está. ¡Éxitos!', 'sofi:feliz'],
+  tato: ['...¿La campaña del año? ¿Ya es? Bien. Tranqui, a tu ritmo. Lo bueno no se apura.', 'tato'],
+  alejo: ['Contalo como una peli: un comienzo que atrape, un conflicto y un final que quede. Toma única.', 'alejo'],
+  giuli: ['Que la presentación esté prolija, bien nombrada y en su carpeta. Lo lindo también convence.', 'giuli'],
+  marga: ['Mi vida, te va a ir divino. Te dejé la sala brillando. Y vos andá tranquil{o}, que acá te queremos.', 'marga'],
+};
+const tipsLeft = () => Object.keys(TEAM_TIPS).filter(id => !(mem().tips || []).includes(id));
+const teamTipsDone = () => !tipsLeft().length;
+function teamTipOpen(){ if (S.lvl >= PROJECT_LVL && (S.bosses || 0) >= 3 && !S.flags.anual && !qState('anual_equipo')) qOpen('anual_equipo'); }
+async function teamTip(n){
+  teamTipOpen();
+  if (qState('anual_equipo') !== 'open' || !TEAM_TIPS[n.id] || (mem().tips || []).includes(n.id)) return false;
+  const m = mem(); m.tips = (m.tips || []).concat(n.id);
+  const [t, mood] = TEAM_TIPS[n.id];
+  await say(t, mood);
+  const left = tipsLeft();
+  if (left.length){ await say(`Consejo para la campaña del año: ${Object.keys(TEAM_TIPS).length - left.length} de ${Object.keys(TEAM_TIPS).length}.`); }
+  else {
+    qDone('anual_equipo'); SFX.learn();
+    await say('Tenés el consejo de todo el equipo. Con la ayuda de todos se puede con cualquier desafío: eso es colaboración.');
+    await say('En la reunión con el Cliente del Año, el equipo te acompaña: arrancás con más ataque, defensa y velocidad.');
+  }
+  return true;
+}
+function teamTipsStep(){
+  if (qState('anual_equipo') !== 'open') return '';
+  const left = tipsLeft().map(id => PEOPLE[id]);
+  return `Antes del Cliente del Año, pedile un consejo a cada uno del equipo. Te ${left.length === 1 ? 'falta' : 'faltan'}: ${left.join(', ')}.`;
 }

@@ -47,7 +47,7 @@ function simDuel(def, lvl, sMul, n){
   for (let i = 0; i < n; i++){
     const foe = mkFoe(fedeScaled(def, sMul), lvl, 'fede');
     const P = {isP: true, lvl: S.lvl, hp: st.max, max: st.max, atk: st.atk, def: st.def, spd: st.spd, st: {atk: 0, def: 0, spd: 0, eva: 0}, sleep: 0};
-    if (S.buff === 'fede'){ P.st.atk = 1; P.st.spd = 1; } else if (S.buff === 'duo'){ P.st.atk = 1; P.st.def = 1; } else if (S.buff === 'def') P.st.def = 1; else if (S.buff) P.st.atk = 1;
+    if (S.buff === 'equipo'){ P.st.atk = 1; P.st.def = 1; P.st.spd = 1; } else if (S.buff === 'fede'){ P.st.atk = 1; P.st.spd = 1; } else if (S.buff === 'duo'){ P.st.atk = 1; P.st.def = 1; } else if (S.buff === 'def') P.st.def = 1; else if (S.buff) P.st.atk = 1;
     const pp = {}; S.equip.forEach(id => pp[id] = SK[id].pp);
     const items = {}; for (const k in S.items) if (IT[k] && !IT[k].key) items[k] = Math.min(3, S.items[k] || 0);
     B = {foe, P, kind: 'spar', turn: 0, prueba: 0}; let res = null;
@@ -255,6 +255,7 @@ async function runBattle(foe, kind){
   await bsay(`¡Vamos, ${fullName()}!`, 700);
   if (B.ally) await bsay('¡Fede está con vos! Cada turno te da una mano.', 1100);
   if (S.buff === 'fede'){ B.P.st.atk = 1; B.P.st.spd = 1; await bsay('El mate con Fede te dejó a full: tu ataque y tu velocidad subieron.'); S.buff = null; }
+  else if (S.buff === 'equipo'){ B.P.st.atk = 1; B.P.st.def = 1; B.P.st.spd = 1; await bsay('Te acompaña el consejo de todo el equipo: tu ataque, tu defensa y tu velocidad subieron.'); S.buff = null; }
   else if (S.buff === 'duo'){ B.P.st.atk = 1; B.P.st.def = 1; await bsay('El plan de Agus y el empuje de Lía te acompañan: tu ataque y tu defensa subieron.'); S.buff = null; }
   else if (S.buff){
     const k = S.buff === 'def' ? 'def' : 'atk'; B.P.st[k] = 1; B.advice = S.buff === 'def' ? 'agus' : 'lia';
@@ -463,7 +464,7 @@ async function wildEncounter(){
 }
 async function bossBattle(key, kind='boss'){
   let d = BOSS[key];
-  const lvl = ({fede: fedeLevel(), fantasma: CLIENT_LVL.fantasma, logo: CLIENT_LVL.logo, explote: CLIENT_LVL.explote, final: Math.max(FINAL_LVL.min, S.lvl + FINAL_LVL.up), anual: CLIENT_LVL.anual})[key] || d.lvl; // los clientes tienen nivel fijo; la Gran Presentación crece con vos
+  const lvl = ({fede: fedeLevel(), fantasma: CLIENT_LVL.fantasma, logo: CLIENT_LVL.logo, explote: CLIENT_LVL.explote, anual: CLIENT_LVL.anual})[key] || d.lvl; // los clientes tienen nivel fijo; la Gran Presentación crece con vos
   // con Fede de compañero, la reunión es más larga: el cliente aguanta más
   if (PENDING_ALLY) d = Object.assign({}, d, {k: [d.k[0] * 1.2, d.k[1], d.k[2], d.k[3]]});
   if (key === 'fede'){

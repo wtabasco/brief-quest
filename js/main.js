@@ -93,13 +93,15 @@ async function pickPasante(menuEl, question){
 async function startWorld(isNew){
   await fade(true, false, 300);
   $('title').hidden = true;
-  // partidas viejas: la terraza ya no existe (la Gran Presentación es en la Sala de Reuniones) y Visión tampoco
+  // partidas viejas: ya no existen la terraza, Visión ni la Gran Presentación (el final es el Cliente del Año)
   if (S.pos.map === 'terrace') S.pos = {x: 32, y: 9, dir: 'left', map: 'upstairs'};
   if (S.skills.includes('vision')){ S.skills = S.skills.filter(id => id !== 'vision'); S.equip = S.equip.map(id => id === 'vision' ? null : id); delete S.pp.vision;
     S.equip = S.equip.filter(Boolean); }
   // el set por tipos (una de cada: creativa, estrategia, técnica y calma), una vez por partida vieja
   if (!S.flags.equipV2){ S.flags.equipV2 = true; balanceEquip(); }
   if (S.quests.ideas){ delete S.quests.ideas; if (S.qbase) delete S.qbase.ideas; }
+  if (S.quests.terraza){ delete S.quests.terraza; if (S.qbase) delete S.qbase.terraza; }
+  if (S.flags.card && !S.flags.done && !S.quests.plan_base) for (const id of PLAN_Q) qOpen(id, true);
   useMap(S.pos.map || 'office'); placeDay();
   // partidas viejas: si quedaste parado donde ahora hay un seto o una planta, volvés a la entrada
   if (!WALK.has(tileAt(S.pos.x, S.pos.y))){ S.pos = {x: 15, y: 13, dir: 'up', map: 'outside'}; useMap('outside'); }

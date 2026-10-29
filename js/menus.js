@@ -76,7 +76,7 @@ async function bagScreen(inBattle){
   }
 }
 async function logScreen(){
-  const keys = Object.keys(EN).concat(BOSS_ORDER, ['final']);
+  const keys = Object.keys(EN).concat(BOSS_ORDER, ['anual']);
   const total = keys.length, seen = keys.filter(k => S.log[k]).length;
   await panelList({title:'BITÁCORA', extra:`${seen}/${total} REGISTRADOS`,
     rows:() => keys.map((k, i) => { const d = EN[k] || BOSS[k], l = S.log[k]; return {label: l ? d.n : '???', right: l ? (l.beaten ? 'x' + l.beaten : 'visto') : String(i+1).padStart(2,'0'), dim:!l}; }),

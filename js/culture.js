@@ -32,17 +32,17 @@ const roleHTML = k => { const r = ROLE_SCOPE[k];
 /* ---- el objetivo del juego, claro desde el principio ---- */
 const objetivoPasos = () => (welcomeStep() >= 3 ? 1 : 0) + Math.min(3, S.bosses || 0) + (S.flags.done ? 1 : 0);
 function objetivoDesc(){
-  if (S.flags.done) return '¡Lo lograste! Si querés seguir: Project Leader y el Cliente del Año.';
-  const next = welcomeStep() < 3 ? 'conocer la agencia' : (S.bosses || 0) < 3 ? `destrabar a los clientes (${S.bosses || 0} de 3)` : 'la Gran Presentación, en la Sala de Reuniones';
+  if (S.flags.done) return '¡Lo lograste! Si querés seguir: completá la bitácora y llegá al nivel 30.';
+  const next = welcomeStep() < 3 ? 'conocer la agencia' : (S.bosses || 0) < 3 ? `destrabar a los clientes (${S.bosses || 0} de 3)` : S.lvl < PROJECT_LVL ? `el plan de Agus y Lía y el nivel ${PROJECT_LVL}` : 'el Cliente del Año, en la Sala del Directorio';
   return `Próximo paso: ${next}.`;
 }
 const objetivoHTML = () => H_([
-  P_('Llegás a la agencia como <b>pasante</b>. Tu objetivo es aprender cómo trabajamos, hacerte tu lugar en el equipo y llegar a <b>la Gran Presentación</b>.'),
+  P_('Llegás a la agencia como <b>pasante</b>. Tu objetivo es aprender cómo trabajamos, hacerte tu lugar en el equipo y llegar a presentarle la campaña del año al <b>Cliente del Año</b>.'),
   B_('1. Conocé la agencia:', 'Sahi, Sofi, Fede, y Agus y Lía te reciben y te cuentan quiénes somos.'),
   B_('2. Aprendé:', 'capacitaciones con el equipo y los problemas de La Base. Así subís de nivel y sumás habilidades.'),
   B_('3. Destrabá a los tres clientes:', 'la Clienta Fantasma, Don Logo y la Clienta Explosiva, en la Sala de Clientes.'),
-  B_('4. La Gran Presentación:', 'en la Sala de Reuniones, con todo el equipo.'),
-  P_('Y después, si querés seguir: crecés hasta <b>Project Leader</b> y le presentás la campaña del año al Cliente del Año.'),
+  B_('4. El Cliente del Año:', 'después de los tres clientes, Agus y Lía te arman un plan de desafíos. En el nivel 25 pasás a Project Leader y se abre la Sala del Directorio.'),
+  P_('Y después, si querés seguir: completás la bitácora y llegás al nivel 30.'),
   `<div class="k">Tu próximo paso siempre está en Tareas (START o la tecla M).</div>`], 2.6);
 const AGENCIA = [
   {t: 'Tu objetivo', title: 'TU OBJETIVO', d: () => objetivoDesc(), full: () => objetivoHTML()},

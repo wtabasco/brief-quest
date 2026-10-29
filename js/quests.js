@@ -4,7 +4,7 @@
 const beatCount = k => (S.log[k] && S.log[k].beaten) || 0;
 const QUESTS = {
   // el objetivo del juego: siempre primero en Tareas, con el próximo paso
-  objetivo:   {giver: 'La agencia', title: 'Tu objetivo: La Gran Presentación', abs: true, goal: 5, count: () => objetivoPasos(),
+  objetivo:   {giver: 'La agencia', title: 'Tu objetivo: el Cliente del Año', abs: true, goal: 5, count: () => objetivoPasos(),
                desc: () => objetivoDesc()},
   clientes:   {giver: 'La agencia', title: 'Los tres clientes', abs: true, goal: 3, count: () => S.bosses,
                desc: () => S.bosses >= 3 ? 'Los tres clientes quedaron conformes.' : `Destrabá ${({fantasma: 'a la Clienta Fantasma', logo: 'a Don Logo', explote: 'a la Clienta Explosiva'})[BOSS_ORDER.find(k => !S.beaten[k]) || 'explote']} en la Sala de Clientes.`},
@@ -53,7 +53,11 @@ const QUESTS = {
                desc: () => welcomeStep() >= 3 ? 'Ya conociste a todos los de la recorrida.' : `Próxima parada: ${WELCOME_NEXT[welcomeStep()]}. Después: ${['Fede, y Agus y Lía', 'Agus y Lía', 'Pimi o Alejo y Giuli'][welcomeStep()]}.`},
   fijo:       {giver: 'Agus y Lía', title: 'Una noticia de RRHH', abs: true, goal: 1, count: () => S.flags.fijo ? 1 : 0, desc: () => 'Llegaste al nivel 15. Agus y Lía te quieren dar una noticia en Guaná, su oficina de la planta alta.'},
   senior:     {giver: 'Fede', title: 'Charla con Fede', abs: true, goal: 1, count: () => S.flags.senior ? 1 : 0, desc: () => 'Llegaste al nivel 25. Fede te espera en Brasil, su oficina de la planta alta.'},
-  terraza:    {giver: 'Agus y Lía', title: 'La Gran Presentación', abs: true, goal: 1, count: () => S.flags.done ? 1 : 0, desc: () => 'En la Sala de Reuniones, la biblioteca de la planta baja. Agus y Lía te esperan ahí, con todo el equipo. También podés arrancar desde la tele de la punta de la mesa.'},
+  anual_equipo:{giver: 'El equipo', title: 'El consejo de todo el equipo', abs: true, goal: 12, count: () => (mem().tips || []).length, desc: () => teamTipsStep() || 'Ya tenés el consejo de todos. El Cliente del Año te espera en la Sala del Directorio.'},
+  plan_base:  {giver: 'Agus y Lía', title: 'Plan: quince problemas', goal: 15, count: () => mem().wildWins || 0, desc: () => 'Resolvé 15 problemas en La Base y contáselo a Agus o Lía, en Guaná.'},
+  plan_fede:  {giver: 'Agus y Lía', title: 'Plan: entrenar con Fede', goal: 3, count: () => mem().spars || 0, desc: () => 'Entrená 3 veces con Fede, en Brasil. Después contáselo a Agus o Lía.'},
+  plan_equipo:{giver: 'Agus y Lía', title: 'Plan: una mano al equipo', goal: 3, count: () => mem().errands || 0, desc: () => 'Hacé 3 encargos del equipo (charlando, alguien te va a pedir algo). Después contáselo a Agus o Lía.'},
+  plan_repaso:{giver: 'Agus y Lía', title: 'Plan: lo importante', goal: 3, count: () => (mem().repOk || 0) + (mem().repasoOk || 0), desc: () => 'Acertá 3 preguntas de lo importante: los repasitos del equipo o la charla de cómo trabajamos con Fede. Después contáselo a Agus o Lía.'},
 };
 const QUEST_ORDER = Object.keys(QUESTS);
 const qState = id => (S.quests || {})[id];
