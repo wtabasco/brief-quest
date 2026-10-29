@@ -1147,11 +1147,18 @@ async function talkSofi(){
 }
 
 const TATO = {
-  again: ['...Uh, ¿estabas ahí? Perdón, estaba en otra.', '¿Me hablabas a mí? Dale, decime.', 'Tranqui, tranqui. ¿Qué precisás?', '¿Eh? Ah, hola. ¿Ya es de tarde?', 'Perdón, estaba con un número. ¿Me decías?', '...Ah, sos vos. Tranqui, pasá.', 'Uy, ¿me hablaste hace mucho? Perdoná.'],
+  again: ['...Uh, ¿estabas ahí? Perdón, estaba en otra.', '¿Me hablabas a mí? Dale, decime.', 'Tranqui, tranqui. ¿Qué precisás?', '¿Eh? Ah, hola. ¿Ya es de tarde?', 'Perdón, estaba con un número. ¿Me decías?', '...Ah, sos vos. Tranqui, pasá.', 'Uy, ¿me hablaste hace mucho? Perdoná.',
+    '...Hola, ¿cómo era tu nombre? No me digas. ...No, decime.',
+    'Ah, ¡hola! ¿Vos sos {el} nuev{o}? ...¿Ya no? ¿Desde cuándo? Bueno, igual.',
+    'Esperá que estaba buscando los lentes. ...Los tenía puestos. Decime.',
+    '¿Qué día es hoy? No, en serio, decime. Ah, bien. Era el que pensaba. Más o menos.',
+    'Hola. Vine a buscar algo acá, pero ya no me acuerdo qué. Capaz eras vos.',
+    'Uh, hola. Dejé el mate en algún lado. Si lo ves, avisame. Es el que no es de Fede.'],
   R: {
     // Tato se entera de todo un rato después
     boss: {explote: 'Me contaron lo de la Clienta Explosiva. ¿Ya pasó? Uh. Bueno, felicitaciones atrasadas.', logo: '¿Don Logo aprobó? ...¿Hace cuánto? Ah, mirá. Igual me alegro.', fantasma: '¿La Clienta Fantasma respondió? Yo todavía le estoy esperando una factura. Pasale el dato.'},
-    level: [() => `¿Nivel ${S.lvl}? Qué bueno. ¿Desde cuándo? ...Ah, recién. Bueno, llegué a tiempo por una vez.`],
+    level: [() => `¿Nivel ${S.lvl}? Qué bueno. ¿Desde cuándo? ...Ah, recién. Bueno, llegué a tiempo por una vez.`,
+      () => `Me dijeron que subiste de nivel. ¿Al ${S.lvl - 1}? ...¿Al ${S.lvl}? Bueno, uno más todavía. Mejor.`],
   },
   lines: [{d: 1, t: '¿Escuchás el parlante? Es reggae. Bajito, pero reggae. Me acomoda el ritmo para los números.'},
     {d: 2, t: '¿Cómo salió lo del cliente? ...¿El de la semana pasada? ¿Ya pasó? Bueno, me alegro igual.'},
@@ -1170,17 +1177,29 @@ const TATO = {
     {d: 6, t: 'Fede me preguntó si estaba todo bien con los números. Le dije que sí. Me ofreció un mate para festejar. Acepté. Uno no festeja todos los días que esté todo bien.'},
     {d: 6, t: 'Lu me recomendó Morat. Yo le recomendé reggae. Ahora cada uno escucha lo suyo, pero más contentos.'},
     {if: () => S.lvl >= 15, t: '¿Quedaste fij{o}? Ah, por eso me llegó un papel nuevo para los sueldos. Hace dos semanas. Felicitaciones atrasadas.'},
-    {d: 5, t: 'La transparencia en los números es eso: que cualquiera los pueda mirar y entender. Hasta Lía. Sobre todo Lía.'}],
+    {d: 5, t: 'La transparencia en los números es eso: que cualquiera los pueda mirar y entender. Hasta Lía. Sobre todo Lía.'},
+    'Hoy llegué y me senté en otra silla. Estuve una hora en el lugar de Sofi. Ella no dijo nada. Creo que no se dio cuenta. O sí.',
+    'Tengo tres anotadores. Uno para las cosas, otro para lo que anoto en el primero. El tercero no sé dónde está.',
+    '¿Vos me prestaste una lapicera? ...Ah, no. Entonces es de alguien más. Tomá, quedátela.',
+    {d: 2, t: 'Sofi me dice que tengo la cabeza en otro lado. Yo le digo que la tengo acá, en los números. El resto lo dejo en el parlante.'},
+    {d: 2, t: 'Ayer fui a la cocina a buscar algo. Volví con una cuchara. Todavía no sé para qué.'},
+    {d: 3, t: 'Hoy entré a una reunión que era ayer. Estuvo tranqui. Estaba solo.'},
+    {d: 3, t: 'Pimi me preguntó si había visto el mail. Le dije que sí. Después lo busqué. Era de marzo.'},
+    {d: 4, t: 'Una vez Reni me grabó un video. Me enteré cuando ya tenía como dos mil vistas. Salgo pensando. Lindo video.'},
+    {d: 4, t: 'Me puse la campera para irme y me volví a sentar. Estuve así una hora. Muy abrigado, eso sí. Los números salieron perfectos.'},
+    {d: 5, t: 'Me olvido de casi todo. De los números, nunca. Ellos se acuerdan de mí, yo me acuerdo de ellos.'},
+    {d: 5, t: 'Marga me dijo "hasta mañanaaa" y yo le contesté "buen día". Eran las doce. Las dos tuvimos razón, en algún lado.'},
+    {d: 6, t: 'Me llamaron de soporte técnico por un ticket. Yo no me acordaba del ticket. Ellos tampoco. Quedamos en volver a hablar.'}],
 };
 async function talkTato(){
   if (!S.flags.tatoMet){
     S.flags.tatoMet = true;
-    await says(['...', 'Ah, ¡hola! Perdón, no te había visto. Soy Tato. Llevo los números.', 'Vos tranqui: si algo no cierra, se vuelve a sumar.'], 'tato');
+    await says(['...', 'Ah, ¡hola! Perdón, no te había visto. Soy Tato. Llevo los números.', '¿Y vos sos…? No, esperá, me lo dijeron. ...No me lo dijeron. ¿Cómo te llamás?', '{name}. Bien. Lo anoto. ...Acá. No, acá. Bueno, me lo acuerdo.', 'Vos tranqui: si algo no cierra, se vuelve a sumar.'], 'tato');
     if (!(S.items.frutaTato > 0)) return;
   }
   if (S.items.frutaTato > 0){
     S.items.frutaTato = 0; S.flags.tatoFruta = true;
-    await says(['Uh, fruta. ¿Es para mí? ...¿De parte de Sofi? Claro. Siempre se da cuenta antes que yo de que tengo hambre.', 'Gracias. Ahora la como. Bueno, cuando termine esta canción. Y la que viene.', 'Bienvenid{o}, {name}. ¿Era tu primer día? ...Ah, ¿hace rato? Bueno, bienvenid{o} igual.'], 'tato');
+    await says(['Uh, fruta. ¿Es para mí? ...¿De parte de Sofi? Claro. Siempre se da cuenta antes que yo de que tengo hambre.', 'Gracias. Ahora la como. Bueno, cuando termine esta canción. Y la que viene.', '...La dejo acá, al lado del teclado. Si mañana sigue acá, avisale a Sofi que la vi. Que la vi, eh. Que comer es otra cosa.', 'Bienvenid{o}, {name}. ¿Era tu primer día? ...Ah, ¿hace rato? Bueno, bienvenid{o} igual.'], 'tato');
     await say('Tato ya tiene su fruta. Contale a Sofi.');
     return;
   }

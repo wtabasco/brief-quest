@@ -304,7 +304,7 @@ const REP_VOICE = {
     ok: ['¡Correcto! ¡Lo anoto en el tablero!', '¡Bien! ¡En tiempo récord! ¿Que no lo medí? ¡Ja! Sí lo medí.'], no: ['¡No pasa nada! Ahora ya lo sabés, y lo que se sabe se mejora.', '¡Casi! La próxima la clavás, lo tengo medido.'], m: 'lia:feliz'},
   sofi: {in: ['Antes de que te vayas, una preguntita. ¿Comiste? No, esa no. Otra.', 'Te pregunto algo rapidito, como cuando reviso que anden todas las compus.'],
     ok: ['¡Bien! Ahora comé una fruta, que pensar cansa.', '¡Eso! Todo en orden.'], no: ['Tranqui, para eso está la hoja de los valores en La Base.', 'No pasa nada. Ahora ya lo sabés. ¿Tomaste agua?'], m: 'sofi:feliz'},
-  tato: {in: ['...Ah, hola. Me pidieron que te pregunte algo. Creo que era esto.', 'Che, una pregunta. Tranqui, sin apuro. Yo tampoco tengo.'],
+  tato: {in: ['...Ah, hola. Me pidieron que te pregunte algo. Creo que era esto.', 'Che, una pregunta. Tranqui, sin apuro. Yo tampoco tengo.', 'Te iba a decir otra cosa, pero se me fue. Te pregunto esto, mientras vuelve.'],
     ok: ['...¿Ya contestaste? Bien. Muy bien. Creo.', 'Eso. Los números cierran.'], no: ['Tranqui. Yo me enteré la semana pasada.', 'No pasa nada. A mí me lo preguntaron hace un mes y todavía lo estoy pensando.'], m: 'tato'},
   alejo: {in: ['Te tiro una, como en un rodaje: toma única.', 'Una rápida, antes de que Giuli me robe la escena.'],
     ok: ['Eso. Plano perfecto.', 'Bien. Eso tiene buena luz.'], no: ['Tranqui. Se repite la toma y listo.', 'Salió fuera de foco, pero ahora ya lo ves.'], m: 'alejo'},
