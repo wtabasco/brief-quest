@@ -1497,7 +1497,7 @@ async function talkAnual(n){
   const d = BOSS.anual;
   if (!S.flags.anual && (S.bosses || 0) < 3){ await say('¿Ya te ocupaste de los otros tres clientes? Primero ellos. Yo soy el postre. Bueno, el plato principal. Bueno, el banquete.', bossWho('anual')); return; }
   teamTipOpen();
-  if (!S.flags.anual && !teamTipsDone()){ await say(pick('anual:solo', ['¿Viniste sol{o}? La campaña del año nunca es de una sola persona. Hablá con tu equipo, que cada uno algo te va a decir. Te espero.', 'Antes de presentarme nada: ¿qué dice tu equipo? Todos. Hasta el que se entera tarde. Andá y volvé.']), bossWho('anual', 'serio')); return; }
+  if (!S.flags.anual && !teamTipsDone()){ await say(pick('anual:solo', ['¿Viniste sol{o}? La campaña del año nunca es de una sola persona. Hablá con tu equipo: Fede, Sahi, Lu, Alejo y Giuli. Te espero.', 'Antes de presentarme nada: ¿qué dice tu equipo? Fede, Sahi, Lu, Alejo y Giuli. Andá y volvé.']), bossWho('anual', 'serio')); return; }
   if (S.flags.anual){ await say(pick('anual:post', ['La campaña del año. Así se presenta. Nos vemos el año que viene: vayan pensando.', 'Ya la aprobó el directorio. Y mi familia. Y el directorio de mi familia.', 'Mandé a enmarcar la presentación. La voy a colgar en el living. Y en el baño.', 'Hace años que no me sorprendían. Gracias.']), bossWho('anual', 'feliz')); return; }
   if (!S.flags.met_anual){
     S.flags.met_anual = true;

@@ -53,10 +53,10 @@ const QUESTS = {
                desc: () => welcomeStep() >= 3 ? 'Ya conociste a todos los de la recorrida.' : `Próxima parada: ${WELCOME_NEXT[welcomeStep()]}. Después: ${['Fede, y Agus y Lía', 'Agus y Lía', 'Pimi o Alejo y Giuli'][welcomeStep()]}.`},
   fijo:       {giver: 'Agus y Lía', title: 'Una noticia de RRHH', abs: true, goal: 1, count: () => S.flags.fijo ? 1 : 0, desc: () => 'Llegaste al nivel 15. Agus y Lía te quieren dar una noticia en Guaná, su oficina de la planta alta.'},
   senior:     {giver: 'Fede', title: 'Charla con Fede', abs: true, goal: 1, count: () => S.flags.senior ? 1 : 0, desc: () => 'Llegaste al nivel 25. Fede te espera en Brasil, su oficina de la planta alta.'},
-  anual_equipo:{giver: 'El equipo', title: 'El consejo de todo el equipo', abs: true, goal: 12, count: () => (mem().tips || []).length, desc: () => teamTipsStep() || 'Ya tenés el consejo de todos. El Cliente del Año te espera en la Sala del Directorio.'},
-  plan_base:  {giver: 'Agus y Lía', title: 'Plan: quince problemas', goal: 15, count: () => mem().wildWins || 0, desc: () => 'Resolvé 15 problemas en La Base y contáselo a Agus o Lía, en Guaná.'},
-  plan_fede:  {giver: 'Agus y Lía', title: 'Plan: entrenar con Fede', goal: 3, count: () => mem().spars || 0, desc: () => 'Entrená 3 veces con Fede, en Brasil. Después contáselo a Agus o Lía.'},
-  plan_equipo:{giver: 'Agus y Lía', title: 'Plan: una mano al equipo', goal: 3, count: () => mem().errands || 0, desc: () => 'Hacé 3 encargos del equipo (charlando, alguien te va a pedir algo). Después contáselo a Agus o Lía.'},
+  anual_equipo:{giver: 'El equipo', title: 'El consejo de tu equipo', abs: true, goal: 5, count: () => (mem().tips || []).length, desc: () => teamTipsStep() || 'Ya tenés el consejo de tu equipo. El Cliente del Año te espera en la Sala del Directorio.'},
+  plan_base:  {giver: 'Agus y Lía', title: 'Plan: cinco problemas', goal: 5, count: () => mem().wildWins || 0, desc: () => 'Resolvé 5 problemas en La Base y contáselo a Agus o Lía, en Guaná.'},
+  plan_fede:  {giver: 'Agus y Lía', title: 'Plan: entrenar con Fede', goal: 1, count: () => mem().spars || 0, desc: () => 'Entrená una vez con Fede, en Brasil. Después contáselo a Agus o Lía.'},
+  plan_equipo:{giver: 'Agus y Lía', title: 'Plan: una mano al equipo', goal: 1, count: () => mem().errands || 0, desc: () => 'Hacé un encargo del equipo (charlando, alguien te va a pedir algo). Después contáselo a Agus o Lía.'},
   plan_repaso:{giver: 'Agus y Lía', title: 'Plan: lo importante', goal: 3, count: () => (mem().repOk || 0) + (mem().repasoOk || 0), desc: () => 'Acertá 3 preguntas de lo importante: los repasitos del equipo o la charla de cómo trabajamos con Fede. Después contáselo a Agus o Lía.'},
 };
 const QUEST_ORDER = Object.keys(QUESTS);

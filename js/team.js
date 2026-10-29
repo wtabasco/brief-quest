@@ -381,7 +381,7 @@ async function repasoFinal(ending){
   await say(ending ? 'Ahora sí: ¡a festejar!' : 'Con todo esto, ya sos parte de la casa de verdad.', 'agus:feliz');
 }
 
-/* ---- Antes del Cliente del Año: el consejo de todo el equipo ----
+/* ---- Antes del Cliente del Año: el consejo de tu equipo (Fede, Sahi, Lu, Alejo y Giuli) ----
    Con la ayuda de todos se puede con cualquier desafío (la colaboración). Cuando sos Project Leader y ya destrabaste
    a los tres clientes, se abre la tarea: hablás con cada uno y te deja un consejo. Sin eso, el Cliente del Año te
    manda a buscar a tu equipo; con eso, entrás a la reunión con todo el equipo encima (ataque, defensa y velocidad). */
@@ -389,15 +389,8 @@ const TEAM_TIPS = {
   fede: ['La campaña del año se arma como el mate: en ronda. Escuchá a todos antes de presentar. Y llevá la versión dos, ¿eh?', 'fede:feliz'],
   sahi: ['Che, nadie gana un partido solo. Ni Riquelme. Andá con todo el equipo en la cabeza, crack.', 'sahi:feliz'],
   lu: ['¡Dormí bien la noche antes y tomá agua! ¡Y si te ponés nervios{o}, tarareá algo! Funciona, te lo juro.', 'lu:risa'],
-  pimi: ['Tranqui. Llevá los números claros: si el dato está, la idea se defiende sola.', 'pimi'],
-  reni: ['Mirá a los ojos. Hablá tranquil{o}. Y comé algo antes, ¿eh? Con hambre no se presenta.', 'reni'],
-  agus: ['Antes de entrar, respirá. Y acordate: no vas sol{o}. Llevás lo que aprendiste de cada uno de nosotros.', 'agus:feliz'],
-  lia: ['¡Abrí con un número! ¡Uno solo, que impacte! ¡Y cerrá con cómo lo vamos a medir! ¡Ja!', 'lia:feliz'],
-  sofi: ['Te dejé el proyector andando y el wifi reiniciado. Soporte técnico no contestó, pero ya está. ¡Éxitos!', 'sofi:feliz'],
-  tato: ['...¿La campaña del año? ¿Ya es? Bien. Tranqui, a tu ritmo. Lo bueno no se apura.', 'tato'],
   alejo: ['Contalo como una peli: un comienzo que atrape, un conflicto y un final que quede. Toma única.', 'alejo'],
   giuli: ['Que la presentación esté prolija, bien nombrada y en su carpeta. Lo lindo también convence.', 'giuli'],
-  marga: ['Mi vida, te va a ir divino. Te dejé la sala brillando. Y vos andá tranquil{o}, que acá te queremos.', 'marga'],
 };
 const tipsLeft = () => Object.keys(TEAM_TIPS).filter(id => !(mem().tips || []).includes(id));
 const teamTipsDone = () => !tipsLeft().length;
@@ -412,13 +405,13 @@ async function teamTip(n){
   if (left.length){ await say(`Consejo para la campaña del año: ${Object.keys(TEAM_TIPS).length - left.length} de ${Object.keys(TEAM_TIPS).length}.`); }
   else {
     qDone('anual_equipo'); SFX.learn();
-    await say('Tenés el consejo de todo el equipo. Con la ayuda de todos se puede con cualquier desafío: eso es colaboración.');
-    await say('En la reunión con el Cliente del Año, el equipo te acompaña: arrancás con más ataque, defensa y velocidad.');
+    await say('Tenés el consejo de tu equipo: Fede, Sahi, Lu, Alejo y Giuli. Con la ayuda de todos se puede con cualquier desafío: eso es colaboración.');
+    await say('Ellos van con vos a la reunión con el Cliente del Año: arrancás con más ataque, defensa y velocidad.');
   }
   return true;
 }
 function teamTipsStep(){
   if (qState('anual_equipo') !== 'open') return '';
   const left = tipsLeft().map(id => PEOPLE[id]);
-  return `Antes del Cliente del Año, pedile un consejo a cada uno del equipo. Te ${left.length === 1 ? 'falta' : 'faltan'}: ${left.join(', ')}.`;
+  return `Antes del Cliente del Año, pedile un consejo a tu equipo (Fede, Sahi, Lu, Alejo y Giuli). Te ${left.length === 1 ? 'falta' : 'faltan'}: ${left.join(', ')}.`;
 }

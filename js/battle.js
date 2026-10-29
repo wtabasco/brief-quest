@@ -255,7 +255,7 @@ async function runBattle(foe, kind){
   await bsay(`¡Vamos, ${fullName()}!`, 700);
   if (B.ally) await bsay('¡Fede está con vos! Cada turno te da una mano.', 1100);
   if (S.buff === 'fede'){ B.P.st.atk = 1; B.P.st.spd = 1; await bsay('El mate con Fede te dejó a full: tu ataque y tu velocidad subieron.'); S.buff = null; }
-  else if (S.buff === 'equipo'){ B.P.st.atk = 1; B.P.st.def = 1; B.P.st.spd = 1; await bsay('Te acompaña el consejo de todo el equipo: tu ataque, tu defensa y tu velocidad subieron.'); S.buff = null; }
+  else if (S.buff === 'equipo'){ B.P.st.atk = 1; B.P.st.def = 1; B.P.st.spd = 1; await bsay('Te acompañan Fede, Sahi, Lu, Alejo y Giuli: tu ataque, tu defensa y tu velocidad subieron.'); S.buff = null; }
   else if (S.buff === 'duo'){ B.P.st.atk = 1; B.P.st.def = 1; await bsay('El plan de Agus y el empuje de Lía te acompañan: tu ataque y tu defensa subieron.'); S.buff = null; }
   else if (S.buff){
     const k = S.buff === 'def' ? 'def' : 'atk'; B.P.st[k] = 1; B.advice = S.buff === 'def' ? 'agus' : 'lia';
