@@ -92,12 +92,17 @@ function drawMop(c, X, Y, n){
   const bx = left ? X - 12 : X + 34; c.fillStyle = '#4f9ad0'; c.fillRect(bx, by - 6, 10, 8); c.fillStyle = '#7fc0ea'; c.fillRect(bx, by - 6, 10, 2); c.fillStyle = '#2f6a98'; c.fillRect(bx, by + 1, 10, 1);
   c.fillStyle = '#2a2236'; c.fillRect(bx + 2, by - 9, 6, 1); c.fillRect(bx + 1, by - 8, 1, 2); c.fillRect(bx + 8, by - 8, 1, 2);
 }
+/* el termo y el celu de Reni. De frente: el termo en una mano y el celu en la otra. De costado, el termo queda
+   bajo el brazo del otro lado (no se ve) y el celu va en la mano que se ve, pegado al cuerpo */
 function drawTermo(c, X, Y, n){
   const d = n.dir; if (d === 'up') return;
-  const tx = X + (d === 'right' ? 4 : d === 'left' ? 22 : 4), mx = X + (d === 'right' ? 24 : d === 'left' ? 4 : 25), y = Y + 2;
+  const side = d === 'left' || d === 'right';
+  const phone = (mx, y) => { c.fillStyle = '#1e1f24'; c.fillRect(mx - 3, y + 3, 6, 10); c.fillStyle = '#7a8ab0'; c.fillRect(mx - 2, y + 4, 4, 7); c.fillStyle = '#a8b8dc'; c.fillRect(mx - 2, y + 4, 4, 2); c.fillStyle = '#e04848'; c.fillRect(mx + 1, y + 9, 1, 1); };
+  if (side){ phone(X + (d === 'left' ? 18 : 15), Y + 4); return; }
+  const tx = X + 4, y = Y + 2;
   c.fillStyle = '#2a2a2e'; c.fillRect(tx - 1, y - 2, 6, 3);
   c.fillStyle = '#b8bcc2'; c.fillRect(tx, y + 1, 4, 11); c.fillStyle = '#e2e5e8'; c.fillRect(tx, y + 1, 1, 11); c.fillStyle = '#8a8e94'; c.fillRect(tx + 3, y + 1, 1, 11);
-  c.fillStyle = '#1e1f24'; c.fillRect(mx - 3, y + 3, 6, 10); c.fillStyle = '#7a8ab0'; c.fillRect(mx - 2, y + 4, 4, 7); c.fillStyle = '#a8b8dc'; c.fillRect(mx - 2, y + 4, 4, 2); c.fillStyle = '#e04848'; c.fillRect(mx + 1, y + 9, 1, 1);
+  phone(X + 25, y);
 }
 function npcPos(n){ if (!n.mv) return [n.x*TS, n.y*TS]; const k = n.mv.t / n.mv.dur; return [(n.mv.fx + (n.mv.tx - n.mv.fx)*k)*TS, (n.mv.fy + (n.mv.ty - n.mv.fy)*k)*TS]; }
 /* globitos de emoción dibujados a mano */
