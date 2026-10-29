@@ -114,3 +114,20 @@ padToggle.addEventListener('click', () => { setInfo(!ctrlInfo.classList.contains
 /* en el celular, el pie del título habla de la cruceta y los botones, no del teclado */
 try { if (matchMedia('(pointer: coarse)').matches){ const f = document.querySelector('.tFoot'); if (f) f.textContent = 'Cruceta para moverte · Z: aceptar · X: volver'; } } catch(e){}
 
+
+/* Color de la consola: verde (el de siempre), violeta o celeste. El botoncito muestra el color que sigue. */
+const SHELLS = [['verde', '#004612'], ['violeta', '#4b2154'], ['celeste', '#2a7fb0']];
+let shellIx = 0;
+try { shellIx = Math.max(0, SHELLS.findIndex(s => s[0] === localStorage.getItem('briefquest.shell'))); } catch(e){}
+function applyShell(){
+  const g = document.querySelector('.gba'); if (!g) return;
+  if (shellIx) g.dataset.shell = SHELLS[shellIx][0]; else delete g.dataset.shell;
+  const nx = SHELLS[(shellIx + 1) % SHELLS.length];
+  document.querySelectorAll('.shellColor').forEach(b => { b.style.setProperty('--next', nx[1]); b.title = 'Color de la consola: pasar a ' + nx[0]; });
+}
+applyShell();
+document.querySelectorAll('.shellColor').forEach(b => b.addEventListener('click', e => {
+  e.preventDefault(); shellIx = (shellIx + 1) % SHELLS.length;
+  try { localStorage.setItem('briefquest.shell', SHELLS[shellIx][0]); } catch(_){}
+  applyShell(); toast('Consola ' + SHELLS[shellIx][0]);
+}));
