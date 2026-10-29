@@ -20,7 +20,7 @@ const QUESTS = {
   lia_kpi:    {giver: 'Lía', title: 'Mejora continua', minLvl: 8, goal: 3, count: () => mem().kpiWins || 0,
                desc: () => S.liaKpi ? `Objetivo ${S.liaKpi.stage + 1} de 3: ${KPI[S.liaKpi.k].n(S.liaKpi)}, tres veces. Lía lo está midiendo (obvio). Después, pasá por Guaná, su oficina de la planta alta: el tablero está al lado de la ventana.` : 'Hablá con Lía.'},
   sahi:       {giver: 'Sahi', title: 'Calentar en La Base', minLvl: 10, goal: 8, count: () => mem().wildWins || 0, desc: () => 'Resolvé 8 problemas en La Base. Sahi quiere ver que le agarraste la mano.'},
-  pimi_atajo: {giver: 'Pimi', title: 'Reiniciar el router', minLvl: 7, goal: 2, count: () => beatCount('wifi'), desc: () => 'Resolvé 2 Wifi Caído en La Base.'},
+  pimi_atajo: {giver: 'Pimi', title: 'Atajos de teclado', minLvl: 7, goal: 2, count: () => beatCount('wifi'), desc: () => 'Resolvé 2 Wifi Caído en La Base.'},
   pimi_bug:   {giver: 'Pimi', title: 'Cazar bugs', goal: 2, count: () => beatCount('bug'), desc: () => 'Resolvé 2 Bugsito. Aparecen en La Base después del primer cliente.'},
   pimi_file:  {giver: 'Pimi', title: 'Ordenar los archivos', minLvl: 12, goal: 3, count: () => beatCount('archivo'), desc: () => 'Resolvé 3 Archivo_final_v7.'},
   pimi_surf:  {giver: 'Pimi', title: 'La ola grande', abs: true, goal: 3, count: () => S.bosses, desc: () => 'Destrabá a los tres clientes.'},

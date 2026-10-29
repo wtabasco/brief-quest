@@ -100,7 +100,7 @@ const BOSS = {
     mv:[{n:'Logo más grande',p:60,w:3},{n:'No me termina de cerrar',p:0,fx:'foeAtk-1',w:1},{n:'Mi sobrino sabe Photoshop',p:85,a:70,w:2},{n:'Reunión de 2 horas',p:0,a:60,fx:'sleep',w:1}]},
   fantasma:{n:'Clienta Fantasma',t:'PRES',lvl:10,look:'fantasma',k:[2.2,1.05,1,1],xp:120,lesson:'seguimiento',d:'Desaparece semanas, vuelve con un pedido misterioso y jura que el brief era clarísimo.',
     mv:[{n:'Visto sin responder',p:0,fx:'selfEva+1',w:1},{n:'Eso lo dejé clarísimo',p:90,a:80,w:2},{n:'Tic tac',p:20,fx:'tictac',w:2},{n:'Era obvio, ¿no?',p:50,w:2}]},
-  final:{n:'La Gran Presentación',t:'CLI',lvl:20,spr:'final',k:[3,1.2,1.15,1],xp:200,d:'Todo lo que aprendiste, en una sola reunión.',
+  final:{n:'La Gran Presentación',t:'CLI',lvl:20,spr:'final',k:[1.4,.7,1.1,1],xp:200,d:'Todo lo que aprendiste, en una sola reunión.',
     mv:[{n:'Pitch imposible',p:80,w:3},{n:'Cambio de último momento',p:25,fx:'reset',w:1},{n:'Todo para ayer',p:100,a:70,w:2},{n:'Logo más grande',p:60,w:2}]},
   // el cliente más difícil: en la Sala del Directorio, desde el nivel 25. Hay que presentarle la campaña del año
   anual:{n:'El Cliente del Año',t:'CLI',lvl:27,look:'anual',k:[2.9,1.2,1.15,1.05],xp:400,lesson:'campana',d:'El cliente más grande de la agencia. Viene a escuchar la campaña del año. Ya vio todo, y quiere algo que nunca vio.',
@@ -158,7 +158,7 @@ const need = L => 12 + L*L*5;
    pasa a Social (Social Manager); en el 25, Project (Project Leader). Al lado del nombre va la versión corta (n);
    en los diálogos de los ascensos, el cargo completo (full). Los celebran Agus y Lía (RRHH) y Fede. */
 const CLIENT_LVL = {fantasma: 10, logo: 17, explote: 22, anual: 27}; // los clientes tienen nivel fijo
-const FINAL_LVL = {min: 24, up: 3}; // la Gran Presentación crece con vos
+const FINAL_LVL = {min: 22, up: 1}; // la Gran Presentación crece con vos
 const PROJECT_LVL = 25; // a Project Leader (y se abre la Sala del Directorio)
 const ROLES = [{lvl: 1, n: 'Pasante', full: 'Pasante'}, {lvl: 15, n: 'Social', full: 'Social Manager'}, {lvl: PROJECT_LVL, n: 'Project', full: 'Project Leader'}];
 const roleAt = lvl => ROLES.filter(r => lvl >= r.lvl).pop();

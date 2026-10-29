@@ -96,7 +96,9 @@ async function startWorld(isNew){
   // partidas viejas: la terraza ya no existe (la Gran Presentación es en la Sala de Reuniones) y Visión tampoco
   if (S.pos.map === 'terrace') S.pos = {x: 32, y: 9, dir: 'left', map: 'upstairs'};
   if (S.skills.includes('vision')){ S.skills = S.skills.filter(id => id !== 'vision'); S.equip = S.equip.map(id => id === 'vision' ? null : id); delete S.pp.vision;
-    for (const id of S.skills) if (!S.equip.includes(id)){ const i = S.equip.indexOf(null); if (i < 0) break; S.equip[i] = id; } }
+    S.equip = S.equip.filter(Boolean); }
+  // el set por tipos (una de cada: creativa, estrategia, técnica y calma), una vez por partida vieja
+  if (!S.flags.equipV2){ S.flags.equipV2 = true; balanceEquip(); }
   if (S.quests.ideas){ delete S.quests.ideas; if (S.qbase) delete S.qbase.ideas; }
   useMap(S.pos.map || 'office'); placeDay();
   // partidas viejas: si quedaste parado donde ahora hay un seto o una planta, volvés a la entrada

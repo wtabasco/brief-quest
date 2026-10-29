@@ -145,7 +145,7 @@ const TAUNTS = {
 };
 const WILD_INTRO = {
   scope: ['"Ya que estamos... ¿agregamos una cosita?"', '"Es un cambio chiquitito, nada más."', '"Solo cambiá el color. Y el logo. Y el texto."'], reunion: ['"¿Tenés cinco minutos? Son dos horas."', '"Esto lo hablamos en una call."', '"Esto podía ser un mail, pero acá estamos."'],
-  archivo: ['"¿Cuál es la versión final? Todas."', '"Soy el definitivo. El otro definitivo era mentira."', '"final_v7_ahora_sí_este.pdf"'], wifi: ['"Se te congeló la cara."', '"¿Me escuchás? ¿Y ahora?"'],
+  archivo: ['"¿Cuál es la versión final? Todas."', '"Soy el definitivo. El otro definitivo era mentira."', '"final_v7_ahora_sí_este.pdf"'], wifi: ['"Ya llamaste a soporte técnico. Te dijeron que reinicies."', '"Se te congeló la cara."', '"¿Me escuchás? ¿Y ahora?"'],
   feedback: ['"Una cosita nomás..."', '"Me encanta, pero..."'], bug: ['"En mi compu anda."', '"Error 404: ganas no encontradas."'],
   mail: ['"Asunto: (sin asunto)"', '"Te reenvío el hilo de 47 mensajes."', '"Esta reunión podría haber sido yo."'], deadline: ['"Tic, tac, tic, tac..."', '"¿Era para hoy o para ayer?"', '"¡El brief llegó! Lo necesitan para ayer."'],
 };
@@ -345,9 +345,43 @@ async function learn(id, msg){
   if (S.skills.includes(id)) return false;
   S.skills.push(id); S.pp[id] = SK[id].pp; SFX.learn();
   await msg(`¡${fullName()} aprendió ${SK[id].n}!`);
-  if (S.equip.length < 4) S.equip.push(id);
-  else await msg('Ya tenés 4 habilidades activas. La nueva quedó en tu repertorio: podés activarla desde el menú.');
+  const r = equipNew(id);
+  if (r && r.out) await msg(r.swap ? `${SK[id].n} entra a tu set: es tu primera habilidad ${TYPES[SK[id].t].n.toLowerCase()} activa. ${SK[r.out].n} queda en tu repertorio.` : `${SK[id].n} reemplaza a ${SK[r.out].n} en tu set: es del mismo tipo (${TYPES[SK[id].t].n.toLowerCase()}) y más fuerte. ${SK[r.out].n} queda en tu repertorio.`);
+  else if (!r) await msg('La nueva quedó en tu repertorio: podés activarla desde el menú, en Habilidades.');
   return true;
+}
+/* El set de 4 habilidades se arma por tipo: una creativa, una de estrategia, una técnica y una de calma, así siempre
+   hay algo que le pegue fuerte a cada problema (burocracia, caos, bugs y presión). Lo que aprendés reemplaza a la
+   activa de su mismo tipo si es mejor; si todavía no tenías de ese tipo, ocupa un lugar libre o el de una de apoyo. */
+const SLOT_TYPES = ['CRE', 'EST', 'TEC', 'CAL'];
+function skillScore(id){
+  const k = SK[id]; if (!k || !k.p) return 0;
+  const fx = k.fx || '';
+  return k.p * (k.a || 100) / 100 + (fx.includes('prueba') ? 25 : 0) + (fx.includes('foeAtk-1') || fx.includes('crit') ? 8 : 0) + (k.pri ? 4 : 0) + (/self(Atk|Def|Spd)/.test(fx) ? 4 : 0);
+}
+const isMain = id => SLOT_TYPES.includes(SK[id].t) && skillScore(id) > 0;
+function equipNew(id){
+  if (S.equip.includes(id)) return {};
+  if (!isMain(id)){ if (S.equip.length < 4){ S.equip.push(id); return {}; } return null; }
+  const same = S.equip.filter(e => isMain(e) && SK[e].t === SK[id].t);
+  if (same.length){
+    const worst = same.sort((a, b) => skillScore(a) - skillScore(b))[0];
+    if (skillScore(id) <= skillScore(worst)) return null;
+    S.equip[S.equip.indexOf(worst)] = id; return {out: worst};
+  }
+  if (S.equip.length < 4){ S.equip.push(id); return {}; }
+  // sin activa de ese tipo: ocupa el lugar de una de apoyo o de un tipo repetido
+  const counts = {}; S.equip.forEach(e => { if (isMain(e)) counts[SK[e].t] = (counts[SK[e].t] || 0) + 1; });
+  const cand = S.equip.filter(e => !isMain(e) || counts[SK[e].t] > 1).sort((a, b) => skillScore(a) - skillScore(b))[0];
+  if (!cand) return null;
+  S.equip[S.equip.indexOf(cand)] = id; return {out: cand, swap: true};
+}
+/* arma el set ideal desde cero (partidas viejas): la mejor de cada tipo y, si sobra lugar, las mejores de apoyo */
+function balanceEquip(){
+  const eq = [];
+  for (const t of SLOT_TYPES){ const best = S.skills.filter(id => isMain(id) && SK[id].t === t).sort((a, b) => skillScore(b) - skillScore(a))[0]; if (best) eq.push(best); }
+  for (const id of S.skills.slice().sort((a, b) => skillScore(b) - skillScore(a))) if (eq.length < 4 && !eq.includes(id) && (SK[id].t !== 'VIS')) eq.push(id);
+  if (eq.length) S.equip = eq;
 }
 const sayN = t => say(t);
 async function battleFlow(foe, kind, key){

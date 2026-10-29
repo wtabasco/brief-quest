@@ -257,7 +257,7 @@ async function pimiFoodFavor(){
     if (c !== 0) return true;
     S.items[food]--; m.pimiFoodAt = b; m.pimiFood = (m.pimiFood || 0) + 1; qDone('pimi_comida');
     await say(pick('pimi:food', ['¡Combustible! Ahora sí.', 'Ñam. Mi cerebro pasó de 3G a fibra óptica.', 'Gracias. Esto vale más que una actualización.', 'Ahora sí. Batería al cien.', 'Esto es mejor que reiniciar.', 'Gracias. Te debo una. Bueno, ya te la pago.', 'Ñam. Rindo el doble. Lía me va a querer medir.']), 'pimi');
-    if (m.pimiFood <= 3){ S.bonus.spd += 1; S.bonus.atk += 1; SFX.learn(); await say('Pimi te optimizó la compu. Tu ataque y tu velocidad subieron de forma permanente.'); }
+    if (m.pimiFood <= 3){ S.bonus.spd += 1; S.bonus.atk += 1; SFX.learn(); await say('Pimi te pasó sus atajos y herramientas. Tu ataque y tu velocidad subieron de forma permanente.'); }
     S.items.pendrive = (S.items.pendrive || 0) + 1; await say(pick('pimi:gift', ['Tomá, te paso un pendrive con mis scripts. Usalo en una emergencia.', 'Llevate esto: un pendrive con atajos. Ojo que no es para guardar fotos.', 'Tomá un pendrive. Adentro hay magia. Bueno, scripts. Es parecido.', 'Llevate este pendrive. Si algo se traba, lo enchufás y listo.']), 'pimi'); await say('Recibiste Pendrive de Pimi.');
     return true;
   }
@@ -485,7 +485,7 @@ const DINAMICAS = [
   {if: () => talks('marga') > 0, t: {q: '¿Qué le encanta mostrarte a Marga?', a: 'Las fotos de sus nietas', o: ['Sus plantas', 'Sus recetas']}},
   {if: () => talks('tato') > 0, t: {q: '¿Qué música tranqui suena siempre en el parlante de Tato?', a: 'Reggae', o: ['Cumbia', 'Heavy metal']}},
   {if: () => talks('tato') > 0, t: {q: '¿De qué se encarga Tato?', a: 'De los números de la agencia', o: ['De los videos', 'De la pauta de las campañas']}},
-  {if: () => talks('pimi') > 0, t: {q: '¿Qué hace Pimi en la agencia?', a: 'Paid media, y lo técnico pasa por él', o: ['Solo arregla el wifi', 'Graba los videos']}},
+  {if: () => talks('pimi') > 0, t: {q: '¿Qué hace Pimi en la agencia?', a: 'Paid media y las innovaciones tecnológicas', o: ['Arregla el wifi cuando se cae', 'Graba los videos']}},
   {if: () => talks('lia') > 0, t: {q: '¿Qué le encanta hacer a Lía, todo el tiempo?', a: 'Medir y mejorar todo', o: ['Seguir el proceso al pie de la letra', 'Dejar todo para mañana']}},
   {if: () => talks('lia') > 0, t: {q: 'El equipo casi siempre vota branding. ¿Qué campañas prefiere siempre Lía?', a: 'Las de performance', o: ['Las de branding, como todos', 'Las que no se miden']}},
   {if: () => talks('lia') > 0, t: {q: 'De las dos fundadoras, ¿quién es re de seguir los procesos?', a: 'Agus', o: ['Lía', 'Ninguna de las dos']}},
@@ -926,7 +926,8 @@ async function talkLu(){
 }
 
 /* ================= PIMI =================
-   Paid media (la pauta de las campañas), y todo lo tecnológico de la agencia termina pasando por él.
+   Paid media (la pauta de las campañas) y las innovaciones tecnológicas: herramientas nuevas, automatizaciones, atajos.
+   Que anden las compus y el internet es cosa de Sofi.
    Práctico y sencillo para hablar, come mucho, hace deporte (surfea en Rocha) y en las crisis tiene calma total.
    Compinche de Lía: los dos viven mirando los números de las campañas. */
 const PIMI = {
@@ -936,7 +937,7 @@ const PIMI = {
     boss: {explote: 'Explotó, pero controlado. Así me gustan las campañas.', logo: 'El logo quedó del mismo tamaño. Eso es eficiencia.', fantasma: 'La Clienta Fantasma respondió. Lo anoto como hito.'},
     level: [() => `Nivel ${S.lvl}. Buen rendimiento. Seguí así.`, () => `¡Subiste a ${S.lvl}! Bien ahí.`],
   },
-  lines: [{d: 1, t: 'Todo lo tecnológico de la agencia, de alguna forma, termina pasando por mí. No sé bien cómo pasó. Pero pasó.'},
+  lines: [{d: 1, t: 'Las herramientas nuevas de la agencia, de alguna forma, terminan pasando por mí. Que la compu prenda, no: eso es Sofi.'},
     {d: 2, t: 'Hoy la ola estaba de dos metros en La Paloma. Mañana a las siete estoy en el agua.'},
     'Si hacés algo dos veces, automatizalo. Si lo hacés tres, ya es tarde.', '¿Se cayó algo? Tranqui. Apagá, prendé y contame.',
     'La pauta es simple: el anuncio correcto a la persona correcta. Lo difícil es todo lo demás.',
@@ -957,7 +958,7 @@ const PIMI = {
 async function talkPimi(){
   if (!S.flags.pimiMet){
     S.flags.pimiMet = true;
-    await says([`${saludo()}! Soy Pimi. Hago paid media: la pauta de las campañas.`, 'Te doy una mano con lo técnico, pero primero mostrame que sabés resolver problemas.', 'Arrancá por algo simple: resolvé 2 Wifi Caído en La Base.'], 'pimi');
+    await says([`${saludo()}! Soy Pimi. Hago paid media: la pauta de las campañas.`, 'Te paso herramientas y atajos, pero primero mostrame que sabés resolver problemas.', 'Arrancá por algo simple: resolvé 2 Wifi Caído en La Base.'], 'pimi');
     qOpen('pimi_atajo'); return;
   }
   await opener('pimi', 'pimi', PIMI.again);
@@ -1098,7 +1099,7 @@ async function presentation(me){
    Tato es el contador: lleva los números. Relajado, con reggae tranqui sonando bajito en el parlante de Asteroide; su gracia es que anda en otra
    cosa, a otro ritmo que el resto (contesta tarde, se entera después). No participa mucho de la aventura. */
 const SOFI = {
-  again: ['¿Volviste? ¿Comiste algo?', '¿Todo bien? ¿Precisás algo?', 'Si es por el wifi, ya lo reinicié.', '¿Volviste? ¿Tomaste agua?', '¡Hola de nuevo! ¿Se te cortó el internet o venís a charlar?', '¿Todo en orden? Si no, lo ordenamos.', '¿Te quedaste con hambre? Hay fruta, ¿eh?'],
+  again: ['¿Volviste? ¿Comiste algo?', '¿Todo bien? ¿Precisás algo?', 'Si es por el wifi, ya lo reinicié. Soporte técnico todavía no contestó, pero eso no es noticia.', '¿Volviste? ¿Tomaste agua?', '¡Hola de nuevo! ¿Se te cortó el internet o venís a charlar?', '¿Todo en orden? Si no, lo ordenamos.', '¿Te quedaste con hambre? Hay fruta, ¿eh?'],
   R: {
     lowhp: ['Estás pálid{o}. Comé una fruta y pasá por lo de Lu, ¿sí?', 'Uy, venís sin pilas. Sentate un ratito, que nadie te apura.'],
     lose: [f => `¿${f} te dejó sin energía? Pasa. Tomá agua, comé algo y volvé con otra cabeza.`],
@@ -1113,7 +1114,7 @@ const SOFI = {
     {d: 3, t: '¿Sabés cuál es el secreto para que una oficina funcione? Que nadie se entere de todo lo que se arregló.'},
     'Si la impresora dice "atasco de papel", no le creas. Llamame.',
     {d: 2, t: 'Compré fruta para toda la semana. Va a durar hasta el miércoles. Por Pimi.'},
-    {d: 4, t: 'Pimi se ocupa de lo técnico de las campañas; yo, de que la compu prenda y el internet ande. Entre los dos, el wifi no tiene escapatoria.'},
+    {d: 4, t: 'Pimi trae las herramientas nuevas; yo me ocupo de que la compu prenda y el internet ande. Y soporte técnico... soporte técnico existe. Eso dicen.'},
     {d: 4, t: 'Cuidar la casa también es cuidar a la gente. Una silla rota a la mañana es un mal día a la tarde.'},
     {d: 2, t: 'A Tato le dejo la fruta al lado del teclado. Si no la ve, no existe.'},
     {d: 5, t: 'Fede me pidió otro termo para la oficina. Ya van tres. Reni dice que no alcanza.'},
@@ -2061,7 +2062,7 @@ async function welcomeGate(n){
     fede: `¡Hola! Antes de arrancar conmigo, pasá por Asteroide a ver a Sofi. Ella te da la bienvenida a la casa. Después volvé, que el mate no se ceba solo.`,
     agus: `¡Hola! Nos encanta que hayas venido. Pero primero conocé a ${next}: así arranca todo el mundo acá.`,
     lia: `¡Hola! ¡Ya te medí! Pero el orden es el orden: primero ${next}. ¡Después te espero con el tablero!`,
-    pimi: `Hola. Todavía es temprano para lo técnico. Primero conocé a ${next}. Después vení, que te doy una mano.`,
+    pimi: `Hola. Todavía es temprano para las herramientas. Primero conocé a ${next}. Después vení, que te doy una mano.`,
     alejo: `¡Hola! Te esperamos, pero antes conocé a ${next}. Después volvés y armamos algo lindo.`,
     giuli: `¡Hola! Primero lo primero: conocé a ${next}. Después volvé, que acá hay mucho para ordenar.`,
   }[n.id];
