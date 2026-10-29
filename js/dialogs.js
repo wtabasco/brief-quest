@@ -1315,7 +1315,20 @@ async function ending(){
   await say('La programo para las siete, que es cuando más se ve. Y con subtítulos.', 'alejo');
   await say('Ya la guardé: bien nombrada y en su carpeta. Como corresponde.', 'giuli');
   await say('La campaña del año fue un éxito. La agencia celebra.');
-  await say('FIN. ¿O el lunes que viene entra otro brief? Podés seguir jugando: completar la bitácora y llegar al nivel 30.');
+  // que quede claro: acá termina la inducción (el juego), y se puede seguir jugando
+  await say('Bueno, ahora en serio. Con esto terminaste tu inducción: ya sabés cómo trabajamos. Te la ganaste mate a mate.', 'fede:feliz');
+  await say('Desde hoy ya no estás aprendiendo a ser parte del equipo: ya sos parte. Bienvenid{o} de verdad, {name}.', 'agus:feliz');
+  await say('¡Y si te quedan ganas, seguí! ¡Hay problemas en La Base hasta el nivel 30 y la bitácora para completar! ¡Yo lo voy midiendo! ¡Ja!', 'lia:risa');
+  await panelInfo('¡TERMINASTE LA INDUCCIÓN!', H_([
+    P_('Llegaste como pasante y terminaste como <b>Project Leader</b>: conociste la agencia, te capacitaste con el equipo, destrabaste a los tres clientes y le presentaste la campaña del año al <b>Cliente del Año</b>.'),
+    P_('<b>Este es el final del juego.</b> La inducción está completa.'),
+    K_('Si querés, podés seguir jugando'),
+    B_('Subir de nivel:', 'los problemas de La Base dan más experiencia que antes y se puede llegar hasta el nivel 30.'),
+    B_('Completar la bitácora:', 'todos los problemas y todas las habilidades.'),
+    B_('Repasar:', 'en START → La agencia → Repaso final, y las capacitaciones en START → Capacitaciones.'),
+    P_('Tu partida queda guardada.')], 2.6));
+  closePanel();
+  await say('FIN DE LA INDUCCIÓN. ¡Gracias por jugar! Podés seguir recorriendo la agencia y subiendo de nivel cuando quieras.');
 }
 
 
