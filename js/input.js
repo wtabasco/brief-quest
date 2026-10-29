@@ -6,8 +6,9 @@ const pushH = fn => H.push(fn);
 const popH = fn => { const i = H.lastIndexOf(fn); if (i >= 0) H.splice(i, 1); };
 const dirStack = [];
 const held = {b:false};
-const KEYMAP = {ArrowUp:'up',KeyW:'up',ArrowDown:'down',KeyS:'down',ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',
-  Enter:'a',Space:'a',KeyZ:'a',KeyX:'b',Escape:'b',Backspace:'b',KeyM:'start',KeyN:'select',KeyQ:'l',KeyE:'r',KeyH:'help'};
+/* las letras de los botones son las mismas del teclado: A, B, L y R (Enter y Espacio también son A; Esc, B) */
+const KEYMAP = {ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',
+  KeyA:'a',Enter:'a',Space:'a',KeyB:'b',Escape:'b',Backspace:'b',KeyL:'l',KeyR:'r',KeyM:'start',KeyN:'select',KeyH:'help'};
 const isDir = b => b==='up'||b==='down'||b==='left'||b==='right';
 function syncSnd(){ const b = $('sndToggle'); if (b){ b.setAttribute('aria-pressed', String(!muted)); b.setAttribute('aria-label', muted ? 'Sonido apagado' : 'Sonido encendido'); } }
 function toggleMute(){ muted = !muted; try { localStorage.setItem('briefquest.muted', muted ? '1' : '0'); } catch(e){} syncSnd(); toast(muted ? 'Sonido apagado' : 'Sonido encendido'); }
@@ -22,8 +23,37 @@ function press(btn){
 }
 function holdDir(b, on){ const i = dirStack.indexOf(b); if (i >= 0) dirStack.splice(i, 1); if (on) dirStack.push(b); }
 function releaseAll(){ dirStack.length = 0; held.b = false; setPad(null); document.querySelectorAll('.on').forEach(e => e.classList.remove('on')); }
+/* Tamaño de la pantalla en la compu: botones − y + (y las teclas - y +). En el celular no aparece. */
+const ZOOM_MIN = .7, ZOOM_MAX = 1.8, ZOOM_STEP = .1;
+const zoomOK = () => { try { return matchMedia('(pointer:fine)').matches; } catch(e){ return true; } };
+let zoom = 1;
+try { zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, parseFloat(localStorage.getItem('briefquest.zoom')) || 1)); } catch(e){}
+function applyZoom(){
+  document.documentElement.style.setProperty('--zoom', zoomOK() ? zoom.toFixed(2) : '1');
+  const m = $('zoomOut'), p = $('zoomIn');
+  if (m) m.disabled = zoom <= ZOOM_MIN + .001;
+  if (p) p.disabled = zoom >= ZOOM_MAX - .001;
+}
+function setZoom(d){
+  if (!zoomOK()) return;
+  const z = Math.round(Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoom + d)) * 10) / 10;
+  if (z === zoom) return;
+  zoom = z; try { localStorage.setItem('briefquest.zoom', String(zoom)); } catch(e){}
+  applyZoom(); toast('Pantalla al ' + Math.round(zoom * 100) + '%');
+}
+function zoomKey(e){
+  if (e.repeat) return false;
+  if (e.key === '+' || e.code === 'NumpadAdd' || e.code === 'Equal'){ e.preventDefault(); setZoom(ZOOM_STEP); return true; }
+  if (e.key === '-' || e.code === 'NumpadSubtract' || e.code === 'Minus'){ e.preventDefault(); setZoom(-ZOOM_STEP); return true; }
+  return false;
+}
+applyZoom();
+$('zoomOut') && $('zoomOut').addEventListener('click', e => { e.preventDefault(); setZoom(-ZOOM_STEP); });
+$('zoomIn') && $('zoomIn').addEventListener('click', e => { e.preventDefault(); setZoom(ZOOM_STEP); });
 addEventListener('keydown', e => {
   if (e.target && e.target.tagName === 'INPUT') return;
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if (zoomKey(e)) return;
   const b = KEYMAP[e.code]; if (!b) return;
   e.preventDefault();
   if (b === 'b') held.b = true;

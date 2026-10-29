@@ -17,11 +17,11 @@ img{max-width:100%}
 [hidden]{display:none!important}
 html,body{background:var(--page);color:var(--page-ink)}
 body{font-family:var(--f-ui);padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:18px 28px}
-.wrap{max-width:1060px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.wrap{max-width:calc(1060px * var(--zoom, 1));margin:0 auto;display:flex;flex-direction:column;gap:18px}
 
 /* ===== Carcasa ===== */
 .gba{position:relative;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;align-items:center}
-.shell{position:relative;z-index:2;width:min(100%, calc((100svh - 120px) * 4 / 3 + 56px));min-width:min(100%, 340px);
+.shell{position:relative;z-index:2;width:min(100%, calc(((100svh - 120px) * 4 / 3 + 56px) * var(--zoom, 1)));min-width:min(100%, 340px);
   background:linear-gradient(172deg,var(--shell-hi) 0%,var(--shell) 45%,var(--shell-lo) 100%);border-radius:30px 30px 26px 26px;padding:16px 22px 12px;
   box-shadow:inset 0 4px 0 rgba(255,255,255,.12), inset 0 -8px 0 rgba(0,0,0,.25), 0 14px 30px rgba(0,40,10,.28)}
 .bezel{background:#151d18;border-radius:12px 12px 22px 22px;padding:9px 12px 12px;box-shadow:inset 0 2px 8px rgba(0,0,0,.55);display:flex;flex-direction:column;gap:7px}
@@ -38,6 +38,10 @@ body{font-family:var(--f-ui);padding-left:max(16px, env(safe-area-inset-left, 0p
 .toggle:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
 .bar-r{display:flex;gap:8px;align-items:center}
 .toggle.snd{background:var(--sand);gap:6px;padding:8px 12px}
+.zoom{display:flex;gap:4px}
+.toggle.zm{background:var(--lav);color:#1c1630;padding:6px 0;width:30px;justify-content:center;font-size:16px;line-height:1}
+.toggle.zm:disabled{opacity:.45;cursor:default}
+@media (pointer:coarse){ .zoom{display:none} }
 .toggle.help{background:var(--orange);color:#1c1408;padding:8px 12px}
 .toggle.snd .ico{display:inline-block;width:12px;height:10px;background:linear-gradient(#1c2b20,#1c2b20) 0 3px/4px 4px no-repeat;position:relative}
 .toggle.snd .ico::before{content:"";position:absolute;left:3px;top:0;border-right:6px solid #1c2b20;border-top:5px solid transparent;border-bottom:5px solid transparent}
@@ -49,7 +53,7 @@ body{font-family:var(--f-ui);padding-left:max(16px, env(safe-area-inset-left, 0p
 #cv{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges;display:block}
 .drawer{position:relative;z-index:1;width:min(92%, 720px);display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease;margin-top:-14px}
 .drawer.open{grid-template-rows:1fr}
-.gba.padOpen .shell{width:min(100%, calc((100svh - 330px) * 4 / 3 + 56px))}
+.gba.padOpen .shell{width:min(100%, calc(((100svh - 330px) * 4 / 3 + 56px) * var(--zoom, 1)))}
 .shell{transition:width .3s ease}
 .drawerIn{overflow:hidden;min-height:0}
 .pad{background:linear-gradient(180deg,var(--shell-lo),var(--shell) 30%,var(--shell-lo));border-radius:0 0 70px 70px / 0 0 50px 50px;padding:30px 26px 26px;

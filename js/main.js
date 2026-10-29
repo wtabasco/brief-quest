@@ -121,7 +121,7 @@ async function startWorld(isNew){
     await say('¡Ey, {name}! Soy Sahi, creativo. ¡Bienvenid{o}!', 'sahi:feliz');
     await says(['Primero andá a ver a Sofi, en Asteroide: la oficina de Administración, en la planta alta. Entrás por esa puerta y subís por la escalera del hall. Ella te da la bienvenida a la casa.', 'Yo estoy acá en el patio, en la mesa de ping pong. Cuando quieras, peloteamos, ¿dale?'], 'sahi');
     qOpen('bienvenida', true);
-    await say('En START (o la tecla M) están tus Tareas. Mantené B (o X) para correr.');
+    await say('En START (o la tecla M) están tus Tareas. Mantené B para correr.');
     hideDlg(); G.busy = false; save();
   }
   G.zone = null; onStep();
