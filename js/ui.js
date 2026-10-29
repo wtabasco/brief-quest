@@ -14,7 +14,25 @@ function crispSrc(src){
     catch(e){ res(src); } }; im.onerror = () => res(src); im.src = src; });
 }
 const CRISP_ON = (() => { try { return matchMedia('(pointer: coarse)').matches; } catch(e){ return false; } })(); // solo en el celular; en la compu, como siempre
-function crispPortrait(img, src){ if (!CRISP_ON){ img.src = src; return; } img.dataset.want = src; crispSrc(src).then(u => { if (img.dataset.want === src) img.src = u; }); if (!CRISP[src + ':done']){ img.src = src; CRISP[src].then(() => CRISP[src + ':done'] = 1); } }
+/* cambia la imagen sin que se vea un instante la anterior: hasta que la nueva está lista, el retrato queda oculto */
+function setPic(img, url){
+  if (img.getAttribute('src') === url){ img.style.visibility = ''; return; }
+  img.style.visibility = 'hidden';
+  img.onload = img.onerror = () => { if (img.getAttribute('src') === url) img.style.visibility = ''; };
+  img.src = url;
+  if (img.complete && img.naturalWidth) img.style.visibility = '';
+}
+function crispPortrait(img, src){
+  if (!CRISP_ON){ setPic(img, src); return; }
+  img.dataset.want = src;
+  if (CRISP_OK[src]){ setPic(img, CRISP_OK[src]); return; }
+  setPic(img, src);
+  crispSrc(src).then(u => { if (img.dataset.want === src && u !== src){ const im = new Image(); im.onload = () => { if (img.dataset.want === src) img.src = u; }; im.src = u; } });
+}
+/* en la compu, deja decodificados todos los retratos (así el primero de cada uno no tarda) */
+const PIC_WARM = [];
+setTimeout(() => { if (CRISP_ON) return; try { const all = Object.values(PORTRAITS).concat(typeof PORTRAIT_MOODS !== 'undefined' ? Object.values(PORTRAIT_MOODS).flatMap(m => Object.values(m)) : []);
+  all.forEach(u => { const im = new Image(); im.src = u; if (im.decode) im.decode().catch(() => {}); PIC_WARM.push(im); }); } catch(e){} }, 1200);
 /* precarga los retratos para que la primera vez ya aparezcan bien */
 setTimeout(() => { if (!CRISP_ON) return; try { Object.values(PORTRAITS).forEach(crispSrc); if (typeof PORTRAIT_MOODS !== 'undefined') Object.values(PORTRAIT_MOODS).forEach(m => Object.values(m).forEach(crispSrc)); } catch(e){} }, 1500);
 function hideDlg(){ $('dlg').hidden = true; }
