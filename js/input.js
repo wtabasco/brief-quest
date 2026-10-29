@@ -6,9 +6,9 @@ const pushH = fn => H.push(fn);
 const popH = fn => { const i = H.lastIndexOf(fn); if (i >= 0) H.splice(i, 1); };
 const dirStack = [];
 const held = {b:false};
-/* las letras de los botones son las mismas del teclado: A, B, L y R (Enter y Espacio también son A; Esc, B) */
-const KEYMAP = {ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',
-  KeyA:'a',Enter:'a',Space:'a',KeyB:'b',Escape:'b',Backspace:'b',KeyL:'l',KeyR:'r',KeyM:'start',KeyN:'select',KeyH:'help'};
+/* los botones de la consola llevan escrita la tecla que les corresponde: Z (A), X (B), Q (L) y E (R) */
+const KEYMAP = {ArrowUp:'up',KeyW:'up',ArrowDown:'down',KeyS:'down',ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',
+  Enter:'a',Space:'a',KeyZ:'a',KeyX:'b',Escape:'b',Backspace:'b',KeyM:'start',KeyN:'select',KeyQ:'l',KeyE:'r',KeyH:'help'};
 const isDir = b => b==='up'||b==='down'||b==='left'||b==='right';
 function syncSnd(){ const b = $('sndToggle'); if (b){ b.setAttribute('aria-pressed', String(!muted)); b.setAttribute('aria-label', muted ? 'Sonido apagado' : 'Sonido encendido'); } }
 function toggleMute(){ muted = !muted; try { localStorage.setItem('briefquest.muted', muted ? '1' : '0'); } catch(e){} syncSnd(); toast(muted ? 'Sonido apagado' : 'Sonido encendido'); }
@@ -112,5 +112,5 @@ function setInfo(open){
 (() => { let open = false; try { open = localStorage.getItem('briefquest.keys') === '1'; } catch(e){} setInfo(open); })();
 padToggle.addEventListener('click', () => { setInfo(!ctrlInfo.classList.contains('open')); padToggle.blur(); });
 /* en el celular, el pie del título habla de la cruceta y los botones, no del teclado */
-try { if (matchMedia('(pointer: coarse)').matches){ const f = document.querySelector('.tFoot'); if (f) f.textContent = 'Cruceta para moverte · A: aceptar · B: volver'; } } catch(e){}
+try { if (matchMedia('(pointer: coarse)').matches){ const f = document.querySelector('.tFoot'); if (f) f.textContent = 'Cruceta para moverte · Z: aceptar · X: volver'; } } catch(e){}
 

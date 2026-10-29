@@ -89,5 +89,5 @@ async function questScreen(){
       return `<h4>${q.title}</h4><div class="k">Te la pidió: ${q.giver}</div><div>${q.desc()}</div>` +
         (done ? '<div class="k">Cumplida.</div>' : `<div class="xp" style="height:2cqw"><i style="width:${(a / b) * 100}%"></i></div><div class="k">${a} de ${b}${qReady(id) ? ' · ¡Volvé a hablar con quien te la pidió!' : ''}</div>` +
           (q.minLvl ? `<div class="k">${S.lvl >= q.minLvl ? `Nivel ${q.minLvl} ✓` : `Pide nivel ${q.minLvl} (estás en el ${S.lvl}).`}</div>` : '')); },
-    hint: 'B: volver'});
+    hint: 'X: volver'});
 }

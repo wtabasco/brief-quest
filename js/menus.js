@@ -31,8 +31,8 @@ async function pauseMenu(){
 async function saveScreen(){
   const rows = () => Array.from({length: SLOTS}, (_, i) => { const n = i + 1, info = slotLabel(n); return {label: `Espacio ${n}` + (n === SLOT ? ' ★' : ''), right: info ? `Nv. ${info.d.lvl}` : 'vacío', dim: !info}; });
   const r = await panelList({title: 'GUARDAR', extra: `ESTÁS EN EL ESPACIO ${SLOT}`, rows,
-    detail: i => { const info = slotLabel(i + 1); return `<h4>Espacio ${i + 1}${i + 1 === SLOT ? ' (esta partida)' : ''}</h4><div>${info ? info.txt : 'Vacío'}</div><div class="k">${i + 1 === SLOT ? 'A: guardar acá.' : info ? 'A: guardar acá. Se borra la partida que había.' : 'A: guardar acá. Vas a seguir jugando desde este espacio.'}</div>`; },
-    hint: 'A: guardar · B: volver'});
+    detail: i => { const info = slotLabel(i + 1); return `<h4>Espacio ${i + 1}${i + 1 === SLOT ? ' (esta partida)' : ''}</h4><div>${info ? info.txt : 'Vacío'}</div><div class="k">${i + 1 === SLOT ? 'Z: guardar acá.' : info ? 'Z: guardar acá. Se borra la partida que había.' : 'Z: guardar acá. Vas a seguir jugando desde este espacio.'}</div>`; },
+    hint: 'Z: guardar · X: volver'});
   if (r < 0) return;
   const n = r + 1, info = slotLabel(n);
   if (n !== SLOT && info){ closePanel(); const c = await choose([`Sí, reemplazar la de ${info.d.name}`, 'No']); if (c !== 0) return; }
@@ -45,9 +45,9 @@ async function skillsScreen(){
     const r = await panelList({title:'HABILIDADES', extra:`${S.skills.length}/${Object.keys(SK).length} · ACTIVAS ${S.equip.length}/4`, start,
       rows:() => S.skills.map(id => ({label:(S.equip.includes(id) ? '★ ' : '· ') + SK[id].n, right:`${S.pp[id]}/${SK[id].pp}`, dim:!S.equip.includes(id)}))
         .concat(locked.map(id => ({label:'🔒 ' + SK[id].n, right:'—', dim:true}))),
-      detail:i => i < S.skills.length ? skillDetail(S.skills[i]) + `<div class="k">${S.equip.includes(S.skills[i]) ? '★ Activa. A para quitarla.' : 'En tu repertorio. A para activarla.'}</div>`
+      detail:i => i < S.skills.length ? skillDetail(S.skills[i]) + `<div class="k">${S.equip.includes(S.skills[i]) ? '★ Activa. Z para quitarla.' : 'En tu repertorio. Z para activarla.'}</div>`
         : `<h4>${SK[locked[i - S.skills.length]].n}</h4><div>${chip(SK[locked[i - S.skills.length]].t)}</div><div class="k">Todavía no la aprendiste.</div><div>${SKILL_HOW[locked[i - S.skills.length]]}</div>`,
-      hint:'A: activar o quitar · B: volver'});
+      hint:'Z: activar o quitar · X: volver'});
     if (r < 0) return;
     if (r >= S.skills.length){ start = r; toast('Todavía no la aprendiste'); continue; }
     start = r; const id = S.skills[r];
@@ -84,6 +84,6 @@ async function logScreen(){
       if (!l) return `<h4>???</h4><div class="k">Todavía no te lo cruzaste.</div>`;
       const need = EN[k] ? LESSON_NEED : 1, ll = EN[k] ? (LESSON_LVL[k] || 0) : 0, les = d.lesson ? (S.skills.includes(d.lesson) ? `Lección: ${SK[d.lesson].n} ✓` : `Lección: ${SK[d.lesson].n}. Se aprende resolviéndolo ${need === 1 ? 'una vez' : need + ' veces'} (${Math.min(l.beaten, need)}/${need})${ll ? `, desde el nivel ${ll}` : ''}.`) : '';
       return `<h4>${d.n}</h4><div>${chip(d.t)}</div><div>${d.d}</div><div class="k">Resuelto ${l.beaten} ${l.beaten === 1 ? 'vez' : 'veces'}</div><div class="k">${les}</div>`; },
-    hint:'B: volver'});
+    hint:'X: volver'});
 }
 

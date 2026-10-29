@@ -1859,8 +1859,8 @@ async function trainingScreen(){
     const rows = trainingRows(), done = rows.filter(r => r.done).length;
     const r = await panelList({title: 'CAPACITACIONES', extra: `${done}/${rows.length}`, start,
       rows: () => rows.map(x => ({label: (x.done ? '✓ ' : '🔒 ') + x.title, right: '', dim: !x.done})),
-      detail: i => { const x = rows[i]; return `<h4>${x.title}</h4><div class="k">${x.group}</div>` + (x.done ? `<div class="k">✓ Hecha</div><div>${lineText(x.lines[1] || x.lines[0]).slice(0, 95).replace(/\s+\S*$/, '')}…</div><div class="k">A: repasarla completa.</div>` : `<div class="k">Todavía no la hiciste.</div><div>${x.lock}</div>`); },
-      hint: 'A: repasar · B: volver'});
+      detail: i => { const x = rows[i]; return `<h4>${x.title}</h4><div class="k">${x.group}</div>` + (x.done ? `<div class="k">✓ Hecha</div><div>${lineText(x.lines[1] || x.lines[0]).slice(0, 95).replace(/\s+\S*$/, '')}…</div><div class="k">Z: repasarla completa.</div>` : `<div class="k">Todavía no la hiciste.</div><div>${x.lock}</div>`); },
+      hint: 'Z: repasar · X: volver'});
     if (r < 0) return;
     start = r; const x = rows[r];
     if (!x.done){ toast('Todavía no la hiciste'); continue; }

@@ -70,7 +70,7 @@ function drawMini(){
   // textos
   ctx.textAlign = 'center'; ctx.fillStyle = '#fbf8ef';
   ctx.font = '14px Silkscreen, "Press Start 2P", monospace'; ctx.fillText('PELOTEO CON SAHI', cx, 28);
-  ctx.font = '11px Silkscreen, monospace'; ctx.fillText(`DEVOLUCIONES: ${R.hits}`, cx, 352); ctx.fillText(G.t < R.t0 ? 'SAHI SACA...' : 'A: DEVOLVER · B: SALIR', cx, 370);
+  ctx.font = '11px Silkscreen, monospace'; ctx.fillText(`DEVOLUCIONES: ${R.hits}`, cx, 352); ctx.fillText(G.t < R.t0 ? 'SAHI SACA...' : 'Z: DEVOLVER · X: SALIR', cx, 370);
   if (R.done && R.msg){ ctx.font = '18px Silkscreen, monospace'; ctx.fillStyle = 'rgba(16,14,24,.8)'; ctx.fillRect(cx - 130, ny - 22, 260, 34); ctx.fillStyle = R.win ? '#b6f03a' : '#fbf8ef'; ctx.fillText(R.msg, cx, ny); }
   ctx.textAlign = 'left';
 }

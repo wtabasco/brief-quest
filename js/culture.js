@@ -101,8 +101,8 @@ async function agenciaScreen(){
   let start = 0;
   for (;;){
     const r = await panelList({title: 'LA AGENCIA', start, rows: () => agList().map(x => ({label: x.t, right: ''})),
-      detail: i => { const x = agList()[i]; return `<h4>${(x.title || x.t).replace(/^ROL: |^CÓMO TRABAJAMOS: /, m => m === 'ROL: ' ? 'Rol: ' : 'Cómo trabajamos: ').replace(/^[A-ZÁÉÍÓÚ ]+$/, () => x.t)}</h4><div>${typeof x.d === 'function' ? x.d() : x.d}</div><div class="k">A: leer completo.</div>`; },
-      hint: 'A: leer · B: volver'});
+      detail: i => { const x = agList()[i]; return `<h4>${(x.title || x.t).replace(/^ROL: |^CÓMO TRABAJAMOS: /, m => m === 'ROL: ' ? 'Rol: ' : 'Cómo trabajamos: ').replace(/^[A-ZÁÉÍÓÚ ]+$/, () => x.t)}</h4><div>${typeof x.d === 'function' ? x.d() : x.d}</div><div class="k">Z: leer completo.</div>`; },
+      hint: 'Z: leer · X: volver'});
     if (r < 0) return;
     start = r; const x = agList()[r];
     closePanel();

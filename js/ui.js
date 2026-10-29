@@ -134,7 +134,7 @@ async function choose(opts, {cancel=-1, tall=false}={}){
 function toast(msg, ms=1600){ const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => t.hidden = true, ms); }
 
 /* Panel con lista y detalle */
-function panelList({title, rows, detail, start=0, hint='A: elegir · B: volver', extra=''}){
+function panelList({title, rows, detail, start=0, hint='Z: elegir · X: volver', extra=''}){
   return new Promise(res => {
     const P = $('panel'), L = $('panelList'), D = $('panelDetail');
     P.hidden = false; $('panelBody').classList.remove('solo'); D.hidden = false;
@@ -175,7 +175,7 @@ function panelList({title, rows, detail, start=0, hint='A: elegir · B: volver',
 function panelInfo(title, html){
   return new Promise(res => {
     const P = $('panel'); P.hidden = false;
-    $('panelTitle').textContent = title; $('panelExtra').textContent = ''; $('panelHint').textContent = 'A o B: volver';
+    $('panelTitle').textContent = title; $('panelExtra').textContent = ''; $('panelHint').textContent = 'Z o X: volver';
     $('panelBody').classList.add('solo'); $('panelList').innerHTML = ''; $('panelList').style.display = 'none';
     const D = $('panelDetail'); D.hidden = false; D.innerHTML = html;
     const h = b => { if (b === 'a' || b === 'b' || (CLOSE_BTN && b === CLOSE_BTN)){ SFX.sel(); popH(h); $('panelList').style.display = ''; $('panelBody').classList.remove('solo'); res(); } };

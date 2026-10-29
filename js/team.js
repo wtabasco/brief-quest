@@ -185,7 +185,7 @@ function helpHTML(){
   return `<div style="font-size:2.45cqw;line-height:1.2;display:flex;flex-direction:column;gap:.45cqw"><h4>Ahora</h4><div>${fmt(nextStep())}</div>` + (ideas ? `<h4 style="margin-top:.6cqw">Para sumar experiencia hoy</h4>${ideas}` : '') + (qs ? `<h4 style="margin-top:.6cqw">En curso</h4>${qs}` : '') +
     `</div>`;
 }
-async function helpPanel(){ const p = panelInfo('AYUDA', helpHTML()); $('panelHint').textContent = 'B: volver · Todas tus tareas: START → Tareas'; await p; }
+async function helpPanel(){ const p = panelInfo('AYUDA', helpHTML()); $('panelHint').textContent = 'X: volver · Todas tus tareas: START → Tareas'; await p; }
 async function helpScreen(){
   if (!S || G.busy || G.mode !== 'world' || !$('dlg').hidden || !$('title').hidden) return;
   G.busy = true; const prev = CLOSE_BTN; CLOSE_BTN = 'help';
