@@ -103,7 +103,7 @@ const BOSS = {
   final:{n:'La Gran Presentación',t:'CLI',lvl:20,spr:'final',k:[1.4,.7,1.1,1],xp:200,d:'Todo lo que aprendiste, en una sola reunión.',
     mv:[{n:'Pitch imposible',p:80,w:3},{n:'Cambio de último momento',p:25,fx:'reset',w:1},{n:'Todo para ayer',p:100,a:70,w:2},{n:'Logo más grande',p:60,w:2}]},
   // el cliente más difícil: en la Sala del Directorio, desde el nivel 25. Hay que presentarle la campaña del año
-  anual:{n:'El Cliente del Año',t:'CLI',lvl:27,look:'anual',k:[2.9,1.2,1.15,1.05],xp:400,lesson:'campana',d:'El cliente más grande de la agencia. Viene a escuchar la campaña del año. Ya vio todo, y quiere algo que nunca vio.',
+  anual:{n:'El Cliente del Año',t:'CLI',lvl:27,look:'anual',k:[1.6,.8,1.15,1.05],xp:400,lesson:'campana',d:'El cliente más grande de la agencia. Viene a escuchar la campaña del año. Ya vio todo, y quiere algo que nunca vio.',
     mv:[{n:'Quiero la campaña del año',p:95,w:3},{n:'Esto ya lo vi',p:0,fx:'foeAtk-1',w:1},{n:'Presupuesto recortado',p:0,fx:'foeDef-1',w:1},{n:'Junta de directorio',p:0,a:60,fx:'sleep',w:1},
         {n:'Cambio de estrategia',p:25,fx:'reset',w:1},{n:'Para el lunes',p:115,a:70,w:2},{n:'Pensemos en grande',p:0,fx:'selfAtk+1 selfDef+1',w:1}]},
   fede:{n:'Fede',t:'NOR',lvl:0,look:'fede',k:[1.5,1.0,1.05,1.05],xp:70,d:'Entrenamiento.',
