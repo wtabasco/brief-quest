@@ -12,14 +12,14 @@ async function titleScreen(){
   // si hay sesión de claude.ai, primero se trae la partida guardada en la cuenta (compu o celular)
   if (!titleScreen.pulled){ titleScreen.pulled = true; await cloudAccount(menuEl, sub); menuEl.innerHTML = ''; sub.textContent = 'Buscando tu partida...'; await cloudPull(); }
   while (true){
-    menuEl.innerHTML = ''; $('tName').hidden = true; sub.textContent = 'Una aventura de agencia';
-    const any = occupied(), opts = (any.length ? ['Continuar', 'Cargar partida', 'Nueva partida'] : ['Nueva partida']).concat(SB_CONF ? ['Mi cuenta'] : []);
-    if (CLOUD.email) sub.textContent = 'Partida guardada en tu cuenta';
+    menuEl.innerHTML = ''; $('tName').hidden = true; tNote(''); sub.textContent = 'Una aventura de agencia';
+    const any = occupied(), opts = (any.length ? ['Continuar', 'Cargar partida', 'Nueva partida'] : ['Nueva partida']).concat(SB_CONF ? [CLOUD.email ? 'Mi cuenta' : 'Entrar con mi mail'] : []);
+    if (CLOUD.email) sub.textContent = 'Tu partida se guarda en tu cuenta';
     const r = await listWidget(menuEl, opts, {cancel: null});
     const pickN = opts[r];
-    if (pickN === 'Mi cuenta'){
+    if (pickN === 'Mi cuenta' || pickN === 'Entrar con mi mail'){
       if (CLOUD.email){ sub.textContent = `Entraste como ${CLOUD.email}`; menuEl.innerHTML = ''; const c = await listWidget(menuEl, ['Volver', 'Cerrar sesión'], {cancel: 0}); if (c === 1){ await cloudLogout(); sub.textContent = 'Cerraste sesión. Tu partida sigue guardada en tu cuenta.'; await sleepMs(1500); } }
-      else { try { localStorage.removeItem('briefquest.sinCuenta'); } catch(e){} await cloudAccount(menuEl, sub); if (await cloudInit(true)) await cloudPull(); }
+      else { await cloudAccount(menuEl, sub, true); if (await cloudInit(true)) await cloudPull(); }
       continue;
     }
     if (pickN === 'Continuar'){ const n = any.includes(lastSlot()) ? lastSlot() : any[0]; return loadAndStart(n, menuEl); }

@@ -10,6 +10,10 @@
    Sin ninguna de las dos, guarda solo en el navegador, como siempre. Al abrir el título se trae lo de la nube:
    gana la partida guardada más reciente de cada espacio (savedAt). */
 const CLOUD = {kind: null, ready: false, timers: {}, email: null};
+/* ¿se abrió la página desde el link del mail? (hay que mirarlo antes de que Supabase limpie la dirección) */
+const LINK_IN = (() => { try { const h = location.hash + '&' + location.search;
+  if (/error_code=otp_expired|error=access_denied/.test(h)) return 'expired';
+  if (/access_token=|[?&]code=|type=magiclink/.test(h)) return 'ok'; } catch(e){} return null; })();
 const SB_CONF = (typeof window !== 'undefined' && window.BQ_SUPABASE && window.BQ_SUPABASE.url && window.BQ_SUPABASE.anonKey) ? window.BQ_SUPABASE : null;
 let SB = null;
 function supabaseOn(){ if (!SB && SB_CONF && window.supabase && window.supabase.createClient) SB = window.supabase.createClient(SB_CONF.url, SB_CONF.anonKey); return !!SB; }
@@ -92,26 +96,54 @@ function askText(label, {type = 'text', max = 80, placeholder = ''} = {}){
     inp.onkeydown = e => { e.stopPropagation(); if (e.key === 'Enter'){ e.preventDefault(); done(inp.value.trim()); } if (e.key === 'Escape') done(null); };
   });
 }
-/* pantalla de cuenta en el título: entrar con el mail o jugar sin cuenta */
-async function cloudAccount(menuEl, sub){
-  if (!SB_CONF || !supabaseOn()) return;
-  if (await cloudInit()) return; // ya hay sesión
-  let skip = false; try { skip = localStorage.getItem('briefquest.sinCuenta') === '1'; } catch(e){}
-  if (skip) return;
+const escHtml = t => String(t).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+function tNote(html){ const n = $('tNote'); if (!n) return; n.innerHTML = html || ''; n.hidden = !html; }
+const okMail = m => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m);
+/* manda el link y explica qué hacer; devuelve 'play' (seguir jugando) u 'other' (usar otro mail) */
+async function sendLink(menuEl, sub, mail){
   for (;;){
-    menuEl.innerHTML = ''; sub.textContent = 'Entrá con tu mail para seguir tu partida en la compu o en el celular';
-    const c = await listWidget(menuEl, ['Entrar con mi mail', 'Jugar sin cuenta'], {cancel: 1});
-    if (c !== 0){ try { localStorage.setItem('briefquest.sinCuenta', '1'); } catch(e){} return; }
-    menuEl.innerHTML = '';
-    const mail = await askText('Tu mail', {type: 'email', placeholder: 'nombre@agencia.com'});
-    if (!mail) continue;
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)){ sub.textContent = 'Ese mail no parece completo. Probá de nuevo.'; await sleepMs(1600); continue; }
-    sub.textContent = 'Enviando...';
-    const {error} = await SB.auth.signInWithOtp({email: mail, options: {emailRedirectTo: location.origin + location.pathname}});
-    if (error){ sub.textContent = 'No se pudo enviar el mail. Probá en un rato.'; await sleepMs(2000); continue; }
-    sub.textContent = `Listo: te mandamos un link a ${mail}. Abrilo en este mismo dispositivo y volvés acá con tu partida.`;
-    await listWidget(menuEl, ['Jugar mientras tanto'], {cancel: 0});
+    sub.textContent = 'Enviando...'; menuEl.innerHTML = ''; tNote('');
+    let error = null;
+    try { ({error} = await SB.auth.signInWithOtp({email: mail, options: {emailRedirectTo: location.origin + location.pathname}})); } catch(e){ error = e; }
+    if (error) sub.textContent = /rate|second|security/i.test(error.message || '') ? 'Esperá un minutito antes de pedir otro link.' : 'No se pudo enviar el mail. Probá en un rato.';
+    else sub.textContent = '¡Te mandamos un link!';
+    tNote(`Abrí el mail en <b>${escHtml(mail)}</b> y tocá el link <b>donde vas a jugar</b> (compu o celular). ¿No llega? Mirá en spam. Si se abre dentro de Gmail, elegí "Abrir en el navegador".`);
+    const r = await listWidget(menuEl, ['Jugar mientras tanto', 'Reenviar el link', 'Usar otro mail'], {cancel: 0});
+    tNote('');
+    if (r === 1) continue;
+    return r === 2 ? 'other' : 'play';
+  }
+}
+/* pantalla de cuenta en el título: entrar con el mail o jugar sin cuenta (asked: lo pidió desde "Entrar con mi mail") */
+async function cloudAccount(menuEl, sub, asked){
+  if (!SB_CONF || !supabaseOn()) return;
+  if (await cloudInit()){
+    if (LINK_IN === 'ok' && !cloudAccount.greeted){ cloudAccount.greeted = true;
+      menuEl.innerHTML = ''; sub.textContent = '¡Listo, entraste!';
+      tNote(`Entraste como <b>${escHtml(CLOUD.email || '')}</b>. Tu partida se guarda en tu cuenta: la seguís en la compu o en el celular entrando con el mismo mail.`);
+      await listWidget(menuEl, ['¡Vamos!'], {cancel: 0}); tNote(''); }
     return;
+  }
+  let skip = false; try { skip = localStorage.getItem('briefquest.sinCuenta') === '1'; } catch(e){}
+  const expired = LINK_IN === 'expired' && !cloudAccount.warned;
+  if (skip && !asked && !expired) return;
+  cloudAccount.warned = true;
+  let first = true;
+  for (;;){
+    menuEl.innerHTML = '';
+    if (first && expired){ sub.textContent = 'Ese link ya se usó o venció'; tNote('Cada link sirve una sola vez y dura un rato. Pedí uno nuevo y abrilo apenas te llegue.'); }
+    else { sub.textContent = 'Entrá con tu mail para seguir tu partida en la compu o en el celular'; tNote('Sin contraseña: te mandamos un link al mail y con eso entrás.'); }
+    first = false;
+    const c = await listWidget(menuEl, ['Entrar con mi mail', 'Jugar sin cuenta'], {cancel: 1});
+    tNote('');
+    if (c !== 0){ try { localStorage.setItem('briefquest.sinCuenta', '1'); } catch(e){} return; }
+    for (;;){
+      menuEl.innerHTML = '';
+      const mail = await askText('Tu mail', {type: 'email', placeholder: 'nombre@agencia.com'});
+      if (!mail) break;
+      if (!okMail(mail)){ sub.textContent = 'Ese mail no parece completo. Probá de nuevo.'; await sleepMs(1600); continue; }
+      if (await sendLink(menuEl, sub, mail) === 'play') return;
+    }
   }
 }
 async function cloudLogout(){ if (CLOUD.kind === 'supabase' && SB){ await SB.auth.signOut(); CLOUD.ready = false; CLOUD.p = null; CLOUD.be = null; CLOUD.email = null; try { localStorage.removeItem('briefquest.sinCuenta'); } catch(e){} } }
