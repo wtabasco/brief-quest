@@ -50,7 +50,7 @@ const OUTSIDE_GRID = [
   'WWWWWWWBBBBBBBBBBBBBBBBWWWWWWW',
   'kvFFFvtBBBBBBBBBBBBBBBBp,,,,,n',
   'vvFFFvvBBBBBBBOOBBBBBBBp,,,,,,',
-  'vcvvvcv,oaaaassssbbo,,,,,,,,,,',
+  'vcvvvcv,oaaaassss,bbo,,,,,,,,,',
   'hh,,,,,,,,,,,,,,,,,,,,,,ppphhh',
   'hh,TTT,,,,,,,,,,,,,,,,,,,,hhhh',
   'hh,TTT,,,,,,,,,,,,,,,,,,,,hhhh',
