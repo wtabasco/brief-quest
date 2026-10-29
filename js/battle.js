@@ -172,6 +172,7 @@ async function doMove(u, t, m, id){
     if (fx.includes('prueba')){ power = Math.min(115, 35 + 20 * B.prueba); B.prueba++; }
     if (fx.includes('tictac')) power = 20 + 12 * B.turn;
     const eff = u.isP ? ((CHART[m.t] || {})[t.type] || 1) : 1;
+    if (u.isP && B){ if (eff < 1) B.weakHits = (B.weakHits || 0) + 1; if (eff > 1) B.goodHits = (B.goodHits || 0) + 1; }
     const hits = fx.includes('multi') ? 2 + rnd(2) : 1;
     let crits = 0;
     for (let h = 0; h < hits; h++){
@@ -443,10 +444,18 @@ async function battleFlow(foe, kind, key){
     await say(`Aprendiste del error: +${xp} de experiencia.`);
     await gainXP(xp, sayN);
     if (here('lu')) await say(pick('lu:rescue', ['¡Listo, enchufad{o} y cargad{o}! ¡A seguir!', '¡Ya está! Tomá agua antes de salir, que te veo como pasa de uva.', '¡Recuperad{o}! Y tranqui, que a todos nos pasa. A mí me pasa los lunes.', '¡Recargad{o}! Hasta las plantas se marchitan un rato. Después vuelven.', '¡Listo! Ahora salí con la frente en alto y la botella llena.']), 'lu:feliz');
+    await afterBattleHints(foe, kind, key, res);
     save(); return 'lose';
   }
   await endBattleUI();
+  await afterBattleHints(foe, kind, key, res);
   save(); return res;
+}
+/* las pistas, después de todo lo demás: la de tipo en La Base y la del nivel con los clientes (después de dos intentos) */
+async function afterBattleHints(foe, kind, key, res){
+  if (kind === 'wild') await typeHint(foe, res);
+  if (res === 'lose' && REC_LVL[key]){ const m = mem(); m.bossLost = m.bossLost || {}; m.bossLost[key] = (m.bossLost[key] || 0) + 1;
+    if (m.bossLost[key] >= REC_AFTER) await bossAdvice(key); }
 }
 const WILD_HP = .6;
 async function wildEncounter(){
@@ -638,4 +647,32 @@ function drawBattle(){
     for (let i = 0; i < 12; i++){ const a = i * .53, r = 18 + (i % 3) * 9, yy = cy + 30 - fk * 60 - (i % 4) * 6; ctx.fillStyle = i % 2 ? '#b6f03a' : '#ffffff'; ctx.fillRect(Math.round(cx + Math.cos(a) * r), Math.round(yy), 2, 2); }
   }
   if (fx && fx.kind === 'hit' && fk < .3){ ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(0, 0, VW, 192); }
+}
+
+/* después de quedarte sin energía dos veces con un cliente, el juego sugiere con qué nivel volver (o qué probar si ya lo tenés) */
+const WEAK_TYPE = {fantasma: 'calma', logo: 'creativo', explote: 'estrategia'};
+async function bossAdvice(key){
+  const rec = REC_LVL[key], cn = artName(BOSS[key].n), n = bossLost(key);
+  if (S.lvl < rec) await say(pick('advice:lvl', [
+    `${capFirst(cn)} no quedó conforme esta vez. Un consejo: intentalo de nuevo con nivel ${rec}. Estás en el ${S.lvl}.`,
+    `Ya van ${n} intentos con ${cn}. Conviene volver con nivel ${rec}: resolvé problemas en La Base y capacitate con el equipo. Estás en el ${S.lvl}.`]) + (key === 'explote' ? ' Y andá con Fede.' : ''));
+  else await say(key === 'anual' ? `Ya tenés el nivel para ${cn}. Usá los objetos de la mochila y no te guardes las mejores habilidades para el final.`
+    : `Ya tenés el nivel para ${cn}. Probá con habilidades de tipo ${WEAK_TYPE[key]}: es su punto débil.${key === 'explote' ? ' Y andá con Fede.' : ''}`);
+}
+
+/* Si te trabás con un tipo de problema (le pegás con lo que le hace poco y nunca con lo que lo destraba, dos desafíos
+   seguidos), alguien del equipo te manda una pista por Slack. Una sola vez por tipo, hasta que lo resuelvas bien. */
+const TYPE_TIP = {BURO: ['la burocracia', 'lo creativo'], CAOS: ['el caos', 'la estrategia'], BUG: ['un bug', 'lo técnico'], PRES: ['la presión', 'la calma']};
+async function typeHint(foe, res){
+  const m = mem(), t = foe.type, tip = TYPE_TIP[t]; if (!tip || !B) return;
+  m.typeMiss = m.typeMiss || {}; m.typeTip = m.typeTip || {};
+  if (B.goodHits){ m.typeMiss[t] = 0; return; }
+  if (!(B.weakHits >= 2 || res === 'lose')) return;
+  m.typeMiss[t] = (m.typeMiss[t] || 0) + 1;
+  if (m.typeMiss[t] < 2 || m.typeTip[t]) return;
+  m.typeTip[t] = true;
+  const who = ['fede', 'sahi', 'giuli', 'alejo', 'pimi'].filter(id => talks(id) > 0), id = who.length ? who[rnd(who.length)] : 'fede';
+  const voice = {fede: `Contra ${tip[0]}, ${tip[1]}. Probá, aprendé, repetí.`, sahi: `Che, contra ${tip[0]} jugá con ${tip[1]}. Es como patear al ángulo, crack.`,
+    giuli: `Te vi con ${foe.name}. Contra ${tip[0]}, ${tip[1]}. Queda más prolijo.`, alejo: `Contra ${tip[0]}, ${tip[1]}. Cambiá de plano y vas a ver.`, pimi: `Tranqui. Contra ${tip[0]}, ${tip[1]}. Y listo.`}[id];
+  await say(`Te llega un mensaje de ${PEOPLE[id]} por Slack: "${voice}"`);
 }

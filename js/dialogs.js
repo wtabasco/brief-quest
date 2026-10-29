@@ -703,7 +703,7 @@ async function talkFounders(n){
     await say('Ahora la casa es tuya. Bajá a La Base: ahí están Alejo y Giuli, y entre las pilas de pendientes saltan los problemas. ¡Resolvé el primero!', 'agus:feliz');
     await say('¡Y dos cosas que vas a escuchar mucho! Las tareas te las manda tu Project por Slack, en orden de prioridad. ¡Y el tiempo se trackea en ClickUp, así sabemos cuánto le dedicamos a cada cliente!', 'lia');
     if (qState('bienvenida') === 'open') qDone('bienvenida');
-    if (!qState('clientes')){ await say(`¡Y cada problema que resolvés te suma experiencia y te sube de nivel! Los clientes te esperan en la Sala de Clientes, en la planta baja: la primera es nivel ${CLIENT_LVL.fantasma}. ¡Yo voy midiendo cómo te va!`, 'lia:feliz'); qOpen('clientes'); }
+    if (!qState('clientes')){ await say(`¡Y cada problema que resolvés te suma experiencia y te sube de nivel! Los clientes te esperan en la Sala de Clientes, en la planta baja: ¡andá cuando te sientas list{o}! ¡Yo voy midiendo cómo te va!`, 'lia:feliz'); qOpen('clientes'); }
     return;
   }
   // recompensas ganadas
@@ -1255,10 +1255,9 @@ async function talkBoss(key, n){
   const fede = NPCS.find(x => x.id === 'fede'), withFede = key === BOSS_ORDER[2] && S.flags.fedeMet && !fede.away;
   if (key === BOSS_ORDER[2] && !S.flags.fantasmaFedeHint){ S.flags.fantasmaFedeHint = true; await say(fede.away ? 'Esta es la más difícil de las tres. Fede ya se fue por hoy, pero mañana te puede acompañar.' : 'Esta es la más difícil de las tres. No tenés que hacerlo sol{o}: Fede puede bajar a acompañarte.'); }
   const cl = CLIENT_LVL[key], cn = ({fantasma: 'la Clienta Fantasma', explote: 'la Clienta Explosiva'})[key] || d.n, Cn = cn.charAt(0).toUpperCase() + cn.slice(1);
-  if (cl && S.lvl < cl) await say(pick('boss:lvl', [
-    `${Cn} es nivel ${cl} y vos estás en el ${S.lvl}. Cada problema que resolvés en La Base te da experiencia: con unos niveles más, la reunión sale mucho mejor.`,
-    `Ojo: ${cn} es nivel ${cl} y vos, ${S.lvl}. Resolver problemas en La Base y capacitarte con el equipo te sube de nivel. Podés intentarlo igual.`,
-    `Te faltan ${cl - S.lvl} ${cl - S.lvl === 1 ? 'nivel' : 'niveles'} para estar a la altura de ${cn} (nivel ${cl}). Los problemas de La Base dan experiencia; las capacitaciones y las tareas del equipo, también.`]));
+  if (cl && recShown(key) && S.lvl < REC_LVL[key]) await say(pick('boss:lvl', [
+    `Acordate: con ${cn} conviene nivel ${REC_LVL[key]} y estás en el ${S.lvl}. Podés intentarlo igual.`,
+    `Te faltan ${REC_LVL[key] - S.lvl} ${REC_LVL[key] - S.lvl === 1 ? 'nivel' : 'niveles'} para el nivel que conviene con ${cn} (${REC_LVL[key]}). Podés intentarlo igual.`]));
   const opts = withFede ? ['¡Arranquemos!', 'Ir con Fede', 'Prepararme antes'] : ['¡Arranquemos!', 'Prepararme antes'];
   let c = await choose(opts, {cancel: opts.length - 1});
   if (withFede && c === 1){

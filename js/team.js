@@ -150,8 +150,9 @@ function nextStep(){
   if (!S.flags.done){
     const k = BOSS_ORDER.find(x => !S.beaten[x]);
     if (k){ const L = CLIENT_LVL[k], n = ({fantasma: 'la Clienta Fantasma', logo: 'Don Logo', explote: 'la Clienta Explosiva'})[k];
-      return S.lvl < L ? `Preparate para ${n} (nivel ${L}): resolvé problemas en La Base y capacitate con el equipo. Estás en el ${S.lvl}.`
-        : `Destrabá a ${n} en la Sala de Clientes (planta baja).${k === 'explote' ? ' Podés ir con Fede.' : ''}`; }
+      if (recShown(k)) return S.lvl < REC_LVL[k] ? `Volvé con ${n} cuando llegues al nivel ${REC_LVL[k]}: resolvé problemas en La Base y capacitate con el equipo. Estás en el ${S.lvl}.`
+        : `Volvé a intentarlo con ${n} en la Sala de Clientes (planta baja).${k === 'explote' ? ' Podés ir con Fede.' : ''}`;
+      return `${capFirst(n)} te espera en la Sala de Clientes (planta baja). Mientras te preparás: resolvé problemas en La Base y capacitate con el equipo.${k === 'explote' ? ' Podés ir con Fede.' : ''}`; }
     if (!S.flags.card) return 'Agus y Lía te esperan en Guaná (planta alta): tienen algo grande para vos.';
     if (S.lvl < PROJECT_LVL){ const p = PLAN_Q.find(q => qState(q) === 'open');
       return p ? `Camino al Cliente del Año (nivel ${PROJECT_LVL}): ${QUESTS[p].desc()} Estás en el ${S.lvl}.` : `Seguí resolviendo problemas hasta el nivel ${PROJECT_LVL}: ahí te espera el Cliente del Año. Estás en el ${S.lvl}.`; }
@@ -168,7 +169,9 @@ function drawTrackHUD(){
   const can = !!S && G.mode === 'world' && $('title').hidden && !G.trans && !G.busy;
   if (can && (!drawTrackHUD.t || G.t - drawTrackHUD.t > 700)){
     drawTrackHUD.t = G.t; const t = nextStep();
-    if (drawTrackHUD.last !== t){ const first = drawTrackHUD.last === undefined; drawTrackHUD.last = t; if (!first || isFreshStart()){ el.innerHTML = `<b>AHORA</b> ${fmt(t)}`; drawTrackHUD.until = G.t + 6500; } }
+    // al empezar, una vez; después solo si pasa mucho sin avanzar (te trabaste): ahí aparece con la pista
+    if (drawTrackHUD.last === undefined){ drawTrackHUD.last = t; if (isFreshStart()){ el.innerHTML = `<b>AHORA</b> ${fmt(t)}`; drawTrackHUD.until = G.t + 6500; } }
+    if (stuckNow(t)){ el.innerHTML = `<b>PISTA</b> ${fmt(t)}`; drawTrackHUD.until = G.t + 9000; }
   }
   const show = can && G.t < (drawTrackHUD.until || 0);
   if (el.hidden === show) el.hidden = !show;
@@ -219,7 +222,7 @@ async function hitoCheck(msg){
 async function levelUnlocks(L, msg){
   const out = [];
   const k = BOSS_ORDER.find(x => !S.beaten[x]);
-  if (k && L === CLIENT_LVL[k]) out.push(`¡Ya tenés el nivel para ${({fantasma: 'la Clienta Fantasma', logo: 'Don Logo', explote: 'la Clienta Explosiva'})[k]}! Te espera en la Sala de Clientes.`);
+  if (k && recShown(k) && L === REC_LVL[k]) out.push(`¡Ya tenés el nivel para ${({fantasma: 'la Clienta Fantasma', logo: 'Don Logo', explote: 'la Clienta Explosiva'})[k]}! Te espera en la Sala de Clientes.`);
   if (S.bosses >= 3 && L === CLIENT_LVL.anual && !S.flags.anual) out.push('Ya estás a la altura del Cliente del Año. Te espera en la Sala del Directorio.');
   for (const id of Object.keys(TRAININGS)) { const T = TRAININGS[id]; if (T.minLvl === L && trainingNext(id) === 0) out.push(`${PEOPLE[T.who]} ya te puede dar la capacitación "${T.title}".`); }
   const ready = QUEST_ORDER.filter(id => qState(id) === 'open' && QUESTS[id].minLvl === L && qCountOk(id));
@@ -415,4 +418,16 @@ function teamTipsStep(){
   if (qState('anual_equipo') !== 'open') return '';
   const left = tipsLeft().map(id => PEOPLE[id]);
   return `Antes del Cliente del Año, pedile un consejo a tu equipo (Fede, Sahi, Lu, Alejo y Giuli). Te ${left.length === 1 ? 'falta' : 'faltan'}: ${left.join(', ')}.`;
+}
+
+/* ¿Te trabaste? Si el próximo paso no cambia en mucho rato (7 desafíos o 3 horas del reloj del juego caminando),
+   el cartelito aparece con la pista. Después espera otro tanto antes de volver a aparecer. */
+const STUCK_BATTLES = 7, STUCK_MIN = 180;
+function stuckNow(step){
+  const m = mem(), now = clk().day * 1440 + clk().min, b = m.battles || 0;
+  const key = step + '|' + S.lvl; // subir de nivel también es avanzar
+  if (m.stuckStep !== key){ m.stuckStep = key; m.stuckAt = {b, now}; return false; }
+  const s = m.stuckAt || (m.stuckAt = {b, now});
+  if (b - s.b >= STUCK_BATTLES || now - s.now >= STUCK_MIN){ m.stuckAt = {b, now}; return true; }
+  return false;
 }
