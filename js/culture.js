@@ -84,9 +84,9 @@ const AGENCIA = [
     B_('Putaparió, Peppers y Chili:', 'los equipos ejecutivos. Cada uno con su Project Leader, Social Managers, Graphic Designers y Paid Media.'),
     P_('Y en los procesos vas a ver siglas: PL (Project Leader), SM (Social Manager), CM (Creative Manager), CC (Content Creator), GD (Graphic Designer), Sp (Specialist), St (Strategist).'),
     P_('Los creativos vienen a contar historias que conectan; los diseñadores, a diseñar cosas lindas; los paid media, a entender los negocios y sus números; los team leaders, a formar equipos que ganan partidos.')], 2.4)},
-  {t: 'Rituales', d: 'Picante cada dos viernes, cumpleaños y aniversarios.', full: () => H_([
+  {t: 'Rituales', d: 'La Picante cada dos viernes, cumpleaños y aniversarios.', full: () => H_([
     B_('Picante:', 'cada dos viernes nos juntamos todos a compartir lo mejor y lo peor de la semana, novedades y reconocimientos. El corazón de nuestra cultura.'),
-    B_('Cumpleaños:', 'los celebramos en el último Picante del mes, con torta. Si querés, traé algo rico.'),
+    B_('Cumpleaños:', 'los celebramos en la última Picante del mes, con torta. Si querés, traé algo rico.'),
     B_('Aniversario y Awards:', 'el 21 de octubre festejamos el aniversario de la agencia y premiamos en categorías votadas por el equipo.'),
     B_('Tu aniversario:', 'el día que cumplís un año (o más) en el equipo, celebramos tu contribución y tu crecimiento.')], 2.75)},
   {t: 'Plan de desarrollo', d: 'Siete pasos para planificar tu crecimiento.', full: () => H_([
@@ -141,7 +141,7 @@ const CULTURE_LINES = {
     '¿Cargaste tus horas en ClickUp? Las de sueño también importan, pero esas no se cargan.',
     'Llamé a soporte técnico a las nueve. Me dijeron que reinicie. Lo reinicié a las nueve y uno. Todavía no me preguntaron si funcionó.',
     '¿El proveedor de soporte técnico? Divinos. Contestan rapidísimo. Rapidísimo para ellos: tres días.',
-    'Le abrí un ticket a soporte por la impresora. El ticket ya cumple años. Lo festejamos en el Picante.',
+    'Le abrí un ticket a soporte por la impresora. El ticket ya cumple años. Lo festejamos en la Picante.',
     'Soporte técnico me preguntó si probé apagarla y prenderla. Sí, hace dos semanas. Ya la arreglé yo.'],
   tato: ['Si todo es urgente, nada es urgente. Eso lo dice el manual. Yo lo digo más despacio.',
     'Presupuestos transparentes: que cualquiera los mire y los entienda. Hasta Lía. Sobre todo Lía.',

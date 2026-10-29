@@ -27,7 +27,7 @@ const REPASO = () => [
   {p: '¿Qué significa R = R?', ok: 'Relaciones es igual a resultados', opts: ['Relaciones es igual a resultados', 'Reunión es igual a reunión', 'Rápido es igual a rendidor'], why: 'R = R: relaciones es igual a resultados.'},
   {p: '¿Hasta qué día se entregan los cronogramas?', ok: 'Hasta el 27 de cada mes', opts: ['Hasta el 27 de cada mes', 'El 1 del mes siguiente', 'Cuando estén'], why: 'Los cronogramas se entregan hasta el 27 de cada mes.'},
   {p: 'Un proceso dice "validación en Tabasco". ¿Con quién es?', ok: 'Con el soporte estratégico', opts: ['Con el soporte estratégico', 'Con la salsa', 'Con el cliente'], why: 'Tabasco es el equipo de soporte estratégico. Putaparió, Peppers y Chili son los ejecutivos.'},
-  {p: '¿Cuándo se festejan los cumpleaños?', ok: 'En el último Picante del mes', opts: ['En el último Picante del mes', 'Nunca', 'Todos los días'], why: 'Los cumpleaños se celebran en el último Picante del mes, con torta.'},
+  {p: '¿Cuándo se festejan los cumpleaños?', ok: 'En la última Picante del mes', opts: ['En la última Picante del mes', 'Nunca', 'Todos los días'], why: 'Los cumpleaños se celebran en la última Picante del mes, con torta.'},
   {p: '¿Qué pasa el 21 de octubre?', ok: 'El aniversario y los Awards', opts: ['El aniversario y los Awards', 'Cierra la oficina', 'Llega el brief del año'], why: 'El 21 de octubre festejamos el aniversario de la agencia y premiamos en categorías que vota el equipo.'},
   {p: '¿Cuáles son nuestros dos trabajos?', ok: 'Hacer y pensar cómo hacerlo mejor', opts: ['Hacer y pensar cómo hacerlo mejor', 'Trabajar y descansar', 'Mandar mails y contestarlos'], why: 'Hacer lo que hay que hacer y pensar cómo hacerlo mejor.'},
   {p: '¿Quién es responsable del clima de la oficina?', ok: 'Cada uno de nosotros', opts: ['Cada uno de nosotros', 'Sofi', 'El aire acondicionado'], why: 'Soy responsable del clima de la oficina: todo se contagia.'},
@@ -365,7 +365,7 @@ const REPASO_FINAL = () => [
     B_('Social Manager:', 'comunicar y gestionar. <b>Graphic Designer:</b> materializar.'),
     B_('Paid Media:', 'planificar y optimizar. <b>Project Leader:</b> liderar y encantar.'),
     B_('Equipos:', 'Tabasco es el soporte estratégico; Putaparió, Peppers y Chili, los equipos ejecutivos.'),
-    B_('Rituales:', 'el Picante cada dos viernes, los cumpleaños en el último Picante del mes y el aniversario el 21 de octubre.')], 2.6)},
+    B_('Rituales:', 'la Picante cada dos viernes, los cumpleaños en la última Picante del mes y el aniversario el 21 de octubre.')], 2.6)},
 ];
 async function repasoFinalPages(){
   for (const p of REPASO_FINAL()){ await say(p.intro, p.who); await panelInfo(p.title, p.html); closePanel(); }
