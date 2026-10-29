@@ -758,14 +758,16 @@ async function talkFounders(n){
     if (me === 'lia'){ await kpiReview(); noteTalk('founders'); return; }
     await say(pick('agus:tokpi', ['Lía te está esperando con tu tablero. Lo actualizó tres veces mientras hablábamos.', 'Andá a ver a Lía: dice que tus números están para festejar.']), 'agus:risa'); noteTalk('founders'); return;
   }
-  const started = qState('consejo') === 'done' || S.bosses >= 1;
-  if (me === 'agus' && !S.pdp && started && b - (m.pdpAskAt ?? -99) >= 2){ m.pdpAskAt = b; await pdpOffer(); noteTalk('founders'); return; }
-  if (me === 'lia' && !S.liaKpi && started && b - (m.kpiAskAt ?? -99) >= 2){ m.kpiAskAt = b; await kpiOffer(); noteTalk('founders'); return; }
-  // la campaña a cuatro manos: la primera vez apenas cumpliste el consejo, después cada tanto
-  if (qState('consejo') === 'done' && b - (m.duoAt ?? -99) >= 3 && (m.duoAt == null || Math.random() < .45)){ await duoCampaign(me); noteTalk('founders'); return; }
+  // lo de Agus y Lía va en segundo plano (pedido de la agencia): recién después del primer cliente, espaciado y
+  // como mucho una propuesta por día entre todas (plan de desarrollo, objetivos, campaña a cuatro manos, dinámica, tablero)
+  const started = S.bosses >= 1, side = m.fdSideDay !== gameDay(), sideUsed = () => { m.fdSideDay = gameDay(); };
+  if (side && me === 'agus' && !S.pdp && started && b - (m.pdpAskAt ?? -99) >= 8){ m.pdpAskAt = b; sideUsed(); await pdpOffer(); noteTalk('founders'); return; }
+  if (side && me === 'lia' && !S.liaKpi && started && b - (m.kpiAskAt ?? -99) >= 8){ m.kpiAskAt = b; sideUsed(); await kpiOffer(); noteTalk('founders'); return; }
+  // la campaña a cuatro manos: cada tanto, después del primer cliente
+  if (side && started && qState('consejo') === 'done' && b - (m.duoAt ?? -99) >= 8 && Math.random() < .35){ sideUsed(); await duoCampaign(me); noteTalk('founders'); return; }
   if (S.bosses >= 1 && !qState('tarjeta') && Math.random() < .5){ await say(me === 'lia' ? '¡Cuando destrabes a los tres clientes, vení a vernos! ¡Te tenemos preparado algo grande!' : 'Cuando destrabes a los tres clientes, vení a vernos. Te tenemos preparado algo grande.', me); qOpen('tarjeta'); return; }
-  if (me === 'agus' && talks('agus') >= 2 && b - (m.dinAt ?? -99) >= 3 && Math.random() < .4){ await agusDinamica(); noteTalk('founders'); return; }
-  if (me === 'lia' && b >= 3 && b - (m.boardAt ?? -99) >= 4 && Math.random() < .5){
+  if (side && started && me === 'agus' && talks('agus') >= 2 && b - (m.dinAt ?? -99) >= 6 && Math.random() < .3){ sideUsed(); await agusDinamica(); noteTalk('founders'); return; }
+  if (side && started && me === 'lia' && b - (m.boardAt ?? -99) >= 10 && Math.random() < .3){ sideUsed();
     await say(pick('lia:boardask', ['¡Te actualicé el tablero! ¿Lo querés ver?', '¡Tengo números nuevos tuyos! ¿Los vemos?', '¡Pará, pará! Antes de seguir: ¿viste cómo vienen tus números?']), 'lia:feliz');
     if (await choose(['¡A ver!', 'Después']) === 0){ await liaShowBoard(); noteTalk('founders'); return; }
     await say('¡Ok! Igual está en la pizarra, al lado de la ventana. Actualizada. Siempre.', 'lia:risa'); m.boardAt = b;
