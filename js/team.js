@@ -232,7 +232,8 @@ async function levelUnlocks(L, msg){
   for (const id of Object.keys(TRAININGS)) { const T = TRAININGS[id]; if (T.minLvl === L && trainingNext(id) === 0) out.push(`${PEOPLE[T.who]} ya te puede dar la capacitación "${T.title}".`); }
   const ready = QUEST_ORDER.filter(id => qState(id) === 'open' && QUESTS[id].minLvl === L && qCountOk(id));
   for (const id of ready) out.push(`Ya podés volver con ${QUESTS[id].giver}: cumpliste "${QUESTS[id].title}".`);
-  for (const t of out.slice(0, 3)) await msg(t, 2000);
+  if (L >= 15 && unlockGlass()) out.unshift('¡Destrabaste la consola glass! Tocá el botoncito de color de la consola: ahora también vienen transparentes, con los circuitos a la vista.');
+  for (const t of out.slice(0, 4)) await msg(t, 2000);
 }
 /* lo que se puede hacer hoy para sumar experiencia, además de los problemas de La Base */
 function xpIdeas(){

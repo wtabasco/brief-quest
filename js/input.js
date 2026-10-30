@@ -121,15 +121,20 @@ const SHELLS = [['verde', '#004612'], ['violeta', '#4b2154'], ['celeste', '#2a7f
 const shellLabel = n => n.replace('-glass', ' glass');
 let shellIx = 0;
 try { shellIx = Math.max(0, SHELLS.findIndex(s => s[0] === localStorage.getItem('briefquest.shell'))); } catch(e){}
+/* Las glass se destraban en el nivel 15 (cuando quedás fijo). Queda guardado en el navegador: una vez destrabadas, valen para todas las partidas. */
+function glassOk(){ try { if (localStorage.getItem('briefquest.glass') === '1') return true; } catch(e){} return false; }
+function unlockGlass(){ if (glassOk()) return false; try { localStorage.setItem('briefquest.glass', '1'); } catch(e){} applyShell(); return true; }
+if (shellIx >= 4 && !glassOk()) shellIx -= 4;
+const shellNext = () => (shellIx + 1) % (glassOk() ? SHELLS.length : 4);
 function applyShell(){
   const g = document.querySelector('.gba'); if (!g) return;
   if (shellIx) g.dataset.shell = SHELLS[shellIx][0]; else delete g.dataset.shell;
-  const nx = SHELLS[(shellIx + 1) % SHELLS.length];
+  const nx = SHELLS[shellNext()];
   document.querySelectorAll('.shellColor').forEach(b => { b.style.setProperty('--next', nx[1]); b.classList.toggle('glass', nx[0].endsWith('-glass')); b.title = 'Color de la consola: pasar a ' + shellLabel(nx[0]); });
 }
 applyShell();
 document.querySelectorAll('.shellColor').forEach(b => b.addEventListener('click', e => {
-  e.preventDefault(); shellIx = (shellIx + 1) % SHELLS.length;
+  e.preventDefault(); shellIx = shellNext();
   try { localStorage.setItem('briefquest.shell', SHELLS[shellIx][0]); } catch(_){}
-  applyShell(); toast('Consola ' + shellLabel(SHELLS[shellIx][0]));
+  applyShell(); toast('Consola ' + shellLabel(SHELLS[shellIx][0]) + (shellIx === 3 && !glassOk() ? ' · las glass se destraban en el nivel 15' : ''));
 }));
