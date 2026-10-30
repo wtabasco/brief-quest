@@ -1629,8 +1629,22 @@ async function duoClassMenu(me, first){
     if (duoToday(who)){ await say(pick('duo:hoy', ['Por hoy ya está: lo de hoy hay que practicarlo. Mañana seguimos.', 'Dos por día, no más. Si no, se pisan. Mañana te espero.', 'Hoy ya aprendiste algo conmigo. Dormilo y mañana vamos por la siguiente.']), who); return; }
     return duoLesson(who, i);
   }
-  if (c === 2) return duoSay(pick('duo:lines', DUO.lines), me);
+  if (c === 2){ if (await giuliTostada()) return; return duoSay(pick('duo:lines', DUO.lines), me); }
   if (!first) await say(pick('duo:bye', ['Dale. Acá estamos.', 'Cuando quieras.', 'Andá tranqui, que no nos movemos de La Base. Bueno, un poquito.']), me);
+}
+/* Giuli te muestra una foto de Tostada, su gata (dibujada en pixel art a partir de la foto real) */
+const TOSTADA_PNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAA4CAIAAAA0M+y9AAAEfElEQVR4nO2Y30ubVxjHv4aSFQnZECdNNscqIXUgo1uL5GIYd7Fagg7JbiRICkV60Ysyb0bbP6AdvTFIcVC8mUjwYguylNDILrSUIaG2sknRNDgJJViR0IZSwnsRdvHMw9uT8+v1jfsB/SIvec/75JyPz4/znLxtz8tP8F+S598G4PUWSKe3QDr9r4CikdhRLKmeVgoUjcS+jwdbzhSNxGpWXTHtMfX3GdPKas49CoCaVVebtSl2anISfb6aqRwai1C8vvb9ahWA33tcMY/GQ0yZ62dpaqdM0UjM62s3t9cDhbqGS3t3GZY9grJUsD+10yxduXJuetotEDE1qvB0PCpuVpircOA2AGPTb8S9GSU9Pm6yEEz2IeaeRvVzNpi5fpbR9FyY4b7i9bULabTu0QCtrOYol0mhyYlQ1/CJcN+JcB8AumpFNKHJCbpVZzTMkxpAaWo2GLEA7BY3FDQff/gRgJ1nZbpNzM8X1pZLU7OGqzhoHZ6OR3aa3eKG0GznWZnRkPrPDJqvYuSh0t7dcG8QwP1flga+PsewhEych0iJ+flWAjHZaWQ2HIpTqXZqEu3X5KFmUYnZgyL0EMl69Vq7rzo7fhQ3K8nUxm64czfcmUxJc6hS3kndHkjdHvA2Go7mh9ZDrJ2Fe4PJ1MatmUHO4LvLyw8e32ce8jYaQhvL4wGwX626KnthZ/jyqx8AdAcCc3Ojsi+qbdTHB815iHV7APSvdwcC3YEAgGRykQ06sqlZdcWRSArEbdOtlSJwjs/ULAqKkJnYyCRNavvpDAdJPZro4swW03tcUgtt7ElNh0aZk/QnxquZin0fYrVG9SX84hefDTAbQiFZr14DqFl1Rcic7dTFzcrct30o7vdcmHnwWGpGoP1nBuFxnBKaKhM+aj4A1X7O0Z99sLC2LJvcbZW1pNzsfcNtla2s5uI3HgKQdTT/NzF21dKoJc0hLmQrq7loJLa+VZDZ75Ur/qbBwtryO773P/ngJEdDITtMleHNPV7GVJqaDU1O0FU41elT/Wwedetoe15+Unv5wv/ue9rryFAim0+PDCVw8HujObsVIibtKsfMada3CqdP9dPs8RsP17cK2z9epltDMpO1VB6iMNuZACjSSO2ebD5t8p+LPcTWZn4mDx0ChUmWA9y4R2hH9dVCGq+vPRqJcavUrPrIUIJbve3pH78p2KkiXNKw1ku9jHlF7CEAtZcvuCuJitwlDYlexNDRjLzCHnGrC3ZqChmlkXvJfiWykHHjAqBsPk3NqyW+aRZxZPNpv/d4Np/WA5GOiMbOJHwkDdnR0TAJsQTNlfrD+Zt/3967NsoZhHuDjpqGTKYhs+86zTQk1jQOLdnrWPHx49610fM3Fw2n7jn5aWdHB4D9apV92P7zdxMmym77oDipiUbmHhI5SVbVJu+EnFWZidSrOnpPxSQGUvvGkdRHfaMqAxC+eGv7adE9jXoS05Bl8+n4sOlrZRMtLNwR0giN/6GN8deln5oHnW2MmYv6ZRYW7oyNXVI8VdzGh8eFIfsLVxMrAfNZH50AAAAASUVORK5CYII=';
+const tostadaHTML = () => '<div style="display:flex;flex-direction:column;align-items:center;gap:1cqw"><div style="background:#1b1d22;border-radius:3cqw;padding:2.2cqw 1.6cqw 3.2cqw;box-shadow:0 0 0 .5cqw #3a3d45"><img src="' + TOSTADA_PNG + '" alt="Tostada, la gata de Giuli" style="display:block;width:30cqw;image-rendering:pixelated;border-radius:1cqw"></div><div style="font-size:2.4cqw">Tostada. Naranja, negra y blanca, y con cara de que sabe algo.</div></div>';
+async function giuliTostada(){
+  const m = mem(), first = !m.tostadaSeen;
+  if (talks('giuli') + talks('alejo') < 3) return false;
+  if (!first && (m.tostadaDay === gameDay() || Math.random() > .2)) return false;
+  m.tostadaSeen = (m.tostadaSeen || 0) + 1; m.tostadaDay = gameDay();
+  await say(first ? '¿Te mostré a Tostada? Mi gata. Esperá que busco una foto... tengo como cuatrocientas.' : '¡Mirá esta de Tostada! Es nueva. Bueno, es igual a las otras. Pero es nueva.', 'giuli');
+  await panelInfo('TOSTADA', tostadaHTML()); closePanel();
+  await say(pick('giuli:tostada', ['Mitad naranja, mitad negra. Como un archivo bien ordenado: cada cosa de su lado.', 'Esa cara pone cuando le hablo de kerning. Me escucha más que Alejo.', 'Me despierta a las siete. Por eso la máquina de chambear arranca temprano.', 'Le hice una pulsera de la amistad. Se la comió. La quiero igual.']), 'giuli');
+  if (first) await say('Yo le hice la foto. Ella eligió el ángulo. Muy de Giuli las dos.', 'alejo');
+  return true;
 }
 async function duoLesson(who, i){
   const les = DUO_LESSONS[who][i], m = mem();
