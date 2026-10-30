@@ -125,6 +125,14 @@ const FEDE = {
     {d: 5, t: 'Sofi cuida la casa y Tato cuida los números. Nosotros cuidamos las ideas. Sin las tres cosas no hay agencia.'},
   ],
   // su manía: casi todo lo explica con el mate
+  // lo personal de Fede (pedido de la agencia): "tranqui, no somos médicos", revisa los cronogramas, ama Cabo Polonio, no le gusta el chocolate ni Taylor Swift
+  me: [{d: 1, t: 'Tranqui, no somos médicos. Si un posteo sale con una coma de más, no se muere nadie. Se corrige y se aprende.'},
+    {d: 2, t: 'Los cronogramas los reviso yo. Todos. Si te dejo un comentario, no es que esté mal: es la versión dos.'},
+    {d: 3, t: 'Cabo Polonio. Sin luz, sin wifi, el faro y los lobos. Ahí se me ocurren las mejores ideas.'},
+    {d: 4, t: 'No me gusta el chocolate. Ya sé, ya sé. Si te sobra un alfajor, dáselo a Pimi. Él sí.'},
+    {d: 5, t: 'Giuli me quiso regalar una pulsera de Taylor Swift. Le dije que no, gracias. Con cariño. No es lo mío.'},
+    {d: 6, t: 'Cuando algo se complica, me acuerdo del Cabo: no hay apuro que llegue hasta ahí. Tranqui, no somos médicos.'},
+    {d: 7, t: 'Si un cronograma vuelve tres veces, no es castigo: es que cada vuelta queda mejor. La cuarta, capaz, te la apruebo.'}],
   mateLore: ['El agua del mate, nunca hervida. Setenta, ochenta grados. Con las ideas pasa igual: si las quemás, quedan amargas.',
     'Un mate lavado es como una idea repetida: ya no tiene gusto. Cambiá la yerba.',
     'El primer mate es para el que ceba, porque sale feo. La primera idea, también: sacala de encima y seguí.',
@@ -154,6 +162,7 @@ async function talkFede(){
     await opener('fede', 'fede', FEDE.again);
     let line = reaction('fede', FEDE.R);
     if (!line && qState('fede_prueba') === 'open' && !qCountOk('fede_prueba')){ const [a, b] = qProg('fede_prueba'); line = pick('fede:q', [`Llevás ${a} de ${b} entrenamientos. Lo que cuenta es volver.`, 'Seguí viniendo a entrenar. Ahí está el aprendizaje.']); }
+    if (!line && Math.random() < .3) line = pick('fede:me', FEDE.me);
     if (!line && Math.random() < .35) line = pick('fede:matelore', FEDE.mateLore);
     await say(line || pick('fede:tips', FEDE.tips), Math.random() < .3 ? 'fede:risa' : 'fede');
   }
@@ -339,6 +348,9 @@ const FOUNDERS = {
     {d: 5, t: 'Sofi es la que sostiene la casa. Si algo funciona y no sabés por qué, fue Sofi.'},
     {d: 7, t: 'Tato tiene otro ritmo. Al principio me preocupaba. Después vi sus planillas: no hay un error. Ahora el que me preocupa es mi ritmo.'},
     {d: 1, t: 'Mi puerta siempre está abierta. Literal: la manija se rompió hace un mes. Pimi dice que la arregla "en un ratito".'},
+    {d: 3, t: 'Si me ves con una taza roja, es del Liverpool. No es casualidad. Nada es casualidad, diría Freud.'},
+    {d: 4, t: 'Me encanta Inglaterra: el té de las cinco, la lluvia finita, los parques. Acá tenemos mate y la lluvia más gruesa. También me encanta.'},
+    {d: 6, t: 'Los días que juega el Liverpool estoy un poquito más ansiosa. Como psicóloga, lo entiendo. Como hincha, no puedo hacer nada.'},
     {d: 2, t: 'En la última dinámica armamos torres con fideos secos. La de Sahi era la más linda. También la primera en caerse.'},
     {d: 4, t: 'Lu me pidió una dinámica de karaoke. Le dije que lo pienso. Ya sabemos cómo termina eso.'},
     {d: 5, t: 'Estoy armando un taller de comunicación para Pimi. Él todavía no lo sabe. Es una sorpresa.'},
@@ -367,6 +379,8 @@ const FOUNDERS = {
   Lchat: [{if: () => statusToday(), t: '¡Vi tu status en el pizarrón! Ya lo pasé a mi tablero. ¡Es broma! ...Un poco.'},
     {d: 7, t: '¡Le pedí a Tato los números del mes! Me dijo "tranqui, ya llegan". Llegaron tres días después. ¡Perfectos! No tuve nada para mejorar. ¡Me desesperé!'},
     {d: 1, t: '¡Tengo un tablero para todo! Clientes, campañas, cuántas veces canta Lu el estribillo... ¡y uno de cuántos tableros tengo! ¡Ja! Ese lo armé ayer.'},
+    {d: 3, t: '¡Desayuné pizza! ¡De anoche, fría! ¡El desayuno más eficiente que hay: cero minutos de preparación!'},
+    {d: 5, t: '¡Medí cuánto tardo en desayunar! ¡Pizza: cuatro minutos! ¡Café con medialunas: doce! ¡Los números no mienten! ¡Ja!'},
     {d: 2, t: 'Agus me pasó la planilla del proceso. La abrí. ¡Eso ya es un avance! La cerré enseguida, pero la abrí.'},
     {d: 2, t: 'En cada reunión pasa lo mismo: yo voto performance y todos los demás, branding. ¡Todos contra una! Igual llevo los números, por las dudas. ¡Ja!'},
     'Mi frase favorita es "¿y si lo medimos?". La de Agus, "¿y si lo hablamos?". Juntas no se nos escapa nada.',
@@ -486,6 +500,11 @@ const DINAMICAS = [
   {if: () => (S.flags.lesGiuli || 0) > 0, t: {q: '¿Quién te enseña a preparar archivos para imprenta?', a: 'Giuli', o: ['Alejo', 'Tato']}},
   {if: () => (S.flags.tr_cronograma || 0) > 0, t: {q: '¿Quién te enseña a armar cronogramas de contenido?', a: 'Alejo', o: ['Giuli', 'Sofi']}},
   {if: () => talks('reni') > 0, t: {q: '¿De dónde es Reni, y lo dice con orgullo?', a: 'De Paysandú', o: ['De Rocha', 'De Buenos Aires']}},
+  {if: () => talks('fede') > 2, t: {q: '¿Quién revisa los cronogramas antes de que vayan al cliente?', a: 'Fede (FD)', o: ['El cliente', 'Nadie: van directo']}},
+  {if: () => talks('fede') > 3, t: {q: '¿Cuál es el lugar en el mundo de Fede?', a: 'Cabo Polonio', o: ['Punta del Este', 'Buenos Aires']}},
+  {if: () => talks('fede') > 4, t: {q: '¿Qué no le gusta a Fede?', a: 'El chocolate', o: ['El mate', 'Los cronogramas']}},
+  {if: () => talks('agus') > 3, t: {q: '¿Qué equipo sigue Agus?', a: 'El Liverpool', o: ['Peñarol', 'Boca']}},
+  {if: () => talks('lia') > 3, t: {q: '¿Qué desayuna Lía, y lo defiende con números?', a: 'Pizza', o: ['Un licuado verde', 'Nada: no desayuna']}},
   {if: () => talks('reni') > 2, t: {q: '¿De qué cuadro es Reni?', a: 'De Nacional', o: ['De Peñarol', 'De Boca']}},
   {if: () => talks('alejo') > 2, t: {q: '¿De qué cuadro es Alejo?', a: 'De Peñarol', o: ['De Nacional', 'De Boca']}},
   {if: () => talks('alejo') > 2, t: {q: '¿Qué toca Alejo en la guitarra de La Base?', a: 'Blues', o: ['Cumbia', 'Reggae']}},
