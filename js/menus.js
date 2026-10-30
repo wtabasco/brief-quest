@@ -45,8 +45,8 @@ async function skillsScreen(){
     const r = await panelList({title:'HABILIDADES', extra:`${S.skills.length}/${Object.keys(SK).length} · ACTIVAS ${S.equip.length}/4`, start,
       rows:() => S.skills.map(id => ({label:(S.equip.includes(id) ? '★ ' : '· ') + SK[id].n, right:`${S.pp[id]}/${SK[id].pp}`, dim:!S.equip.includes(id)}))
         .concat(locked.map(id => ({label:'🔒 ' + SK[id].n, right:'—', dim:true}))),
-      detail:i => i < S.skills.length ? skillDetail(S.skills[i]) + `<div class="k">${S.equip.includes(S.skills[i]) ? '★ Activa. Z para quitarla.' : 'En tu repertorio. Z para activarla.'}</div>`
-        : `<h4>${SK[locked[i - S.skills.length]].n}</h4><div>${chip(SK[locked[i - S.skills.length]].t)}</div><div class="k">Todavía no la aprendiste.</div><div>${SKILL_HOW[locked[i - S.skills.length]]}</div>`,
+      detail:i => i < S.skills.length ? skillDetail(S.skills[i]) + `<div class="k">${S.equip.includes(S.skills[i]) ? '★ Activa (Z: quitar)' : 'En tu repertorio (Z: activar)'}</div>`
+        : `<h4>${SK[locked[i - S.skills.length]].n}</h4><div>${chip(SK[locked[i - S.skills.length]].t)}</div><div class="k">Todavía no la aprendiste.</div><div>${SKILL_HOW[locked[i - S.skills.length]]}</div>${skillVs(SK[locked[i - S.skills.length]])}`,
       hint:'Z: activar o quitar · X: volver'});
     if (r < 0) return;
     if (r >= S.skills.length){ start = r; toast('Todavía no la aprendiste'); continue; }

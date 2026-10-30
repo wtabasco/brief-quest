@@ -201,7 +201,15 @@ function panelInfo(title, html){
 const closePanel = () => { $('panel').hidden = true; $('panelList').style.display = ''; $('panelBody').classList.remove('solo'); };
 function skillDetail(id){
   const s = SK[id], mult = id === 'prueba' ? ' (+20 por uso)' : '';
-  return `<h4>${s.n}</h4><div>${chip(s.t)}</div><div class="k">Poder: ${s.p || '—'}${mult} · Precisión: ${s.a} · Usos: ${S.pp[id]}/${s.pp}</div><div>${s.d}</div>`;
+  return `<h4>${s.n}</h4><div>${chip(s.t)}</div><div class="k">Poder ${s.p || '—'}${mult} · Prec. ${s.a}</div><div>${s.d}</div>${skillVs(s)}`;
+}
+/* contra qué rinde el doble y contra qué rinde poco (lo mismo que la guía del pizarrón de La Base), en un renglón */
+function skillVs(s){
+  if (!s.p) return '<div class="k">De apoyo: no pega, te prepara.</div>';
+  const ch = CHART[s.t]; if (!ch) return '';
+  if (Object.keys(ch).length > 3) return '<div><b>Efectivo contra todo.</b></div>';
+  const lo = t => TYPES[t].n.toLowerCase(), good = Object.keys(ch).filter(t => ch[t] > 1), weak = Object.keys(ch).filter(t => ch[t] < 1);
+  return `<div><b>Efectivo contra ${good.map(lo).join(' y ')}</b></div>${weak.length ? `<div class="k">Poco contra ${weak.map(lo).join(' y ')}</div>` : ''}`;
 }
 function statsHTML(){
   const st = stats();
