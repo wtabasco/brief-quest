@@ -173,7 +173,7 @@ const CULTURE_AGUS = ['Tenemos dos trabajos: hacer lo que hay que hacer y pensar
   'Trackear el tiempo en ClickUp es transparencia: sabemos cuánto le dedicamos a cada cliente y podemos valorizar mejor nuestro trabajo.'];
 const CULTURE_LIA = ['¡Estoy midiendo el tiempo de respuesta de soporte técnico! ¡El cronómetro sigue corriendo! ¡Desde el martes! ¡Ja!',
   '¡ClickUp es mi tablero favorito! ¡Con las horas de cada cliente valorizamos mejor el trabajo y elegimos con qué clientes trabajar!',
-  '¡Tareas por Slack, en orden de prioridad! ¡Y el tiempo en ClickUp! ¡Lo que no se mide no se mejora! ¡Ja! Eso ya lo sabías.','¡Preparamos cada reunión con un objetivo y salimos habiéndolo cumplido! ¡Si no, es un café caro!',
+  '¡El tiempo, en ClickUp! ¡Cada tarea con sus minutos! ¡Lo que no se mide no se mejora! ¡Ja! Eso ya lo sabías.','¡Preparamos cada reunión con un objetivo y salimos habiéndolo cumplido! ¡Si no, es un café caro!',
   '¡Los argumentos se dan a tiempo! ¡Después son excusas! ¡Y las excusas no se pueden medir!',
   '¡Plazos reales desde el principio! ¡Ser flexibles no es decir que sí a todo!',
   '¡Buscamos la excelencia aunque el cliente no la pida! ¡Nosotros ponemos la vara!',

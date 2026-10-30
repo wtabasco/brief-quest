@@ -235,7 +235,7 @@ async function houseThing(ch, tx){
       i: ['El inodoro. Limpio y con papel. Sofi se ocupa.'],
       d: ['El bidé. Sí, acá hay bidé. Bienvenid{o} al Río de la Plata.'],
       z: ['La mesada de granito negro con la bacha y el espejo. Hay un aerosol de jazmín que alguien usa con demasiado entusiasmo.', 'Te mirás en el espejo. Tenés cara de estar aprendiendo un montón.'],
-      g: ['Una guitarra criolla en su soporte. En los afters siempre aparece alguien que sabe tres acordes. Lu canta igual, sepa quien sepa.', 'Está un poquito desafinada. Sahi dice que es "a propósito, para que suene a fogón".'],
+      g: ['La guitarra criolla de La Base. Es de todos, pero la afina Alejo. Cuando la agarra él, suena un blues.', 'Una guitarra criolla en su soporte. En los afters siempre aparece alguien que sabe tres acordes. Lu canta igual, sepa quien sepa.', 'Está un poquito desafinada. Sahi dice que es "a propósito, para que suene a fogón".'],
       u: CURMAP.id === 'office' ? ['El parlante de La Base. Suena la playlist del equipo: cada uno agrega un tema por semana.', 'Hoy eligió Lu, así que ya sabés lo que suena. Pimi le bajó un poquito el volumen. Lu se lo subió.'] : ['El parlante de torre de Asteroide. Suena un reggae bajito. Tato dice que es "para que los números tengan ritmo".', 'Arriba tiene botones que nadie toca. Bueno, Tato sí: el de volumen, para bajarlo cuando entra Lía.'],
       l: ['La lámpara de pie de arco, con su pantalla negra. Tato dice que con esa luz los números cierran solos.'],
       p: ['La impresora de Asteroide, arriba del mueble gris. Imprime facturas, recibos y, una vez, la lista de reggae de Tato. Entera.', 'Al lado hay un teléfono inalámbrico. Nadie sabe el número. Pero suena.'],

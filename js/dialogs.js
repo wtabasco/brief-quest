@@ -485,6 +485,9 @@ const DINAMICAS = [
   {if: () => talks('sofi') > 0, t: {q: '¿Quién se ocupa de que haya fruta, ande internet y la casa esté linda?', a: 'Sofi', o: ['Tato', 'Lía']}},
   {if: () => (S.flags.lesGiuli || 0) > 0, t: {q: '¿Quién te enseña a preparar archivos para imprenta?', a: 'Giuli', o: ['Alejo', 'Tato']}},
   {if: () => (S.flags.tr_cronograma || 0) > 0, t: {q: '¿Quién te enseña a armar cronogramas de contenido?', a: 'Alejo', o: ['Giuli', 'Sofi']}},
+  {if: () => talks('reni') > 0, t: {q: '¿De dónde es Reni, y lo dice con orgullo?', a: 'De Paysandú', o: ['De Rocha', 'De Buenos Aires']}},
+  {if: () => talks('alejo') > 2, t: {q: '¿Qué toca Alejo en la guitarra de La Base?', a: 'Blues', o: ['Cumbia', 'Reggae']}},
+  {if: () => talks('giuli') + talks('alejo') > 3, t: {q: '¿Cómo se llama la gata de Giuli?', a: 'Tostada', o: ['Galleta', 'Medialuna']}},
   {if: () => talks('marga') > 0, t: {q: '¿Quién es la que está hace más tiempo en la agencia?', a: 'Marga', o: ['Fede', 'Tato']}},
   {if: () => talks('marga') > 0, t: {q: '¿Qué le encanta mostrarte a Marga?', a: 'Las fotos de sus nietas', o: ['Sus plantas', 'Sus recetas']}},
   {if: () => talks('tato') > 0, t: {q: '¿Qué música tranqui suena siempre en el parlante de Tato?', a: 'Reggae', o: ['Cumbia', 'Heavy metal']}},
@@ -702,7 +705,8 @@ async function talkFounders(n){
     qOpen('consejo');
     S.buff = c === 1 ? 'atk' : 'def'; m.lastAdviceBattle = b;
     await say('Ahora la casa es tuya. Bajá a La Base: ahí están Alejo y Giuli, y entre las pilas de pendientes saltan los problemas. En el pizarrón grande hay una guía de qué habilidad destraba cada uno. ¡Resolvé el primero!', 'agus:feliz');
-    await say('¡Y dos cosas que vas a escuchar mucho! Las tareas te las manda tu Project por Slack, en orden de prioridad. ¡Y el tiempo se trackea en ClickUp, así sabemos cuánto le dedicamos a cada cliente!', 'lia');
+    await say('Una cosa que vas a escuchar mucho: las tareas te las manda tu Project por Slack, en orden de prioridad. Se hacen en ese orden, primero lo primero.', 'agus');
+    await say('¡Y otra! ¡El tiempo se trackea en ClickUp! ¡Así sabemos cuánto le dedicamos a cada cliente y valorizamos mejor el trabajo!', 'lia');
     if (qState('bienvenida') === 'open') qDone('bienvenida');
     if (!qState('clientes')){ await say(`¡Y cada problema que resolvés te suma experiencia y te sube de nivel! Los clientes te esperan en la Sala de Clientes, en la planta baja: ¡andá cuando te sientas list{o}! ¡Yo voy midiendo cómo te va!`, 'lia:feliz'); qOpen('clientes'); }
     return;
@@ -1409,7 +1413,7 @@ async function ending(){
 /* ================= ALEJO Y GIULI: LOS SPECIALISTS (La Base) =================
    Una dupla: andan siempre juntos (Giuli sigue a Alejo por su rincón de La Base) y se completan.
    Alejo es Social Media Specialist: el que más sabe de redes. Giuli es Graphic Design Specialist:
-   la que más sabe de diseño. Los dos son muy artísticos (fotos de rollo, cine y playlists; libretas, letras y
+   la que más sabe de diseño. Los dos son muy artísticos (guitarra, blues y dibujo; libretas, letras y
    referencias de todos lados). Cada uno te enseña lo suyo, hasta dos capacitaciones por día, con una pregunta al final para fijarla:
    no se aprueba ni se reprueba, si no sale se explica y se vuelve a probar. */
 const DUO_LESSONS = {
@@ -1461,7 +1465,7 @@ const DUO_LESSONS = {
   ],
 };
 const DUO = {
-  again: [{t: [['alejo', '¿Volviste? Justo estábamos mirando referencias.']]}, {t: [['giuli', '¿Otra vez por acá? Bien. Acá se aprende mirando.']]}, {t: [['alejo', '¡Ey! Pasá, que hay lugar en la dupla. Bueno, en el trío.']]}],
+  again: [{t: [['alejo', '¿Volviste? Justo estábamos mirando referencias.']]}, {t: [['giuli', '¿Volviste? Pasá, que la máquina de chambear hace una pausa. Corta.']]}, {t: [['alejo', '¡Ey! Estaba afinando la guitarra. Bueno, estaba trabajando. Las dos cosas.']]}, {t: [['giuli', '¿Otra vez por acá? Bien. Acá se aprende mirando.']]}, {t: [['alejo', '¡Ey! Pasá, que hay lugar en la dupla. Bueno, en el trío.']]}],
   lines: [
     {t: [['giuli', 'Yo hago que se vea bien.'], ['alejo', 'Y yo, que lo vea la gente.'], ['giuli', 'Y ninguno publica nada sin que el otro lo mire.']]},
     {d: 1, t: [['giuli', 'Si encuentro un archivo que se llama "nuevo_final_ahora_sí", lo renombro. Con cariño, pero lo renombro.'], ['alejo', 'Lo hace. Lo vi.']]},
@@ -1476,12 +1480,22 @@ const DUO = {
     {d: 5, t: [['alejo', 'Armamos una playlist para trabajar juntos.'], ['giuli', 'Tato dice que le falta reggae. Lu dice que le falta Aitana. Está quedando rarísima.']]},
     {d: 5, t: [['alejo', 'Un buen posteo no es el más lindo: es el que alguien guarda o le manda a un amigo.'], ['giuli', 'Igual, si además es lindo, mejor.']]},
     {d: 6, t: [['giuli', 'Mi parte favorita del laburo es cuando un archivo bien armado llega a la imprenta y vuelve perfecto.'], ['alejo', 'La mía es cuando alguien comenta "¿quién hizo esto?". Y fuimos nosotros.']]},
-    {d: 2, t: [['alejo', 'Anoche vi una peli vieja en blanco y negro. Cada plano parecía una foto.'], ['giuli', 'Y me mandó tres capturas a las once de la noche. Con comentarios.']]},
+    {d: 2, t: [['alejo', 'La guitarra criolla de La Base es la mía. Bueno, de todos. Pero la afino yo.'], ['giuli', 'Y toca blues. Siempre blues. Hasta los lunes a las nueve.']]},
+    {d: 3, t: [['alejo', 'Anoche Vir me hizo una torta. Sin motivo. ¿Vos entendés lo que es eso?'], ['giuli', 'Ya nos contó. Tres veces. Está enamoradísimo.'], ['alejo', 'Cuatro. Te faltó una.']]},
+    {d: 5, t: [['alejo', 'Mientras pienso un posteo, dibujo. En la libreta, en un post-it, en la servilleta del café.'], ['giuli', 'Le guardo las servilletas. Algún día hacemos una muestra.']]},
+    {d: 6, t: [['alejo', 'La música triste me pone contento. No sé explicarlo.'], ['giuli', 'Yo sí: es blues. Y está casado. Es feliz y escucha canciones de gente que la pasó mal.']]},
+    {d: 7, t: [['alejo', 'Hoy es el aniversario con Vir. Le dibujé una tarjeta. Y le compuse un blues.'], ['giuli', '¿Un blues triste para un aniversario?'], ['alejo', 'Un blues feliz. Existen. Bueno, ahora existe uno.']]},
+    // Giuli: la hermana pastelera, la gata Tostada y la máquina de chambear
+    {d: 2, t: [['giuli', 'Mi hermana es pastelera. Hace unas galletas que no podés creer. ¿Le comprás una cajita? Te paso el contacto.'], ['alejo', 'Comprale. Después te pregunta si te gustaron. Y te gustan.']]},
+    {d: 3, t: [['giuli', 'Mi gata se llama Tostada. Duerme arriba de la compu, porque está calentita.'], ['alejo', 'Tiene más fotos en el celu de Giuli que cualquier cliente.']]},
+    {d: 4, t: [['giuli', 'Soy la máquina de chambear. Me lo dije yo, pero es verdad.'], ['alejo', 'Es verdad. Entra, se pone los auriculares y a las seis hay veinte piezas en Finales.']]},
+    {d: 6, t: [['giuli', 'Si hoy termino todo, me compro galletas de mi hermana. Si no termino, también.'], ['alejo', 'La máquina de chambear también necesita combustible.']]},
+    {d: 7, t: [['giuli', 'Tostada se sentó arriba del teclado y mandó un mail que decía "hhhhhhhhh".'], ['alejo', 'Y el cliente contestó "perfecto, avancemos". Nunca supimos qué aprobó.']]},
     {d: 3, t: [['giuli', 'Alejo es el único que me dice "esto no" y me convence.'], ['alejo', 'Y vos la única que me dice "esto sí" y le creo.']]},
-    {d: 3, t: [['alejo', 'A las cinco de la tarde, en el patio, hay una luz que no te la da ningún aro.'], ['giuli', 'Reni dice lo mismo. A las cinco se pelean por el patio.']]},
+    {d: 4, t: [['alejo', 'A las cinco de la tarde, en el patio, hay una luz que no te la da ningún aro.'], ['giuli', 'Reni dice lo mismo. A las cinco se pelean por el patio.']]},
     {d: 4, t: [['giuli', 'Si una letra está mal espaciada, la veo desde la puerta.'], ['alejo', 'Desde la puerta de la calle. Y te lo dice.']]},
     {d: 4, t: [['giuli', 'Junto etiquetas: de vino, de yerba, de fósforos. Tengo una caja llena.'], ['alejo', 'No es una caja. Es un archivo, con carpetas.'], ['giuli', 'Obvio. Por color.']]},
-    {d: 5, t: [['alejo', 'Cada mes armo la playlist del equipo. La de este mes tiene una regla: nada que alguien ya conozca.'], ['giuli', 'Tato pidió reggae igual. Entró.']]},
+    {d: 5, t: [['alejo', 'Cada mes armo la playlist del equipo. La de este mes es de blues.'], ['giuli', 'Es triste. Linda, pero triste. Tato pidió reggae igual, y entró.']]},
     {d: 6, t: [['giuli', 'Mi rincón favorito es la biblioteca. Los lomos de los libros viejos tienen unas letras divinas.'], ['alejo', 'Y la luz de los ventanales. Ahí saqué mi mejor foto. De rollo, obvio.']]},
     {d: 7, t: [['alejo', 'Para mí un reel se decide en el primer segundo. Si no engancha ahí, no lo salva nada.'], ['giuli', 'Y para mí se decide en la tapa. Por eso discutimos tanto la tapa.']]},
     {if: () => tod() === 'tarde', t: [['alejo', 'A esta hora se mira mucho el celular. Es buen momento para publicar.'], ['giuli', 'Y para un café. Las dos cosas.']]},
@@ -1755,7 +1769,7 @@ const TRAININGS = {
       {title: 'La carpeta del cliente: año y Extras', lines: [
         'Adentro de cada CLIENTE hay una carpeta por año. Dentro del año, una carpeta por mes y una adicional para Extras.',
         'Cada mes tiene: 01 Cronograma, 02 Materiales, 03 Editables, 04 Finales y 05 Reporte.',
-        'En Extras se crean solo las carpetas de campañas o recursos adicionales a la planificación Always On de la marca. Adentro de cada una: 01 Creatividad, 02 Materiales, 03 Editables y 04 Finales.',
+        'En Extras se crean solo las carpetas de campañas y pedidos extras, adicionales a la planificación Always On de la marca. Adentro de cada una: 01 Creatividad, 02 Materiales, 03 Editables y 04 Finales.',
         'Las campañas extras van siempre dentro de Extras, en la carpeta del año en que se hizo la campaña.'],
         quiz: [{q: '¿Qué carpetas tiene cada mes?', a: '01 Cronograma, 02 Materiales, 03 Editables, 04 Finales y 05 Reporte', o: ['Una sola carpeta con todo adentro', 'Cronograma y Varios'],
                 why: 'Cada mes tiene sus cinco carpetas numeradas, siempre iguales, así cualquiera encuentra todo.'},
@@ -2029,7 +2043,7 @@ const TRAINING_TALK = {
     ['Hoy, la carpeta del cliente. Adentro, una carpeta por año.',
      'Dentro del año, una por mes. Y cada mes, siempre las mismas cinco: 01 Cronograma, 02 Materiales, 03 Editables, 04 Finales, 05 Reporte.',
      ['fede:risa', 'Siempre iguales, así cualquiera abre cualquier cliente y encuentra todo. Como la ronda del mate: siempre para el mismo lado.'],
-     'En el año hay una carpeta más: Extras. Ahí van solo las campañas o recursos que no son del Always On.',
+     'En el año hay una carpeta más: Extras. Ahí van solo las campañas y los pedidos extras, lo que no es del Always On.',
      'Cada extra lleva 01 Creatividad, 02 Materiales, 03 Editables y 04 Finales. Y va en el año en que se hizo.'],
     ['Además de los años, cada cliente tiene cinco carpetas fijas. Anotá, que te las tomo.',
      'Carpeta Cliente Cliente: lo que compartimos con el cliente. Últimos cronogramas, reportes en PDF, producciones. Por año.',
