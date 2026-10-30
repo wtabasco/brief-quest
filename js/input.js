@@ -115,11 +115,12 @@ padToggle.addEventListener('click', () => { setInfo(!ctrlInfo.classList.contains
 try { if (matchMedia('(pointer: coarse)').matches){ const f = document.querySelector('.tFoot'); if (f) f.textContent = 'Cruceta para moverte · Z: aceptar · X: volver'; } } catch(e){}
 
 
-/* Color de la consola: verde (el de siempre), violeta, celeste o rosa, y las mismas en versión glass (transparente, con los circuitos a la vista). El botoncito muestra el color que sigue. */
+/* Color de la consola: verde (el de siempre), violeta, celeste o rosa, y las mismas en versión glass (transparente, con los circuitos a la vista); en el 20, Boca, Peñarol y Nacional, también en glass. El botoncito muestra el color que sigue. */
 const SHELLS = [['verde', '#004612'], ['violeta', '#4b2154'], ['celeste', '#2a7fb0'], ['rosa', '#d97a9c'],
   ['verde-glass', 'rgba(15,106,53,.6)'], ['violeta-glass', 'rgba(96,44,140,.6)'], ['celeste-glass', 'rgba(31,120,173,.6)'], ['rosa-glass', 'rgba(205,104,146,.6)'],
-  ['boca', 'linear-gradient(135deg,#123c8c 50%,#f6c400 50%)'], ['penarol', 'linear-gradient(135deg,#161616 50%,#f5c000 50%)'], ['nacional', 'linear-gradient(135deg,#ffffff 50%,#1d3fa0 50%)']];
-const shellLabel = n => ({penarol: 'Peñarol', boca: 'Boca', nacional: 'Nacional'})[n] || n.replace('-glass', ' glass');
+  ['boca', 'linear-gradient(135deg,#123c8c 50%,#f6c400 50%)'], ['penarol', 'linear-gradient(135deg,#161616 50%,#f5c000 50%)'], ['nacional', 'linear-gradient(135deg,#ffffff 50%,#1d3fa0 50%)'],
+  ['boca-glass', 'linear-gradient(135deg,rgba(18,60,140,.6) 50%,rgba(246,196,0,.7) 50%)'], ['penarol-glass', 'linear-gradient(135deg,rgba(24,24,24,.6) 50%,rgba(245,192,0,.7) 50%)'], ['nacional-glass', 'linear-gradient(135deg,rgba(255,255,255,.6) 50%,rgba(29,63,160,.7) 50%)']];
+const shellLabel = n => { const [b, g] = n.split('-'); return (({penarol: 'Peñarol', boca: 'Boca', nacional: 'Nacional'})[b] || b) + (g ? ' glass' : ''); };
 let shellIx = 0;
 try { shellIx = Math.max(0, SHELLS.findIndex(s => s[0] === localStorage.getItem('briefquest.shell'))); } catch(e){}
 /* Las glass se destraban en el nivel 15 (cuando quedás fijo) y las de los cuadros en el 20. Queda guardado en el navegador: una vez destrabadas, valen para todas las partidas. */
