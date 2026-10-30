@@ -378,6 +378,7 @@ const FOUNDERS = {
     {d: 4, t: 'Ayer reordené la heladera por fecha de vencimiento. Encontré un yogur de 2019. Ese no lo pude mejorar.'},
     {d: 3, t: 'Sahi dice que hizo catorce devoluciones seguidas en el ping pong. Lo medí: fueron once. Igual, buenísimo.'},
     {if: () => (mem().ppBest || 0) > 0, t: () => `Tu récord en el peloteo con Sahi es de ${mem().ppBest} devoluciones. ¿Cómo que no sabías que lo estaba midiendo?`},
+    {if: () => (mem().bici || 0) >= 2, t: '¿Pimi te quiso contar lo de la bicicleta? ¡Yo la escuché tres veces! Catorce minutos. Lo medí. ¡El final no te lo arruino!'},
     {if: () => (mem().mates || 0) > 0, t: () => `Le llevaste ${mem().mates} mate${mem().mates === 1 ? '' : 's'} a Fede. Lo tengo en el tablero, en la columna "cultura de equipo".`},
     {if: () => !!S.pdp && !S.pdp.done, t: '¿Agus te armó un plan de desarrollo? ¡Me encanta! Su plan dice a dónde ir; mi tablero, cuánto falta.'},
     {if: () => tod() === 'noche' || tod() === 'madrugada', t: '¿A esta hora? Yo también estoy, pero yo no cuento: me divierte. Igual andá a dormir, que si no Agus me reta a mí.'}],
@@ -971,6 +972,33 @@ const PIMI = {
     () => `Llevás ${mem().stats.wins} problemas resueltos. Buen número.`,
     {if: () => S.pimiGiven <= 3, t: 'Tengo algo para vos. Volvé después de tu próxima reunión con cliente.'}],
 };
+// Pimi quiere contar la anécdota de la bicicleta y nunca hay tiempo (chiste recurrente):
+// aparece cuando ya charlaron bastante, espaciada, y las únicas respuestas son "Otro día mejor" y "Ahora no puedo".
+const BICI_OPEN = [
+  'Che, ¿te conté la de la bicicleta? Es buenísima. Arranca en Rocha, un domingo...',
+  'Tengo que contarte lo de la bici. Cinco minutos. Bueno, diez.',
+  'Hoy sí. La anécdota de la bicicleta. Agarrate.',
+  'Lo de la bici, ¿te acordás que te debía? Arranca con un pozo. Y un perro.',
+  'Te la resumo: la bicicleta, el viento en contra, un alfajor. ¿Te la cuento entera?',
+  'Ahora que tenemos un rato: la bicicleta. Es corta. Más o menos.',
+];
+const BICI_BACK = [
+  'Tranqui. La anécdota no se va a ningún lado. La bici sí, pero esa es otra historia.',
+  'Dale, otro día. Igual mejora con el tiempo.',
+  'Tranqui. Le voy agregando detalles mientras tanto.',
+  'Sin drama. Algún día te la cuento. Lía ya la escuchó tres veces y dice que mejora.',
+  'Ok. La guardo. Cada vez que no te la cuento, se pone mejor.',
+  'Tranqui. Ya va a haber un momento.',
+];
+async function pimiBici(){
+  const m = mem(), b = m.battles || 0;
+  if (talks('pimi') < 5 || b < 10 || b - (m.biciAt ?? -99) < 9 || m.biciDay === gameDay() || Math.random() > .35) return false;
+  m.biciAt = b; m.biciDay = gameDay(); m.bici = (m.bici || 0) + 1;
+  await say(BICI_OPEN[(m.bici - 1) % BICI_OPEN.length], 'pimi');
+  await choose(['Otro día mejor', 'Ahora no puedo']);
+  await say(BICI_BACK[(m.bici - 1) % BICI_BACK.length], 'pimi');
+  return true;
+}
 async function talkPimi(){
   if (!S.flags.pimiMet){
     S.flags.pimiMet = true;
@@ -979,6 +1007,7 @@ async function talkPimi(){
   }
   await opener('pimi', 'pimi', PIMI.again);
   if (await pimiFoodFavor()) return;
+  if (await pimiBici()) return;
   const steps = [
     {q: 'pimi_atajo', give: async () => { await say('Listo. Te configuré los atajos de teclado. Vas a atacar primero.', 'pimi'); await learn('atajo', sayN); }, next: 'pimi_bug', nextIf: () => S.bosses >= 1, nextMsg: 'Ahora cazá 2 Bugsito. Aparecen en La Base.', wait: 'Destrabá al primer cliente y vas a ver aparecer Bugsitos. Ahí te doy la próxima tarea.'},
     {q: 'pimi_bug', give: async () => { await say('Bugs afuera. Te armé un monitor extra: ahora ves todo venir.', 'pimi'); S.bonus.def += 3; SFX.learn(); await say('Tu defensa subió de forma permanente.'); }, next: 'pimi_file', nextIf: () => true, nextMsg: 'Siguiente: ordená 3 Archivo_final_v7. Con un nombre claro se ahorra medio día.'},
