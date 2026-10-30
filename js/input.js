@@ -115,19 +115,21 @@ padToggle.addEventListener('click', () => { setInfo(!ctrlInfo.classList.contains
 try { if (matchMedia('(pointer: coarse)').matches){ const f = document.querySelector('.tFoot'); if (f) f.textContent = 'Cruceta para moverte · Z: aceptar · X: volver'; } } catch(e){}
 
 
-/* Color de la consola: verde (el de siempre), violeta, celeste o rosa. El botoncito muestra el color que sigue. */
-const SHELLS = [['verde', '#004612'], ['violeta', '#4b2154'], ['celeste', '#2a7fb0'], ['rosa', '#d97a9c']];
+/* Color de la consola: verde (el de siempre), violeta, celeste o rosa, y las mismas en versión glass (transparente, con los circuitos a la vista). El botoncito muestra el color que sigue. */
+const SHELLS = [['verde', '#004612'], ['violeta', '#4b2154'], ['celeste', '#2a7fb0'], ['rosa', '#d97a9c'],
+  ['verde-glass', 'rgba(15,106,53,.6)'], ['violeta-glass', 'rgba(96,44,140,.6)'], ['celeste-glass', 'rgba(31,120,173,.6)'], ['rosa-glass', 'rgba(205,104,146,.6)']];
+const shellLabel = n => n.replace('-glass', ' glass');
 let shellIx = 0;
 try { shellIx = Math.max(0, SHELLS.findIndex(s => s[0] === localStorage.getItem('briefquest.shell'))); } catch(e){}
 function applyShell(){
   const g = document.querySelector('.gba'); if (!g) return;
   if (shellIx) g.dataset.shell = SHELLS[shellIx][0]; else delete g.dataset.shell;
   const nx = SHELLS[(shellIx + 1) % SHELLS.length];
-  document.querySelectorAll('.shellColor').forEach(b => { b.style.setProperty('--next', nx[1]); b.title = 'Color de la consola: pasar a ' + nx[0]; });
+  document.querySelectorAll('.shellColor').forEach(b => { b.style.setProperty('--next', nx[1]); b.classList.toggle('glass', nx[0].endsWith('-glass')); b.title = 'Color de la consola: pasar a ' + shellLabel(nx[0]); });
 }
 applyShell();
 document.querySelectorAll('.shellColor').forEach(b => b.addEventListener('click', e => {
   e.preventDefault(); shellIx = (shellIx + 1) % SHELLS.length;
   try { localStorage.setItem('briefquest.shell', SHELLS[shellIx][0]); } catch(_){}
-  applyShell(); toast('Consola ' + SHELLS[shellIx][0]);
+  applyShell(); toast('Consola ' + shellLabel(SHELLS[shellIx][0]));
 }));
