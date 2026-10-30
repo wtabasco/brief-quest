@@ -1256,8 +1256,37 @@ const CLIENT_LINES = {
 };
 /* los clientes con ficha hablan con su retrato (y si no, solo con su nombre) */
 const bossWho = (key, mood) => (typeof PORTRAIT_MOODS !== 'undefined' && PORTRAIT_MOODS[key]) ? key + (mood ? ':' + mood : '') : null;
+/* después del final: los clientes vuelven con más exigencias y se los puede volver a enfrentar */
+const REMATCH = {
+  fantasma: {ask: ['¡Volví! Bueno, nunca me fui. Bueno, sí, tres semanas. Tengo un brief nuevo. Clarísimo. Está en un audio que todavía no mandé.', 'Ahora que sos Project, vengo con todo. Bueno, con casi todo. El resto te lo cuento cuando aparezca.'],
+    win: '¡Otra vez exactamente lo que quería! Sigo sin saber qué quería, pero es eso.', mood: 'feliz'},
+  logo: {ask: ['Volví. Me quedé pensando en el logo. Está chico. Lo sé, lo aprobé. Pero ahora lo veo chico.', 'Ya que sos Project Leader, te traigo una queja de nivel Project. Y alfajores, igual.'],
+    win: 'Bueno. Está bien. Mejor que la otra vez. Que conste que no estoy del todo conforme. Pero casi.', mood: 'serio'},
+  explote: {ask: ['¡VOLVÍ! ¡Y quiero que esta vez explote MÁS! ¡Con dos caballos!', '¿Sos Project ahora? ¡Me encanta! ¡Subamos todo! ¡El confeti, el volumen, los fuegos artificiales!'],
+    win: '¡EXPLOTÓ! ¡Más que la vez pasada! ¡Ya estoy pensando la próxima!', mood: 'feliz'},
+  anual: {ask: ['El directorio quiere la campaña del año que viene. Ya. Bueno, para el lunes.', 'La vara está más alta. La subí yo. Con el habano.'],
+    win: 'Aprobada otra vez. Sin cambios. Ya me estoy acostumbrando a decirlo. No se lo cuentes a nadie.', mood: 'risa'},
+};
+async function clientRematch(key){
+  const d = BOSS[key], R = REMATCH[key], m = mem(), who = bossWho(key) || null, cn = capFirst(artName(d.n));
+  m.rematch = m.rematch || {};
+  if (!m.rematch[key]){ for (const l of R.ask) await say(l, who, {name: d.n}); }
+  else await say(pick(key + ':post', key === 'anual' ? ['¿Otra presentación? Sentate. No, parate: queda más épico.', 'El directorio no descansa. Yo tampoco. Bueno, un poco.'] : CLIENT_LINES.post[key]), bossWho(key, 'serio'), {name: d.n});
+  await say(`${cn} volvió con más exigencias: ahora es nivel ${clientLvl(key)}. Estás en el ${S.lvl}.`);
+  const fede = NPCS.find(x => x.id === 'fede'), withFede = key === 'explote' && !fede.away;
+  const opts = withFede ? ['¡Otra reunión!', 'Ir con Fede', 'Ahora no'] : ['¡Otra reunión!', 'Ahora no'];
+  let c = await choose(opts, {cancel: opts.length - 1});
+  if (withFede && c === 1){ await say('Llamás a Fede. Baja con el mate.'); await say('Otra vez juntos. Vos presentás; yo te banco.', 'fede'); PENDING_ALLY = 'fede'; c = 0; }
+  else if (withFede && c === 2) c = 1;
+  if (c !== 0){ await say(key === 'fantasma' ? 'Dale, yo mientras desaparezco un ratito.' : 'Te espero. Prepará bien la próxima.', who, {name: d.n}); return; }
+  hideDlg();
+  const res = await bossBattle(key, key === 'anual' ? 'final' : 'boss');
+  if (res === 'win'){ m.rematch[key] = (m.rematch[key] || 0) + 1; await say(R.win, bossWho(key, R.mood), {name: d.n}); await say(`¡Destrabaste otra vez ${key === 'anual' ? 'al Cliente del Año' : 'a ' + artName(d.n)}! ${m.rematch[key] === 1 ? 'Primera revancha cumplida' : `Van ${m.rematch[key]} revanchas`}.`); }
+  else if (!m.rematch[key]) m.rematch[key] = 0;
+}
 async function talkBoss(key, n){
   const idx = BOSS_ORDER.indexOf(key), d = BOSS[key];
+  if (S.beaten[key] && S.flags.done){ await clientRematch(key); return; }
   if (S.beaten[key]){ await say(pick(key + ':post', CLIENT_LINES.post[key]), bossWho(key, 'serio'), {name: d.n}); return; }
   // un pasante recién llegado no se presenta ante un cliente sin que antes lo presenten en la agencia
   if (welcomeStep() < 3 && !S.flags['met_' + key]){ await say({explote: '¡Hola, hola! ¿Sos nuev{o}? ¡Me encanta lo nuevo! Pero primero que te presenten en la agencia, y después hablamos de algo que EXPLOTE.', logo: '¿Y vos quién sos? Nadie me avisó que venía alguien. Típico. Bueno, no es tu culpa. Que primero te presenten en la agencia, y después hablamos del logo.', fantasma: '(Visto.) ...¡Ay, perdón, no te había visto! ¿Sos nuev{o}? Que primero te presenten en la agencia. Después te cuento lo que necesito. Bueno, si me acuerdo.'}[key], bossWho(key), {name: d.n}); return; }
@@ -1323,7 +1352,8 @@ async function ending(){
     P_('Llegaste como pasante y terminaste como <b>Project Leader</b>: conociste la agencia, te capacitaste con el equipo, destrabaste a los tres clientes y le presentaste la campaña del año al <b>Cliente del Año</b>.'),
     P_('<b>Este es el final del juego.</b> La inducción está completa.'),
     K_('Si querés, podés seguir jugando'),
-    B_('Subir de nivel:', 'los problemas de La Base dan más experiencia que antes y se puede llegar hasta el nivel 30.'),
+    B_('Subir de nivel:', 'los problemas de La Base dan más experiencia que antes.'),
+    B_('Volver a los clientes:', 'vuelven con más exigencias: 20 niveles más cada uno, y el Cliente del Año, 15 más.'),
     B_('Completar la bitácora:', 'todos los problemas y todas las habilidades.'),
     B_('Repasar:', 'en START → La agencia → Repaso final, y las capacitaciones en START → Capacitaciones.'),
     P_('Tu partida queda guardada.')], 2.6));
@@ -1532,6 +1562,7 @@ async function talkAnual(n){
   if (!S.flags.anual && (S.bosses || 0) < 3){ await say('¿Ya te ocupaste de los otros tres clientes? Primero ellos. Yo soy el postre. Bueno, el plato principal. Bueno, el banquete.', bossWho('anual')); return; }
   teamTipOpen();
   if (!S.flags.anual && !teamTipsDone()){ await say(pick('anual:solo', ['¿Viniste sol{o}? La campaña del año nunca es de una sola persona. Hablá con tu equipo: Fede, Sahi, Lu, Alejo y Giuli. Te espero.', 'Antes de presentarme nada: ¿qué dice tu equipo? Fede, Sahi, Lu, Alejo y Giuli. Andá y volvé.']), bossWho('anual', 'serio')); return; }
+  if (S.flags.anual && S.flags.done){ await clientRematch('anual'); return; }
   if (S.flags.anual){ await say(pick('anual:post', ['La campaña del año. Así se presenta. Nos vemos el año que viene: vayan pensando.', 'Ya la aprobó el directorio. Y mi familia. Y el directorio de mi familia.', 'Mandé a enmarcar la presentación. La voy a colgar en el living. Y en el baño.', 'Hace años que no me sorprendían. Gracias.']), bossWho('anual', 'feliz')); return; }
   if (!S.flags.met_anual){
     S.flags.met_anual = true;

@@ -454,7 +454,7 @@ async function battleFlow(foe, kind, key){
 /* las pistas, después de todo lo demás: la de tipo en La Base y la del nivel con los clientes (después de dos intentos) */
 async function afterBattleHints(foe, kind, key, res){
   if (kind === 'wild') await typeHint(foe, res);
-  if (res === 'lose' && REC_LVL[key]){ const m = mem(); m.bossLost = m.bossLost || {}; m.bossLost[key] = (m.bossLost[key] || 0) + 1;
+  if (res === 'lose' && REC_LVL[key] && !S.flags.done){ const m = mem(); m.bossLost = m.bossLost || {}; m.bossLost[key] = (m.bossLost[key] || 0) + 1;
     if (m.bossLost[key] >= REC_AFTER) await bossAdvice(key); }
 }
 const WILD_HP = .6;
@@ -473,7 +473,7 @@ async function wildEncounter(){
 }
 async function bossBattle(key, kind='boss'){
   let d = BOSS[key];
-  const lvl = ({fede: fedeLevel(), fantasma: CLIENT_LVL.fantasma, logo: CLIENT_LVL.logo, explote: CLIENT_LVL.explote, anual: CLIENT_LVL.anual})[key] || d.lvl; // los clientes tienen nivel fijo; la Gran Presentación crece con vos
+  const lvl = key === 'fede' ? fedeLevel() : (clientLvl(key) || d.lvl); // los clientes tienen nivel fijo; la Gran Presentación crece con vos
   // con Fede de compañero, la reunión es más larga: el cliente aguanta más
   if (PENDING_ALLY) d = Object.assign({}, d, {k: [d.k[0] * 1.2, d.k[1], d.k[2], d.k[3]]});
   if (key === 'fede'){

@@ -165,7 +165,7 @@ function nextStep(){
   if (S.flags.anual && sideStep()) return sideStep();
   if (!S.flags.anual && teamTipsStep()) return teamTipsStep();
   if (!S.flags.anual) return `Presentale la campaña del año al Cliente del Año, en la Sala del Directorio (planta baja).`;
-  return S.lvl < 30 ? `Terminaste la inducción: el juego está completo. Si querés seguir, charlá con el equipo (te piden misiones secundarias), subí hasta el nivel 30 (estás en el ${S.lvl}) y completá la bitácora.` : '¡Terminaste la inducción y llegaste al nivel 30! Si querés, completá la bitácora.';
+  return `Terminaste la inducción: el juego está completo. Si querés seguir: los clientes volvieron con más exigencias (la Clienta Fantasma, nivel ${clientLvl('fantasma')}), el equipo te pide misiones secundarias y podés seguir subiendo de nivel (estás en el ${S.lvl}).`;
 }
 /* El cartelito "AHORA" no queda fijo: aparece unos segundos cuando cambia el próximo paso (y al empezar el día).
    Para verlo cuando quieras está el botón AYUDA (o la tecla H, o "Ayuda" en el menú de START). */

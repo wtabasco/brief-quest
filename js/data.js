@@ -160,6 +160,9 @@ const need = L => 12 + L*L*5;
 const CLIENT_LVL = {fantasma: 10, logo: 17, explote: 22, anual: 25};
 // el nivel con el que conviene volver a cada cliente: el juego lo sugiere recién después de quedarte sin energía dos veces con ese cliente
 const REC_LVL = {fantasma: 10, logo: 16, explote: 22, anual: 25}, REC_AFTER = 2;
+/* después del final, los clientes vuelven con más exigencias: +20 niveles los tres, +15 el Cliente del Año */
+const POST_UP = {fantasma: 20, logo: 20, explote: 20, anual: 15};
+const clientLvl = k => (CLIENT_LVL[k] || 0) + (S && S.flags && S.flags.done ? (POST_UP[k] || 0) : 0);
 const bossLost = k => ((mem().bossLost || {})[k] || 0);
 const recShown = k => bossLost(k) >= REC_AFTER; // los clientes tienen nivel fijo
 const PROJECT_LVL = 25; // a Project Leader (y se abre la Sala del Directorio)
