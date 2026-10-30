@@ -1032,7 +1032,7 @@ const RENI = {
 };
 async function talkReni(n){
   const m = mem(), b = m.battles || 0;
-  if (!S.flags.reniMet){ S.flags.reniMet = true; await say('¡Hola, {name}! Soy Reni. ¡No te muevas, que te grabo!', 'reni'); }
+  if (!S.flags.reniMet){ S.flags.reniMet = true; await say('¡Hola, {name}! Soy Reni, Content Manager: los videos y las redes del equipo, con el celu. ¡No te muevas, que te grabo!', 'reni'); }
   // si Fede está esperando su mate, Reni siempre tiene uno
   if (qState('fede_mate') === 'open' && !(S.items.mate > 0)){
     S.items.mate = 1; m.reniMateAt = b;
@@ -1155,7 +1155,7 @@ const TATO = {
     'Uh, hola. Dejé el mate en algún lado. Si lo ves, avisame. Es el que no es de Fede.'],
   R: {
     // Tato se entera de todo un rato después
-    boss: {explote: 'Me contaron lo de la Clienta Explosiva. ¿Ya pasó? Uh. Bueno, felicitaciones atrasadas.', logo: '¿Don Logo aprobó? ...¿Hace cuánto? Ah, mirá. Igual me alegro.', fantasma: '¿La Clienta Fantasma respondió? Yo todavía le estoy esperando una factura. Pasale el dato.'},
+    boss: {explote: 'Me contaron lo de la Clienta Explosiva. ¿Ya pasó? Uh. Bueno, felicitaciones atrasadas.', logo: '¿Don Logo aprobó? ...¿Hace cuánto? Ah, mirá. Igual me alegro.', fantasma: '¿La Clienta Fantasma contestó? ¿A vos? Yo le mandé una factura en marzo y todavía la estoy esperando. Si la volvés a ver, recordale que la pague.'},
     level: [() => `¿Nivel ${S.lvl}? Qué bueno. ¿Desde cuándo? ...Ah, recién. Bueno, llegué a tiempo por una vez.`,
       () => `Me dijeron que subiste de nivel. ¿Al ${S.lvl - 1}? ...¿Al ${S.lvl}? Bueno, uno más todavía. Mejor.`],
   },

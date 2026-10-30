@@ -57,7 +57,7 @@ const AGENCIA = [
     B_('Lu:', 'Project Leader.'), B_('Sahi:', 'Creative Manager.'), B_('Pimi:', 'Paid Media Strategist.'),
     B_('Alejo:', 'Social Media Specialist.'), B_('Giuli:', 'Graphic Design Specialist.'),
     B_('Sofi:', 'Office Manager.'), B_('Tato:', 'Finance Manager.'),
-    B_('Reni:', 'audiovisual: los videos del equipo, con el celu.'), B_('Marga:', 'la que cuida que la casa brille. La que está hace más tiempo.')], 2.7)},
+    B_('Reni:', 'Content Manager: los videos del equipo, con el celu.'), B_('Marga:', 'la que cuida que la casa brille. La que está hace más tiempo.')], 2.7)},
   {t: 'Contenido', title: 'CÓMO TRABAJAMOS: CONTENIDO', d: 'Si no es AEIOU, no lo proponemos.', full: () => H_([
     P_('Todo lo que hacemos es importante, pero importa más <b>cómo</b> lo hacemos. El contenido tiene que ser:'),
     ...AEIOU.map(([a, d]) => B_(a + ':', d)), K_('Además'),
