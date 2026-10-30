@@ -1258,6 +1258,8 @@ const TATO = {
   lines: [{d: 1, t: '¿Escuchás el parlante? Es reggae. Bajito, pero reggae. Me acomoda el ritmo para los números.'},
     {d: 2, t: '¿Cómo salió lo del cliente? ...¿El de la semana pasada? ¿Ya pasó? Bueno, me alegro igual.'},
     {d: 2, t: 'El reggae tiene un ritmo que va un poquito atrás del tiempo. Yo también.'},
+    {d: 4, t: 'De chico quería ser cantante. Ensayaba en el baño, con el cepillo de micrófono. Después me di cuenta de que los números no desafinan. Bueno, ¿qué te estaba diciendo?'},
+    {d: 8, t: '¿Te conté que de chico quería ser cantante? ...¿Sí? Bueno, todavía canto. Bajito, cuando nadie escucha. Sofi dice que escucha.'},
     'Los números no se apuran. Si los apurás, se equivocan.',
     {d: 4, t: 'Lía me pidió un número "para ayer". Le dije que ayer ya cerró. Hoy se lo paso.'},
     {d: 3, t: '...Sí, a las cuatro. ¿Qué? Ah, perdón, le contestaba a Sofi. Me había preguntado algo hace un rato.'},

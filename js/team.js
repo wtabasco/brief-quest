@@ -519,6 +519,7 @@ const POST = {
     ['Tato y yo somos un buen equipo. Yo me acuerdo de las cosas y él de los números.', 'Entre los dos, nos acordamos de todo. Bueno, casi.']],
   tato: [['¿Vos estuviste en el festejo? ...Ah, el festejo era tuyo. Felicitaciones atrasadas. Otra vez.', 'Igual de la torta me acuerdo. De eso sí.'],
     ['El reggae va un poquito atrás del tiempo. Por eso nunca me apuro.', 'Los números tampoco se apuran. Somos tres: el reggae, los números y yo. Tranquilos.'],
+    ['De chico quería ser cantante. Tenía hasta el nombre artístico. No me acuerdo cuál era.', 'Igual terminé con los números. Los números no te piden un bis. Eso me gusta.'],
     ['Hoy vine con dos medias distintas. Sofi se dio cuenta. Yo, recién cuando me lo dijo.', 'Igual el balance cerró perfecto. Eso sí.'],
     ['¿Te conté que tengo una lista de reggae de catorce horas? ...¿Sí? ¿Te lo conté?', 'Bueno, ahora tiene quince. Le agregué una. La misma, dos veces. Sin querer.']],
   alejo: [['Ayer revelé un rollo. Treinta y seis fotos. Salieron doce.', 'Las otras veinticuatro son de mi dedo. Igual me gustan: tienen textura.'],
