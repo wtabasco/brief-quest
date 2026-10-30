@@ -172,7 +172,11 @@ async function climbStairs(){ SFX.sel(); warp('upstairs', 5, 9, 'right'); }
 async function patioThing(ch, tx){
   if (ch === 'T'){
     const s = NPCS.find(n => n.id === 'sahi' && n.map === CURMAP.id);
-    if (s && Math.abs(s.x - G.x) <= 1 && s.y < G.y){
+    if (s && s.away && Math.abs(s.hx - G.x) <= 1 && s.hy < G.y){
+      G.busy = true; try { await say(pick('pp:away', ['Sahi ya se fue. Dejó la paleta sobre la mesa, como siempre: "para que me espere".', 'La mesa está sola. Mañana Sahi vuelve con la paleta y con ganas de revancha.'])); } finally { hideDlg(); G.busy = false; }
+      return;
+    }
+    if (s && !s.away && Math.abs(s.x - G.x) <= 1 && s.y < G.y){
       G.busy = true; s.dir = 'down'; emote(s, s.mood, 1500); await sleepMs(380);
       try { await s.talk(s); } finally { hideDlg(); closePanel(); s.emote = null; s.next = G.t + 2500; G.busy = false; noteTalk(s.id); save(); }
       return;

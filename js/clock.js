@@ -30,7 +30,22 @@ function leaveAt(id){
 }
 /* los problemas de la agencia (los desafíos) no se van nunca: son problemas */
 function shouldBeHere(n){ if (BOSS_ORDER.includes(n.id) || n.id === 'anual') return true;
-  const m = gameMin(); return m >= DAY_START && m < leaveAt(n.id); }
+  const m = gameMin(); if (m >= DAY_START && m < leaveAt(n.id)) return true;
+  // si alguien tiene algo pendiente con vos (una tarea para cobrar, un encargo, una noticia), se queda hasta que hablen
+  // (siempre que todavía no se haya ido y la oficina siga abierta)
+  return !n.away && m >= DAY_START && m < CLOSE && hasPending(n.id); }
+function hasPending(id){
+  try {
+    const nm = PEOPLE[id] || ''; if (!nm || !S) return false;
+    if (QUEST_ORDER.some(q => qState(q) === 'open' && !AUTO_Q.includes(q) && qReady(q) && String(QUESTS[q].giver || '').includes(nm))) return true;
+    if (S.errand && S.errand.to === id) return true;
+    if (S.side && SIDE[S.side.id] && SIDE[S.side.id].who === id && sideReady()) return true;
+    if (S.side && S.side.id === 'tato_factura' && id === 'sofi' && !S.flags.facturaOk) return true;
+    if (typeof TEAM_TIPS !== 'undefined' && TEAM_TIPS[id] && qState('anual_equipo') === 'open' && tipsLeft().includes(id)) return true;
+    if ((id === 'agus' || id === 'lia') && S.lvl >= 15 && !S.flags.fijo) return true;
+  } catch(e){}
+  return false;
+}
 function onScreen(n){
   if (n.map !== CURMAP.id) return false;
   const {cx, cy} = camera(), [nx, ny] = npcPos(n);
