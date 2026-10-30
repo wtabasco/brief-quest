@@ -136,7 +136,11 @@ async function endDay(early){
     await say(`${weekday()}, 9:00. ${rainy() ? 'Llueve. El patio está vacío y huele a tierra mojada.' : 'Un día nuevo en la agencia.'} Descansaste: tenés toda la energía.`);
   } finally { hideDlg(); G.busy = false; G.dayEnding = false; save(); }
 }
+// de noche (desde las 19 del juego) los botones de la consola tienen un brillo tenue, como si estuvieran encendidos; vale para todos los colores
+let glowOn = false;
 function drawClockHUD(){
+  const night = !!S && gameMin() >= 19*60;
+  if (night !== glowOn){ glowOn = night; const g = document.querySelector('.gba'); if (g) g.classList.toggle('glow', night); }
   const el = $('clock'); if (!el) return;
   const show = !!S && G.mode === 'world';
   if (el.hidden === show) el.hidden = !show;

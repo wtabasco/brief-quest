@@ -79,6 +79,12 @@ body{font-family:var(--f-ui);padding-left:max(16px, env(safe-area-inset-left, 0p
 .gba[data-shell="nacional"] .toggle.snd{background:#e3e8f5;color:#102a74}
 .gba[data-shell="nacional"] #padToggle{background:#1d3fa0;color:#fff}.gba[data-shell="nacional"] #padToggle i{border-top-color:#fff}
 .gba[data-shell="boca"] .pill kbd,.gba[data-shell="penarol"] .pill kbd{color:#f6c400}.gba[data-shell="boca"] .pill{color:#e3ebfb}.gba[data-shell="penarol"] .pill{color:#e9e2c6}
+/* De noche (19 a 20 del juego) los botones brillan apenas, como encendidos. */
+.ab button,.sh,.cross,.pill,.toggle{transition:filter 1.5s ease}
+.gba.glow .ab button,.gba.glow .sh,.gba.glow .toggle{filter:drop-shadow(0 0 4px rgba(255,244,210,.55)) brightness(1.06);animation:btnGlow 4s ease-in-out infinite}
+.gba.glow .cross,.gba.glow .pill{filter:drop-shadow(0 0 4px rgba(255,244,210,.45))}
+@keyframes btnGlow{50%{filter:drop-shadow(0 0 7px rgba(255,244,210,.7)) brightness(1.1)}}
+@media (prefers-reduced-motion:reduce){.gba.glow .ab button,.gba.glow .sh,.gba.glow .toggle{animation:none}}
 .shellColor{flex:none;width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.75);background:var(--next,#4b2154);cursor:pointer;padding:0;box-shadow:0 1px 0 rgba(0,0,0,.35)}
 .shellColor:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
 .shellColor.m{display:none;width:22px;height:22px}
