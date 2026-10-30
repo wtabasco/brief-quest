@@ -144,7 +144,7 @@ async function talkFede(){
   if (S.flags.fedeMet && S.lvl >= PROJECT_LVL && !S.flags.senior){ await seniorCeremony(); return; }
   if (!S.flags.fedeMet){
     S.flags.fedeMet = true; S.flags.typesHint = true;
-    await say(`${saludo()}, {name}! Soy Fede, director de contenido. Entré como diseñador y fui creciendo: acá se crece. Bienvenid{o} a la parte divertida.`, 'fede:feliz');
+    await say(`${saludo()}, {name}! Soy Fede, director de contenidos. Entré como diseñador y fui creciendo: acá se crece. Bienvenid{o} a la parte divertida.`, 'fede:feliz');
     await say('Acá se aprende probando y equivocándose. Un dato práctico: cada problema tiene su punto débil. Lo creativo destraba la burocracia, la estrategia ordena el caos, lo técnico arregla bugs y la calma desarma la presión.', 'fede');
     await say('Y lo más importante de todo: ¿me traés un mateee? Por favor. Reni anda siempre con el termo por la agencia. Sin mate pienso a la mitad.', 'fede:risa');
     qReopen('fede_mate'); m.fedeMateAt = m.battles || 0; firstTime = true;
@@ -929,7 +929,7 @@ async function talkLu(){
   SFX.sing();
   await say(pick('lu:song', LU.songs), 'lu:risa');
   let open;
-  if (talks('lu') === 0) open = `¡Hola, {name}! Soy Lu. Si algo te cansa, este es tu lugar. Acá se recarga energía y se canta. Lo segundo es obligatorio.`;
+  if (talks('lu') === 0) open = `¡Hola, {name}! Soy Lu, Project Leader: armo las prioridades del equipo y te las paso por Slack. Y si algo te cansa, este es tu lugar. Acá se recarga energía y se canta. Lo segundo es obligatorio.`;
   else if (fresh('lu', mem().lastLose)){ ack('lu', mem().lastLose); open = pick('lu:lose', ['¡Uh, vení! Te recargo y salís como cohete.', '¿Una mala racha? Nada que no arregle un tema de Aitana y un vaso de agua.', 'Ay, ese desafío costó. Vení que te recargo.', '¡Vení, vení! De los errores se aprende, pero con agua se aprende mejor.', '¡Uh! Ese desafío te despeinó. Vení que te acomodo.']); }
   else if (p < .35) open = pick('lu:low', ['¡Uy, venís arrastrando los pies! ¡Vení que te enchufo!', '¿Qué te pasó? ¡Parecés un celular al dos por ciento!', '¡Estás sin pilas! Vení, que acá se recarga.', '¡Ay, no! ¡Vení que te hago la pausa activa completa!', '¡Uy, uy, uy! Sentate antes de que te caigas, que te recargo.', '¡Estás en modo ahorro de batería! Vení, que acá se enchufa.']);
   else if (p >= .99) open = pick('lu:full', ['¡Estás impecable! Igual te hago un chequeo, que me encanta hacer chequeos.', '¡Vos estás al cien! ¿Viniste por el show? Bien hecho.', '¡Estás a full! Igual pasá, que te canto algo.', '¡Estás espléndid{o}! Igual te mimo un poco, no me cuesta nada.', '¡Al cien! ¿Viniste por el temita? Hacés bien.']);
@@ -974,7 +974,7 @@ const PIMI = {
 async function talkPimi(){
   if (!S.flags.pimiMet){
     S.flags.pimiMet = true;
-    await says([`${saludo()}! Soy Pimi. Hago paid media: la pauta de las campañas.`, 'Te paso herramientas y atajos, pero primero mostrame que sabés resolver problemas.', 'Arrancá por algo simple: resolvé 2 Wifi Caído en La Base. Dos más, desde ahora: los de antes ya los conozco.'], 'pimi');
+    await says([`${saludo()}! Soy Pimi, Paid Media Strategist: la pauta de las campañas. Y las herramientas nuevas, también.`, 'Te paso herramientas y atajos, pero primero mostrame que sabés resolver problemas.', 'Arrancá por algo simple: resolvé 2 Wifi Caído en La Base. Dos más, desde ahora: los de antes ya los conozco.'], 'pimi');
     qOpen('pimi_atajo'); return;
   }
   await opener('pimi', 'pimi', PIMI.again);
@@ -1106,7 +1106,7 @@ async function talkSofi(){
   const m = mem(), b = m.battles || 0;
   if (!S.flags.sofiMet){
     S.flags.sofiMet = true;
-    await say(`${saludo()}, {name}! Soy Sofi, de Administración. ¡Bienvenid{o} a la casa!`, 'sofi:feliz');
+    await say(`${saludo()}, {name}! Soy Sofi, Office Manager: que la casa ande, desde las compus hasta la fruta. ¡Bienvenid{o}!`, 'sofi:feliz');
     await say('Te cuento cómo funciona esto, cortito: acá se aprende resolviendo. Los problemas aparecen entre las pilas de pendientes de La Base, y cada uno que resolvés te deja experiencia: así subís de nivel y llegás preparad{o} a los clientes.', 'sofi');
     await say('Cada persona del equipo te va a enseñar algo. Si no sabés qué hacer, tocá AYUDA. La jornada es de 9 a 18, y si te quedás sin energía, Lu te recarga en Bienestar. ¡Y comé algo!', 'sofi');
     await say('Mirá, así es la casa:', 'sofi');
@@ -1192,7 +1192,7 @@ const TATO = {
 async function talkTato(){
   if (!S.flags.tatoMet){
     S.flags.tatoMet = true;
-    await says(['...', 'Ah, ¡hola! Perdón, no te había visto. Soy Tato. Llevo los números.', '¿Y vos sos…? No, esperá, me lo dijeron. ...No me lo dijeron. ¿Cómo te llamás?', '{name}. Bien. Lo anoto. ...Acá. No, acá. Bueno, me lo acuerdo.', 'Vos tranqui: si algo no cierra, se vuelve a sumar.'], 'tato');
+    await says(['...', 'Ah, ¡hola! Perdón, no te había visto. Soy Tato, Finance Manager. Llevo los números.', '¿Y vos sos…? No, esperá, me lo dijeron. ...No me lo dijeron. ¿Cómo te llamás?', '{name}. Bien. Lo anoto. ...Acá. No, acá. Bueno, me lo acuerdo.', 'Vos tranqui: si algo no cierra, se vuelve a sumar.'], 'tato');
     if (!(S.items.frutaTato > 0)) return;
   }
   if (S.items.frutaTato > 0){
@@ -1364,7 +1364,7 @@ async function ending(){
 
 /* ================= ALEJO Y GIULI: LOS SPECIALISTS (La Base) =================
    Una dupla: andan siempre juntos (Giuli sigue a Alejo por su rincón de La Base) y se completan.
-   Alejo es Social Media Specialist: el que más sabe de redes. Giuli es Design Specialist:
+   Alejo es Social Media Specialist: el que más sabe de redes. Giuli es Graphic Design Specialist:
    la que más sabe de diseño. Los dos son muy artísticos (fotos de rollo, cine y playlists; libretas, letras y
    referencias de todos lados). Cada uno te enseña lo suyo, hasta dos capacitaciones por día, con una pregunta al final para fijarla:
    no se aprueba ni se reprueba, si no sale se explica y se vuelve a probar. */
@@ -1447,7 +1447,7 @@ async function talkDuo(n){
   if (!S.flags.duoMet){
     S.flags.duoMet = true;
     const hiA = first => say(first ? `${saludo()}, {name}! Soy Alejo, Social Media Specialist. Todo lo que pasa en redes pasa primero por acá.` : 'Y yo soy Alejo, Social Media Specialist. Todo lo que pasa en redes pasa primero por acá.', 'alejo');
-    const hiG = first => say(first ? `${saludo()}, {name}! Soy Giuli, Design Specialist. Todo lo que se ve, pasa por mis manos.` : 'Y yo soy Giuli, Design Specialist. Todo lo que se ve, pasa por mis manos.', 'giuli');
+    const hiG = first => say(first ? `${saludo()}, {name}! Soy Giuli, Graphic Design Specialist. Todo lo que se ve, pasa por mis manos.` : 'Y yo soy Giuli, Graphic Design Specialist. Todo lo que se ve, pasa por mis manos.', 'giuli');
     if (me === 'giuli'){ await hiG(true); await hiA(false); } else { await hiA(true); await hiG(false); }
     await say('Somos los specialists de la agencia. Andamos siempre juntos: el diseño y las redes no se separan.', other);
     await say('Cada uno te enseña lo suyo. Hasta dos capacitaciones por día: lo que se aprende hay que practicarlo antes de sumar lo siguiente.', me);
@@ -2046,7 +2046,7 @@ const TRAINING_TALK = {
      'El Project arma el Gantt desde el día uno. Fechas primero con FD y el equipo; después, con el cliente.',
      ['sahi:risa', 'Reuniones: brief cliente, brief al equipo, brainstorming, validaciones internas y presentación. Es el fixture, crack.']],
     [['sahi:feliz', 'Fase 2: conceptos. Mi parte favorita, no te voy a mentir.'],
-     'Brainstorming con el Creative (y a veces el Social): campañas previas, propias y de la competencia, y todo el contexto. Si es del AO, piensa el Social.',
+     'Brainstorming con el Creative, o sea yo, crack (y a veces el Social): campañas previas, propias y de la competencia, y todo el contexto. Si es del AO, piensa el Social.',
      'El Creative propone mínimo dos caminos distintos. Y una idea extra: siempre un poquito más de lo pedido.',
      ['sahi:risa', 'Como un tiro libre al ángulo que nadie esperaba.'],
      'Lineamientos del Key Visual: ejemplos, guiones, activaciones. Se puede bocetar con IA, pero lo que importa es cómo se tiene que sentir.',
@@ -2054,7 +2054,7 @@ const TRAINING_TALK = {
     ['Fases 3 y 4: los números. Sin números no hay campaña, crack.',
      'El Project presupuesta todo: vía pública, influencers, redes, radio, TV, web, producción. Con la planilla de presupuestos y una interna por proveedor.',
      'Ojo con la comisión de agencia o los honorarios. El presupuesto final se chequea en la reunión de facturación.',
-     'Lo aprueban Finance Manager y FD. Recién ahí sale a la cancha.',
+     'Lo aprueban el Finance Manager, que es Tato, y FD, que es Fede. Recién ahí sale a la cancha.',
      'Después Paid arma el plan de medios: cómo medimos el éxito, datos de contexto y qué hace la competencia en esos medios.'],
     [['sahi:feliz', 'Último tramo: diseño, presentación y aprobación. ¡Tiempo de descuento!'],
      'Diseño arma las piezas y la presentación. Acá no se descarta nada: cuanto más para mostrar, mejor. Codo a codo con la creatividad.',

@@ -118,7 +118,7 @@ async function startWorld(isNew){
     await panelInfo('TU OBJETIVO', objetivoHTML()); closePanel();
     qOpen('objetivo', true);
     await say('Ahí está la puerta. ¡A conocer la agencia!');
-    await say('¡Ey, {name}! Soy Sahi, creativo. ¡Bienvenid{o}!', 'sahi:feliz');
+    await say('¡Ey, {name}! Soy Sahi, Creative Manager: las ideas de las campañas arrancan acá. ¡Bienvenid{o}!', 'sahi:feliz');
     await says(['Primero andá a ver a Sofi, en Asteroide: la oficina de Administración, en la planta alta. Entrás por esa puerta y subís por la escalera del hall. Ella te da la bienvenida a la casa.', 'Yo estoy acá en el patio, en la mesa de ping pong. Cuando quieras, peloteamos, ¿dale?'], 'sahi');
     qOpen('bienvenida', true);
     await say('En START (o la tecla M) están tus Tareas. Mantené X para correr.');

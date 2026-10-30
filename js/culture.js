@@ -50,8 +50,14 @@ const AGENCIA = [
   {t: 'Directores', d: 'Agus (AZ), Lía (LÍ) y Fede (FD). La agencia nació en 2010.', full: () => H_([
     B_('Agus (AZ), directora general.', 'Autodidacta y curiosa por la tecnología; estudia Psicología. Foco en el desarrollo, el liderazgo, el bienestar y las dinámicas del equipo.'),
     B_('Lía (LÍ), directora comercial.', 'Licenciada en Comunicación, con pasión por la publicidad y un empuje comercial contagioso. Foco en entender los negocios y en estrategias que hagan crecer a los clientes.'),
-    B_('Fede (FD), director de contenido.', 'Diseñador de formación, con mirada estética meticulosa. Foco en el contenido, la calidad creativa y los procesos.'),
+    B_('Fede (FD), director de contenidos.', 'Diseñador de formación, con mirada estética meticulosa. Foco en el contenido, la calidad creativa y los procesos.'),
     P_('Agus y Lía fundaron la agencia en 2010. Fede llegó en 2018 como diseñador, pasó a Head of Content y después a director. El nombre viene de un condimento japonés: <b>chiquita pero picante</b>.')], 2.45)},
+  {t: 'Quién es quién', title: 'QUIÉN ES QUIÉN', d: 'El rol de cada uno en el equipo.', full: () => H_([
+    B_('Agus:', 'directora general.'), B_('Lía:', 'directora comercial.'), B_('Fede:', 'director de contenidos.'),
+    B_('Lu:', 'Project Leader.'), B_('Sahi:', 'Creative Manager.'), B_('Pimi:', 'Paid Media Strategist.'),
+    B_('Alejo:', 'Social Media Specialist.'), B_('Giuli:', 'Graphic Design Specialist.'),
+    B_('Sofi:', 'Office Manager.'), B_('Tato:', 'Finance Manager.'),
+    B_('Reni:', 'audiovisual: los videos del equipo, con el celu.'), B_('Marga:', 'la que cuida que la casa brille. La que está hace más tiempo.')], 2.7)},
   {t: 'Contenido', title: 'CÓMO TRABAJAMOS: CONTENIDO', d: 'Si no es AEIOU, no lo proponemos.', full: () => H_([
     P_('Todo lo que hacemos es importante, pero importa más <b>cómo</b> lo hacemos. El contenido tiene que ser:'),
     ...AEIOU.map(([a, d]) => B_(a + ':', d)), K_('Además'),
