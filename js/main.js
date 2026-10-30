@@ -98,7 +98,8 @@ async function startWorld(isNew){
   if (S.skills.includes('vision')){ S.skills = S.skills.filter(id => id !== 'vision'); S.equip = S.equip.map(id => id === 'vision' ? null : id); delete S.pp.vision;
     S.equip = S.equip.filter(Boolean); }
   // el set por tipos (una de cada: creativa, estrategia, técnica y calma), una vez por partida vieja
-  if (S.lvl >= 15 && unlockGlass()) setTimeout(() => toast('¡Destrabaste la consola glass! Tocá el botoncito de color de la consola.'), 2500);
+  { const g = S.lvl >= 15 && unlockGlass(), t = S.lvl >= 20 && unlockTeams();
+    if (g || t) setTimeout(() => toast(t ? '¡Destrabaste ' + (g ? 'la consola glass y ' : '') + 'las consolas de Boca, Peñarol y Nacional! Tocá el botoncito de color.' : '¡Destrabaste la consola glass! Tocá el botoncito de color de la consola.'), 2500); }
   if (!S.flags.equipV2){ S.flags.equipV2 = true; balanceEquip(); }
   if (S.quests.ideas){ delete S.quests.ideas; if (S.qbase) delete S.qbase.ideas; }
   if (S.quests.terraza){ delete S.quests.terraza; if (S.qbase) delete S.qbase.terraza; }

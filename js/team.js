@@ -232,6 +232,7 @@ async function levelUnlocks(L, msg){
   for (const id of Object.keys(TRAININGS)) { const T = TRAININGS[id]; if (T.minLvl === L && trainingNext(id) === 0) out.push(`${PEOPLE[T.who]} ya te puede dar la capacitación "${T.title}".`); }
   const ready = QUEST_ORDER.filter(id => qState(id) === 'open' && QUESTS[id].minLvl === L && qCountOk(id));
   for (const id of ready) out.push(`Ya podés volver con ${QUESTS[id].giver}: cumpliste "${QUESTS[id].title}".`);
+  if (L >= 20 && unlockTeams()) out.unshift('¡Destrabaste las consolas de los cuadros: Boca, Peñarol y Nacional! Están en el botoncito de color de la consola.');
   if (L >= 15 && unlockGlass()) out.unshift('¡Destrabaste la consola glass! Tocá el botoncito de color de la consola: ahora también vienen transparentes, con los circuitos a la vista.');
   for (const t of out.slice(0, 4)) await msg(t, 2000);
 }

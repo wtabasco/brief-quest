@@ -38,6 +38,47 @@ body{font-family:var(--f-ui);padding-left:max(16px, env(safe-area-inset-left, 0p
 .gba[data-shell$="-glass"] .pad{background:linear-gradient(180deg,rgba(var(--glass),.82),rgba(var(--glass),.62) 30%,rgba(var(--glass),.8)),var(--circ) 40px 20px/180px 180px,#c9d1cc}
 .gba[data-shell$="-glass"] .sh{background:linear-gradient(rgba(var(--glass),.55),rgba(var(--glass),.85)),#9aa69f}
 .shellColor.glass{background:linear-gradient(135deg,rgba(255,255,255,.7) 0 30%,transparent 31%),var(--next)}
+/* Consolas de los cuadros (se destraban en el nivel 20): solo los colores, sin escudos ni nombres en la carcasa. */
+/* Boca: azul y oro */
+.gba[data-shell="boca"]{--shell:#123c8c;--shell-hi:#1a4aa3;--shell-lo:#0c2c6a;--sh-hi:#ffd23a;--sh-lo:#d9a800}
+.gba[data-shell="boca"] .sh{color:#0c2c6a}
+.gba[data-shell="boca"] .ab .a,.gba[data-shell="boca"] .ab .b{background:#f6c400;color:#0c2c6a}
+.gba[data-shell="boca"] .brand{color:#f6c400}.gba[data-shell="boca"] .brand span{color:#fff}
+/* Peñarol: negro y amarillo */
+.gba[data-shell="penarol"]{--shell:#161616;--shell-hi:#262626;--shell-lo:#0b0b0b;--sh-hi:#ffd23a;--sh-lo:#d9a800}
+.gba[data-shell="penarol"] .sh{color:#141414}
+.gba[data-shell="penarol"] .ab .a,.gba[data-shell="penarol"] .ab .b{background:#f5c000;color:#141414}
+.gba[data-shell="penarol"] .brand{color:#f5c000}.gba[data-shell="penarol"] .brand span{color:#fff}
+/* Nacional: blanco, azul y rojo */
+.gba[data-shell="nacional"]{--shell:#efefec;--shell-hi:#ffffff;--shell-lo:#d6d6d1;--sh-hi:#1d3fa0;--sh-lo:#102a74}
+.gba[data-shell="nacional"] .sh{color:#fff}
+.gba[data-shell="nacional"] .ab .a{background:#d21f2b}.gba[data-shell="nacional"] .ab .b{background:#1d3fa0}
+.gba[data-shell="nacional"] .brand{color:#1d3fa0}.gba[data-shell="nacional"] .brand span{color:#d21f2b}.gba[data-shell="nacional"] .brand em{color:#1d3fa0}
+.gba[data-shell="nacional"] .pill{color:#102a74}.gba[data-shell="nacional"] .pill kbd{color:#d21f2b}
+/* La cruceta y SELECT/START (los grises): amarillo en Boca y Peñarol, azul en Nacional */
+.gba[data-shell="boca"],.gba[data-shell="penarol"]{--pad:#f6c400;--pad-lo:#b88f00;--pad-hi:#ffe27a;--pad-ink:#5c4600}
+.gba[data-shell="nacional"]{--pad:#1d3fa0;--pad-lo:#0e2366;--pad-hi:#4a69c4;--pad-ink:#9fb3ea}
+.gba[data-shell="boca"] .cross::before,.gba[data-shell="boca"] .cross::after,.gba[data-shell="penarol"] .cross::before,.gba[data-shell="penarol"] .cross::after,.gba[data-shell="nacional"] .cross::before,.gba[data-shell="nacional"] .cross::after{background:var(--pad);box-shadow:inset 0 -5px 0 var(--pad-lo), inset 0 2px 0 var(--pad-hi)}
+.gba[data-shell="boca"] .cross b,.gba[data-shell="penarol"] .cross b,.gba[data-shell="nacional"] .cross b{background:var(--pad-lo)}
+.gba[data-shell="boca"] .cross .u,.gba[data-shell="penarol"] .cross .u,.gba[data-shell="nacional"] .cross .u{border-bottom-color:var(--pad-ink)}
+.gba[data-shell="boca"] .cross .d,.gba[data-shell="penarol"] .cross .d,.gba[data-shell="nacional"] .cross .d{border-top-color:var(--pad-ink)}
+.gba[data-shell="boca"] .cross .l,.gba[data-shell="penarol"] .cross .l,.gba[data-shell="nacional"] .cross .l{border-right-color:var(--pad-ink)}
+.gba[data-shell="boca"] .cross .r,.gba[data-shell="penarol"] .cross .r,.gba[data-shell="nacional"] .cross .r{border-left-color:var(--pad-ink)}
+.gba[data-shell="boca"] .pill::before,.gba[data-shell="penarol"] .pill::before,.gba[data-shell="nacional"] .pill::before{background:var(--pad);box-shadow:inset 0 -3px 0 var(--pad-lo)}
+/* −/+, AYUDA, SONIDO y CONTROLES: tonos de cada equipo */
+.gba[data-shell="boca"] .toggle.zm{background:#ffe48a}.gba[data-shell="boca"] .toggle.zm::before,.gba[data-shell="boca"] .toggle.zm::after{background:#0c2c6a}
+.gba[data-shell="boca"] .toggle.help{background:#f6c400;color:#0c2c6a}
+.gba[data-shell="boca"] .toggle.snd{background:#cdd9f3;color:#0c2c6a}
+.gba[data-shell="boca"] #padToggle{background:#3e6cc6;color:#ffe48a}.gba[data-shell="boca"] #padToggle i{border-top-color:#ffe48a}
+.gba[data-shell="penarol"] .toggle.zm{background:#ffe48a}.gba[data-shell="penarol"] .toggle.zm::before,.gba[data-shell="penarol"] .toggle.zm::after{background:#141414}
+.gba[data-shell="penarol"] .toggle.help{background:#f5c000;color:#141414}
+.gba[data-shell="penarol"] .toggle.snd{background:#ece4c4;color:#141414}
+.gba[data-shell="penarol"] #padToggle{background:#3a3a3a;color:#f5c000}.gba[data-shell="penarol"] #padToggle i{border-top-color:#f5c000}
+.gba[data-shell="nacional"] .toggle.zm{background:#cad5f3}.gba[data-shell="nacional"] .toggle.zm::before,.gba[data-shell="nacional"] .toggle.zm::after{background:#102a74}
+.gba[data-shell="nacional"] .toggle.help{background:#d21f2b;color:#fff}
+.gba[data-shell="nacional"] .toggle.snd{background:#e3e8f5;color:#102a74}
+.gba[data-shell="nacional"] #padToggle{background:#1d3fa0;color:#fff}.gba[data-shell="nacional"] #padToggle i{border-top-color:#fff}
+.gba[data-shell="boca"] .pill kbd,.gba[data-shell="penarol"] .pill kbd{color:#f6c400}.gba[data-shell="boca"] .pill{color:#e3ebfb}.gba[data-shell="penarol"] .pill{color:#e9e2c6}
 .shellColor{flex:none;width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.75);background:var(--next,#4b2154);cursor:pointer;padding:0;box-shadow:0 1px 0 rgba(0,0,0,.35)}
 .shellColor:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
 .shellColor.m{display:none;width:22px;height:22px}

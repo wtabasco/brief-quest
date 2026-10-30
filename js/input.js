@@ -117,15 +117,20 @@ try { if (matchMedia('(pointer: coarse)').matches){ const f = document.querySele
 
 /* Color de la consola: verde (el de siempre), violeta, celeste o rosa, y las mismas en versión glass (transparente, con los circuitos a la vista). El botoncito muestra el color que sigue. */
 const SHELLS = [['verde', '#004612'], ['violeta', '#4b2154'], ['celeste', '#2a7fb0'], ['rosa', '#d97a9c'],
-  ['verde-glass', 'rgba(15,106,53,.6)'], ['violeta-glass', 'rgba(96,44,140,.6)'], ['celeste-glass', 'rgba(31,120,173,.6)'], ['rosa-glass', 'rgba(205,104,146,.6)']];
-const shellLabel = n => n.replace('-glass', ' glass');
+  ['verde-glass', 'rgba(15,106,53,.6)'], ['violeta-glass', 'rgba(96,44,140,.6)'], ['celeste-glass', 'rgba(31,120,173,.6)'], ['rosa-glass', 'rgba(205,104,146,.6)'],
+  ['boca', 'linear-gradient(135deg,#123c8c 50%,#f6c400 50%)'], ['penarol', 'linear-gradient(135deg,#161616 50%,#f5c000 50%)'], ['nacional', 'linear-gradient(135deg,#ffffff 50%,#1d3fa0 50%)']];
+const shellLabel = n => ({penarol: 'Peñarol', boca: 'Boca', nacional: 'Nacional'})[n] || n.replace('-glass', ' glass');
 let shellIx = 0;
 try { shellIx = Math.max(0, SHELLS.findIndex(s => s[0] === localStorage.getItem('briefquest.shell'))); } catch(e){}
-/* Las glass se destraban en el nivel 15 (cuando quedás fijo). Queda guardado en el navegador: una vez destrabadas, valen para todas las partidas. */
-function glassOk(){ try { if (localStorage.getItem('briefquest.glass') === '1') return true; } catch(e){} return false; }
+/* Las glass se destraban en el nivel 15 (cuando quedás fijo) y las de los cuadros en el 20. Queda guardado en el navegador: una vez destrabadas, valen para todas las partidas. */
+const lsOn = k => { try { return localStorage.getItem(k) === '1'; } catch(e){ return false; } };
+function glassOk(){ return lsOn('briefquest.glass'); }
+function teamsOk(){ return lsOn('briefquest.teams'); }
 function unlockGlass(){ if (glassOk()) return false; try { localStorage.setItem('briefquest.glass', '1'); } catch(e){} applyShell(); return true; }
-if (shellIx >= 4 && !glassOk()) shellIx -= 4;
-const shellNext = () => (shellIx + 1) % (glassOk() ? SHELLS.length : 4);
+function unlockTeams(){ if (teamsOk()) return false; try { localStorage.setItem('briefquest.teams', '1'); } catch(e){} applyShell(); return true; }
+const shellOpen = i => i < 4 || (i < 8 ? glassOk() : teamsOk());
+if (!shellOpen(shellIx)) shellIx = 0;
+const shellNext = () => { let i = shellIx; do { i = (i + 1) % SHELLS.length; } while (!shellOpen(i)); return i; };
 function applyShell(){
   const g = document.querySelector('.gba'); if (!g) return;
   if (shellIx) g.dataset.shell = SHELLS[shellIx][0]; else delete g.dataset.shell;
@@ -136,5 +141,5 @@ applyShell();
 document.querySelectorAll('.shellColor').forEach(b => b.addEventListener('click', e => {
   e.preventDefault(); shellIx = shellNext();
   try { localStorage.setItem('briefquest.shell', SHELLS[shellIx][0]); } catch(_){}
-  applyShell(); toast('Consola ' + shellLabel(SHELLS[shellIx][0]) + (shellIx === 3 && !glassOk() ? ' · las glass se destraban en el nivel 15' : ''));
+  applyShell(); toast('Consola ' + shellLabel(SHELLS[shellIx][0]) + (shellNext() === 0 && !teamsOk() ? (glassOk() ? ' · en el nivel 20 se destraban más' : ' · en el nivel 15 se destraban más') : ''));
 }));
