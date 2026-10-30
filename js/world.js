@@ -290,6 +290,13 @@ function onStep(silentWarp){
   }
   const z = zoneAt(G.x, G.y);
   if (z && z !== G.zone){ G.zone = z; const el = $('zone'); el.textContent = z.n; el.hidden = false; clearTimeout(onStep.zt); onStep.zt = setTimeout(() => el.hidden = true, 1800); }
+  // después de las 18, salir a la vereda es irte a casa: arrancás el día siguiente a las 9
+  if (z && z.n === 'La Vereda' && G.zone === z && onStep.vereda !== z && canGoHome() && !G.busy){
+    G.busy = true; G.pendA = false;
+    (async () => { await say('Ya terminó la jornada. ¿Te vas a casa?'); const c = await choose(['Sí, hasta mañana', 'Todavía no']); hideDlg();
+      if (c === 0){ G.busy = false; await endDay(true); } })().finally(() => { G.busy = false; });
+  }
+  onStep.vereda = z && z.n === 'La Vereda' ? z : null;
   if (tileAt(G.x, G.y) === '"'){
     if (S.cool > 0) S.cool--;
     else if (Math.random() < .13){ G.pendA = false; G.busy = true; wildEncounter().finally(() => { G.busy = false; }); }
