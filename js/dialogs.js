@@ -974,7 +974,7 @@ const PIMI = {
 async function talkPimi(){
   if (!S.flags.pimiMet){
     S.flags.pimiMet = true;
-    await says([`${saludo()}! Soy Pimi. Hago paid media: la pauta de las campañas.`, 'Te paso herramientas y atajos, pero primero mostrame que sabés resolver problemas.', 'Arrancá por algo simple: resolvé 2 Wifi Caído en La Base.'], 'pimi');
+    await says([`${saludo()}! Soy Pimi. Hago paid media: la pauta de las campañas.`, 'Te paso herramientas y atajos, pero primero mostrame que sabés resolver problemas.', 'Arrancá por algo simple: resolvé 2 Wifi Caído en La Base. Dos más, desde ahora: los de antes ya los conozco.'], 'pimi');
     qOpen('pimi_atajo'); return;
   }
   await opener('pimi', 'pimi', PIMI.again);
@@ -1592,14 +1592,40 @@ async function talkMarga(){
   const r = Math.random();
   if (r < .35){ await say(pick('marga:fotoq', ['¿Te muestro una foto nueva de mis nietas?', 'Mirá lo que me mandaron hoy... ¿querés ver?', '¿Te muestro las fotos del cumple de la más chiquita?', 'Ay, corazón, ¿tenés un minutito? Te muestro una foto.']), 'marga');
     if (await choose(['¡A ver!', 'Después'], {cancel: 1}) === 0) await margaFotos(); else await say('Bueno, te la guardo para mañana.', 'marga'); }
-  else if (r < .65) await say(pick('marga:viaje', MARGA.viajes), 'marga');
+  else if (r < .65){ await say(pick('marga:viaje', MARGA.viajes), 'marga');
+    if (Math.random() < .5){ await say(pick('marga:viaje2', ['Y esperá, que tengo las fotos. Acá estoy yo. Acá también. Esta es la misma, pero con sol.', 'Pará, que te muestro el video. Dura un ratito nomás. Bueno, dos ratitos.', '¡Y no sabés lo que me pasó en el aeropuerto! Te cuento, que es cortito.']), 'marga'); margaDelay(); } }
   else await say(pick('marga:lines', MARGA.lines), 'marga');
   if (gameMin() >= 11*60 + 50) await say('¡Bueno, me voy! ¡Hasta mañanaaa!!!', 'marga');
+}
+/* Marga no lo hace a propósito, pero entre las fotos de las nietas y los viajes se te pasa el tiempo: el reloj avanza
+   y el primero del equipo con quien hablás después te lo comenta (con humor, nunca como reto) */
+function margaDelay(){
+  const c = clk(), mins = 15 + rnd(4) * 5, before = c.min;
+  c.min = Math.min(CLOSE - 5, c.min + mins); const d = c.min - before; if (d <= 0) return;
+  mem().margaLate = {day: gameDay(), min: d};
+  const hh = h => `${Math.floor(h / 60)}:${String(h % 60).padStart(2, '0')}`;
+  toast(`Se te pasaron ${d} minutos con Marga. Ya son las ${hh(c.min)}.`, 2600);
+}
+const MARGA_LATE = {
+  fede: m => `¿${m} minutos tarde? ...Ah, Marga y las fotos. Pasa. A mí me mostró Lisboa entera. Dos veces.`,
+  lia: m => `¡Llegaste ${m} minutos tarde! ¡Lo medí! ...¿Marga? ¡Ah, bueno! A mí me tuvo con Venecia media hora. ¡Ja!`,
+  agus: m => `¿Te agarró Marga con las nietas? Pasa. Es imposible decirle que no. Yo tampoco puedo.`,
+  sahi: m => `¡Che, ${m} minutos! ¿Las fotos de Marga? Yo una vez entré a la cocina por un vaso de agua y salí sabiendo todo de Roma.`,
+  pimi: m => `Tranqui. Marga, ¿no? Yo ya sé: paso por la cocina corriendo. Igual me agarra.`,
+  sofi: m => `¿Marga? Te dejé fruta en la mesa, igual. Seguro que también te convidó cafecito.`,
+  reni: m => `¡Ay, Marga y las fotos! Yo le hice un reel con las de Grecia que todavía no sacó. ¿Comiste algo, por lo menos?`,
+  alejo: m => `${m} minutos con Marga. Igual sus fotos tienen buen encuadre. Las nietas siempre al centro.`,
+  giuli: m => `¿Marga te mostró las fotos? Las de Venecia tienen unos colores... Yo las uso de referencia.`,
+};
+async function margaLateTalk(n){
+  const m = mem(), L = m.margaLate; if (!L || L.day !== gameDay() || !MARGA_LATE[n.id]) return false;
+  m.margaLate = null; await say(MARGA_LATE[n.id](L.min), n.id); return false;
 }
 async function margaFotos(){
   await say('Marga te muestra el celular. Tiene como cuarenta fotos de sus nietas. En todas están sonriendo.');
   await say(pick('marga:foto', MARGA.fotos), 'marga');
   await say(pick('marga:foto2', ['¿Viste qué divinas? Salieron a la abuela.', 'Son lo más lindo que tengo. Bueno, eso y esta casa.', 'Ay, me pongo chocha. Perdoná, mi vida.', 'Las quiero llevar a Grecia. Algún día, mi vida.', 'Mirá esa sonrisa. Eso no se compra, corazón.']), 'marga');
+  margaDelay();
 }
 
 /* ================= LOS VALORES DE LA AGENCIA =================

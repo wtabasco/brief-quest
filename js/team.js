@@ -71,6 +71,8 @@ async function teamExtras(n){
   if (!S || welcomeStep() < 3) return false;
   const m = mem();
   if (!qState('repaso')) qOpen('repaso', true);
+  // si Marga te demoró con las fotos, el primero con quien hablás te lo comenta
+  await margaLateTalk(n);
   // 0) antes del Cliente del Año, el consejo de cada uno (la colaboración)
   if (await teamTip(n)) return true;
   // 1) cumplir un encargo
@@ -346,7 +348,7 @@ async function repasito(n){
   // lo de contenidos (el AEIOU) lo preguntan los que hacen contenido: Fede, Giuli y Alejo
   if (kind === 'aeiou' && !AEIOU_PRE[who]) kind = 'sit';
   // cada uno pregunta de lo suyo: Marga, de valores y propósito; Tato, de eso y de tareas y horas (sus números)
-  const ONLY = {marga: ['prop', 'def', 'sit', 'fun'], tato: ['prop', 'def', 'sit', 'fun', 'tareas']}[who];
+  const ONLY = {marga: ['def', 'sit', 'fun'], tato: ['prop', 'def', 'sit', 'fun', 'tareas']}[who];
   if (ONLY && !ONLY.includes(kind)) kind = ONLY[rnd(ONLY.length)];
   const q = repQuestion(kind);
   await say(pick(who + ':repin', v.in), who);

@@ -88,7 +88,7 @@ async function questScreen(){
       if (id === '_now') return `<h4>Tu próximo paso</h4><div>${fmt(nextStep())}</div><div class="k">Debajo, todas tus tareas con su avance.</div>`;
       const q = QUESTS[id], [a, b] = qProg(id), done = S.quests[id] === 'done';
       return `<h4>${q.title}</h4><div class="k">Te la pidió: ${q.giver}</div><div>${q.desc()}</div>` +
-        (done ? '<div class="k">Cumplida.</div>' : `<div class="xp" style="height:2cqw"><i style="width:${(a / b) * 100}%"></i></div><div class="k">${a} de ${b}${qReady(id) ? ' · ¡Volvé a hablar con quien te la pidió!' : ''}</div>` +
+        (done ? '<div class="k">Cumplida.</div>' : (q.abs ? '' : '<div class="k">Cuentan los que hagas desde que te la pidieron.</div>') + `<div class="xp" style="height:2cqw"><i style="width:${(a / b) * 100}%"></i></div><div class="k">${a} de ${b}${qReady(id) ? ' · ¡Volvé a hablar con quien te la pidió!' : ''}</div>` +
           (q.minLvl ? `<div class="k">${S.lvl >= q.minLvl ? `Nivel ${q.minLvl} ✓` : `Pide nivel ${q.minLvl} (estás en el ${S.lvl}).`}</div>` : '')); },
     hint: 'X: volver'});
 }
