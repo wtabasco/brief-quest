@@ -278,10 +278,16 @@ const REP_TYPES = [['CRE', 'BURO'], ['EST', 'CAOS'], ['TEC', 'BUG'], ['CAL', 'PR
 const TYPE_RULE = 'Lo creativo destraba la burocracia, la estrategia ordena el caos, lo técnico arregla los bugs y la calma desarma la presión.';
 const TYPE_WEAK = {CAOS: ' Ojo: contra el caos, lo creativo y la calma rinden poco.', BUG: ' Ojo: contra un bug, la estrategia rinde poco.', BURO: ' Ojo: contra la burocracia, lo técnico rinde poco.', PRES: ''};
 const valOpts = n => shuffle(VALORES.map(v => v[0]).filter(x => x !== n)).slice(0, 2);
+/* antes de preguntar qué letra le falta a una idea, se explica qué es el AEIOU (con la voz de quien pregunta) */
+const AEIOU_PRE = {
+  fede: 'Te repaso algo de contenido. Todo lo que sale de acá tiene que ser AEIOU: Actual, Estratégico, Impactante, Original y Útil. Si le falta una letra, no se propone. Como el mate sin yerba: no es mate.',
+  giuli: 'Para el contenido usamos el AEIOU: tiene que ser Actual, Estratégico, Impactante, Original y Útil. Las cinco. Si falta una, no sale, aunque esté lindo.',
+  alejo: 'En contenido lo chequeamos con el AEIOU: Actual, Estratégico, Impactante, Original y Útil. Si falta una letra, la idea no va. Toma descartada.',
+};
 function repQuestion(kind){
   if (kind === 'tareas') return {...REP_TASKS[rnd(REP_TASKS.length)], why: TASKS_WHY};
   if (kind === 'aeiou'){ const i = IDEAS[rnd(IDEAS.length)], o = shuffle(AEIOU.map(([x]) => x).filter(x => x !== i.no)).slice(0, 2);
-    return {q: `Te cuento una idea: "${i.t}" Si no es AEIOU, no se propone. ¿Qué le falta?`, a: i.no, o, why: i.why}; }
+    return {q: `Te cuento una idea: "${i.t}" ¿Qué letra del AEIOU le falta?`, a: i.no, o, why: i.why}; }
   if (kind === 'prop') return {...REP_PURPOSE[rnd(REP_PURPOSE.length)], why: 'Nuestro propósito: ' + PROPOSITO};
   if (kind === 'def'){ const [n, d] = VALORES[rnd(VALORES.length)]; return {q: `"${d}" ¿Qué valor es?`, a: n, o: valOpts(n), why: `Nuestros cinco valores son: ${VALORES.map(v => v[0]).join(', ')}.`}; }
   if (kind === 'sit'){ const [t, n] = REP_SIT[rnd(REP_SIT.length)], d = VALORES.find(v => v[0] === n)[1]; return {q: `${t} ¿Qué valor es ese?`, a: n, o: valOpts(n), why: d}; }
@@ -337,8 +343,11 @@ async function repasito(n){
   const r = Math.random(), early = (S.bosses || 0) < 3;
   const W = early ? [['tipo', .3], ['tareas', .2], ['aeiou', .1], ['prop', .1], ['def', .1], ['sit', .15], ['fun', .05]] : [['tipo', .15], ['tareas', .2], ['aeiou', .15], ['prop', .15], ['def', .1], ['sit', .2], ['fun', .05]];
   let acc = 0, kind = 'sit'; for (const [k, w] of W){ acc += w; if (r < acc){ kind = k; break; } }
+  // lo de contenidos (el AEIOU) lo preguntan los que hacen contenido: Fede, Giuli y Alejo
+  if (kind === 'aeiou' && !AEIOU_PRE[who]) kind = 'sit';
   const q = repQuestion(kind);
   await say(pick(who + ':repin', v.in), who);
+  if (kind === 'aeiou') await say(AEIOU_PRE[who], who);
   await say(q.q, who);
   const opts = shuffle([q.a, ...q.o]);
   const c = await choose(opts, {cancel: null});
