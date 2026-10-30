@@ -1076,7 +1076,7 @@ const RENI = {
     // chusma de los buenos: le encanta comentar lo que pasa en la agencia
     {d: 2, t: 'Yo me entero de las cosas antes que Slack. Slack se entera por mí.'},
     // hincha de Nacional, fanática (y Alejo es de Peñarol)
-    {d: 2, t: 'Soy de Nacional. Fanática. Lo aviso de entrada, así nadie se confunde.'},
+    {d: 2, t: '¿Viste el domingo? ¡Qué partido! Bueno, vos no sé. Yo lo vi tres veces. Una en vivo y dos en el celu.'},
     {d: 3, t: 'Semana de clásico, Alejo y yo no nos hablamos. Bueno, nos hablamos. Pero con cuidado.'},
     {d: 5, t: 'Si gana Nacional, el lunes traigo bizcochos para todos. Si gana Peñarol, los trae Alejo. Así cualquiera gana algo.'},
     {d: 6, t: 'Sahi me quiere convencer de que la Bombonera es la mejor cancha del mundo. Que venga al Parque Central y hablamos.'},
@@ -1490,7 +1490,7 @@ const DUO = {
     {d: 5, t: [['alejo', 'Armamos una playlist para trabajar juntos.'], ['giuli', 'Tato dice que le falta reggae. Lu dice que le falta Aitana. Está quedando rarísima.']]},
     {d: 5, t: [['alejo', 'Un buen posteo no es el más lindo: es el que alguien guarda o le manda a un amigo.'], ['giuli', 'Igual, si además es lindo, mejor.']]},
     {d: 6, t: [['giuli', 'Mi parte favorita del laburo es cuando un archivo bien armado llega a la imprenta y vuelve perfecto.'], ['alejo', 'La mía es cuando alguien comenta "¿quién hizo esto?". Y fuimos nosotros.']]},
-    {d: 2, t: [['alejo', 'Soy de Peñarol. Fanático. Es lo segundo que hay que saber de mí.'], ['giuli', 'Lo primero es Vir.'], ['alejo', 'Obvio. Lo primero es Vir.']]},
+    {d: 2, t: [['alejo', 'Hoy vine con la camiseta aurinegra abajo del buzo. Por las dudas.'], ['giuli', '¿Por las dudas de qué?'], ['alejo', 'De que alguien pregunte. Nadie preguntó.']]},
     {d: 3, t: [['alejo', 'Reni es de Nacional. Nos queremos mucho. Menos cuando hay clásico.'], ['giuli', 'Ese fin de semana yo hago de árbitro. Y no cobro nada.']]},
     {d: 5, t: [['alejo', 'Cuando gana Peñarol toco un blues contento. Cuando pierde, uno triste.'], ['giuli', 'Igual siempre suena a blues.']]},
     {if: () => shellNow() === 'penarol' || shellNow() === 'penarol-glass', t: [['alejo', '¡La consola aurinegra! Sos de los míos.'], ['giuli', 'Ahora lo tenés que escuchar todo el día. Avisado quedás.']]},
@@ -1503,7 +1503,7 @@ const DUO = {
     // Giuli: la hermana pastelera, la gata Tostada y la máquina de chambear
     {d: 2, t: [['giuli', 'Mi hermana es pastelera. Hace unas galletas que no podés creer. ¿Le comprás una cajita? Te paso el contacto.'], ['alejo', 'Comprale. Después te pregunta si te gustaron. Y te gustan.']]},
     {d: 3, t: [['giuli', 'Mi gata se llama Tostada. Duerme arriba de la compu, porque está calentita.'], ['alejo', 'Tiene más fotos en el celu de Giuli que cualquier cliente.']]},
-    {d: 2, t: [['giuli', 'Soy fan de Taylor Swift. No un poco: fan.'], ['alejo', 'Lo dice en serio. Tiene una pulsera de la amistad para cada uno del equipo.'], ['giuli', 'La tuya dice BLUES. De nada.']]},
+    {d: 2, t: [['giuli', 'Hice una pulsera de la amistad para cada uno del equipo. Como en los recitales de Taylor.'], ['alejo', 'La mía dice BLUES.'], ['giuli', 'De nada.']]},
     {d: 4, t: [['alejo', 'Yo pongo blues, Giuli pone Taylor. La playlist del equipo es una batalla.'], ['giuli', 'Una batalla que voy ganando. Tato ya sabe los estribillos.']]},
     {d: 6, t: [['giuli', 'Cada proyecto tiene su era. Este mes estoy en mi era de carpetas ordenadas.'], ['alejo', 'El mes pasado fue la era de las tipografías. Duró tres semanas y un archivo de 2 GB.']]},
     {d: 4, t: [['giuli', 'Soy la máquina de chambear. Me lo dije yo, pero es verdad.'], ['alejo', 'Es verdad. Entra, se pone los auriculares y a las seis hay veinte piezas en Finales.']]},
