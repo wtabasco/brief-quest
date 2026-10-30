@@ -527,6 +527,7 @@ const POST = {
     ['Cuando veo un afiche lindo en la calle, le saco foto. Cuando veo uno feo, también.', 'Del feo se aprende más. Pero no se lo digas a nadie.'],
     ['Tengo una caja llena de etiquetas: vino, yerba, fósforos. Ordenadas por color.', 'Alejo dice que es un archivo. Tiene razón: hasta tiene carpetas.'],
     ['¿Ya probaste las galletas de mi hermana? Es pastelera. ¿No? Esta semana te encargo una cajita.', 'No es publicidad. Bueno, un poco. Pero son buenísimas, preguntale a Pimi.'],
+    ['Les hice pulseras de la amistad a todos, como en los recitales de Taylor. Fede la usa en el termo.', 'Tato la perdió el primer día. Le hice otra. También la perdió. Ya le hice cinco.'],
     ['Tostada, mi gata, me despierta todos los días a las siete. Por eso llego con todo.', 'La máquina de chambear arranca temprano. Gracias a Tostada.']],
   marga: [['Mi vida, ¿te mostré las fotos de mis nietas? Esta es la más chiquita. Esta la grande, en el acto.', 'Y esta soy yo en Venecia. Bueno, es una góndola. Yo estoy atrás, ¿me ves?'],
     ['Corazón, ¿sabés hace cuánto estoy en la agencia? Desde que eran poquitos.', 'Los vi crecer a todos. Ahora te veo crecer a vos. Me pone contenta.'],

@@ -489,6 +489,7 @@ const DINAMICAS = [
   {if: () => talks('reni') > 2, t: {q: '¿De qué cuadro es fanática Reni?', a: 'De Nacional', o: ['De Peñarol', 'De Boca']}},
   {if: () => talks('alejo') > 2, t: {q: '¿De qué cuadro es fanático Alejo?', a: 'De Peñarol', o: ['De Nacional', 'De Boca']}},
   {if: () => talks('alejo') > 2, t: {q: '¿Qué toca Alejo en la guitarra de La Base?', a: 'Blues', o: ['Cumbia', 'Reggae']}},
+  {if: () => talks('giuli') + talks('alejo') > 3, t: {q: '¿De quién es fan Giuli?', a: 'De Taylor Swift', o: ['De la música triste de Alejo', 'Del reggae de Tato']}},
   {if: () => talks('giuli') + talks('alejo') > 3, t: {q: '¿Cómo se llama la gata de Giuli?', a: 'Tostada', o: ['Galleta', 'Medialuna']}},
   {if: () => talks('marga') > 0, t: {q: '¿Quién es la que está hace más tiempo en la agencia?', a: 'Marga', o: ['Fede', 'Tato']}},
   {if: () => talks('marga') > 0, t: {q: '¿Qué le encanta mostrarte a Marga?', a: 'Las fotos de sus nietas', o: ['Sus plantas', 'Sus recetas']}},
@@ -1502,6 +1503,9 @@ const DUO = {
     // Giuli: la hermana pastelera, la gata Tostada y la máquina de chambear
     {d: 2, t: [['giuli', 'Mi hermana es pastelera. Hace unas galletas que no podés creer. ¿Le comprás una cajita? Te paso el contacto.'], ['alejo', 'Comprale. Después te pregunta si te gustaron. Y te gustan.']]},
     {d: 3, t: [['giuli', 'Mi gata se llama Tostada. Duerme arriba de la compu, porque está calentita.'], ['alejo', 'Tiene más fotos en el celu de Giuli que cualquier cliente.']]},
+    {d: 2, t: [['giuli', 'Soy fan de Taylor Swift. No un poco: fan.'], ['alejo', 'Lo dice en serio. Tiene una pulsera de la amistad para cada uno del equipo.'], ['giuli', 'La tuya dice BLUES. De nada.']]},
+    {d: 4, t: [['alejo', 'Yo pongo blues, Giuli pone Taylor. La playlist del equipo es una batalla.'], ['giuli', 'Una batalla que voy ganando. Tato ya sabe los estribillos.']]},
+    {d: 6, t: [['giuli', 'Cada proyecto tiene su era. Este mes estoy en mi era de carpetas ordenadas.'], ['alejo', 'El mes pasado fue la era de las tipografías. Duró tres semanas y un archivo de 2 GB.']]},
     {d: 4, t: [['giuli', 'Soy la máquina de chambear. Me lo dije yo, pero es verdad.'], ['alejo', 'Es verdad. Entra, se pone los auriculares y a las seis hay veinte piezas en Finales.']]},
     {d: 6, t: [['giuli', 'Si hoy termino todo, me compro galletas de mi hermana. Si no termino, también.'], ['alejo', 'La máquina de chambear también necesita combustible.']]},
     {d: 7, t: [['giuli', 'Tostada se sentó arriba del teclado y mandó un mail que decía "hhhhhhhhh".'], ['alejo', 'Y el cliente contestó "perfecto, avancemos". Nunca supimos qué aprobó.']]},
