@@ -188,7 +188,7 @@ function helpHTML(){
   const qs = open.map(id => { const [a, b] = qProg(id); return `<div>· <b>${QUESTS[id].title}</b> (${a}/${b}), de ${QUESTS[id].giver}</div>`; }).join('');
   const ideas = xpIdeas().map(t => `<div>· ${fmt(t)}</div>`).join('');
   return `<div style="font-size:2.45cqw;line-height:1.2;display:flex;flex-direction:column;gap:.45cqw"><h4>Ahora</h4><div>${fmt(nextStep())}</div>` + (ideas ? `<h4 style="margin-top:.6cqw">Para sumar experiencia hoy</h4>${ideas}` : '') + (qs ? `<h4 style="margin-top:.6cqw">En curso</h4>${qs}` : '') +
-    `</div>`;
+    `<div class="k" style="margin-top:.6cqw">¿Qué habilidad usar contra cada problema? Mirá la guía del pizarrón grande de La Base.</div></div>`;
 }
 async function helpPanel(){ const p = panelInfo('AYUDA', helpHTML()); $('panelHint').textContent = 'X: volver · Todas tus tareas: START → Tareas'; await p; }
 async function helpScreen(){
@@ -278,6 +278,24 @@ const TYPE_LBL = {CRE: 'Creativo', EST: 'Estrategia', TEC: 'Técnico', CAL: 'Cal
 const PT_LBL = {BURO: 'burocracia', CAOS: 'caos', BUG: 'bug', PRES: 'presión'};
 const REP_TYPES = [['CRE', 'BURO'], ['EST', 'CAOS'], ['TEC', 'BUG'], ['CAL', 'PRES']];
 const TYPE_RULE = 'Lo creativo destraba la burocracia, la estrategia ordena el caos, lo técnico arregla los bugs y la calma desarma la presión.';
+/* la guía del pizarrón grande de La Base: qué tipo de habilidad destraba cada problema (y cada cliente) */
+function typeChartHTML(){
+  const met = k => S.log && S.log[k] && (S.log[k].seen || S.log[k].beaten);
+  const names = t => Object.keys(EN).filter(k => EN[k].t === t).map(k => met(k) ? EN[k].n : '???').join(', ');
+  const cli = t => BOSS_ORDER.filter(k => BOSS[k].t === t && S.log && S.log[k]).map(k => BOSS[k].n);
+  const row = (t, sk, weak) => { const c = cli(t);
+    return `<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:1cqw;align-items:center;padding:.5cqw 0;border-bottom:.2cqw solid var(--rule)">` +
+      `<div><b style="color:${TYPES[t].c}">${TYPES[t].n}</b><div class="k">${names(t)}${c.length ? '<br>Cliente: ' + c.join(', ') : ''}</div></div>` +
+      `<div style="font-size:3.4cqw">←</div><div><b style="color:${TYPES[sk].c}">${TYPES[sk].n}</b><div class="k">${weak}</div></div></div>`; };
+  return H_([P_('Qué habilidad destraba cada problema: contra el que corresponde, rinde el doble.'),
+    row('BURO', 'CRE', 'Lo técnico rinde poco.'), row('CAOS', 'EST', 'Lo creativo y la calma rinden poco.'),
+    row('BUG', 'TEC', 'La estrategia rinde poco.'), row('PRES', 'CAL', 'Lo demás rinde normal.'),
+    K_('??? = todavía no lo cruzaste. Con una habilidad de cada tipo, siempre tenés la buena.')], 2.5);
+}
+async function typeChartLook(){
+  await say('En una esquina del pizarrón grande, alguien armó una guía con marcadores de colores: qué destraba cada problema. Abajo dice: "Para que nadie le pegue a un bug con calma. Firmado: Pimi."');
+  await panelInfo('QUÉ DESTRABA QUÉ', typeChartHTML()); closePanel();
+}
 const TYPE_WEAK = {CAOS: ' Ojo: contra el caos, lo creativo y la calma rinden poco.', BUG: ' Ojo: contra un bug, la estrategia rinde poco.', BURO: ' Ojo: contra la burocracia, lo técnico rinde poco.', PRES: ''};
 const valOpts = n => shuffle(VALORES.map(v => v[0]).filter(x => x !== n)).slice(0, 2);
 /* antes de preguntar qué letra le falta a una idea, se explica qué es el AEIOU (con la voz de quien pregunta) */
@@ -298,7 +316,7 @@ function repQuestion(kind){
   const [sk, pt] = REP_TYPES[rnd(REP_TYPES.length)];
   const seen = Object.keys(LESSON_LVL).filter(k => EN[k] && EN[k].t === pt && S.log[k]), k = seen.length ? seen[rnd(seen.length)] : null;
   return {q: k ? `Te salta ${EN[k].n}, que es de ${PT_LBL[pt]}. ¿Qué tipo de habilidad lo destraba mejor?` : `Te salta un problema de ${PT_LBL[pt]}. ¿Qué tipo de habilidad lo destraba mejor?`,
-    a: TYPE_LBL[sk], o: shuffle(Object.keys(TYPE_LBL).filter(x => x !== sk)).slice(0, 2).map(x => TYPE_LBL[x]), why: TYPE_RULE + TYPE_WEAK[pt]};
+    a: TYPE_LBL[sk], o: shuffle(Object.keys(TYPE_LBL).filter(x => x !== sk)).slice(0, 2).map(x => TYPE_LBL[x]), why: TYPE_RULE + TYPE_WEAK[pt] + ' Está en la guía del pizarrón grande de La Base.'};
 }
 // cada uno pregunta, festeja y explica con su estilo (Lu no: con ella se recarga)
 const REP_VOICE = {

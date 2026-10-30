@@ -675,4 +675,5 @@ async function typeHint(foe, res){
   const voice = {fede: `Contra ${tip[0]}, ${tip[1]}. Probá, aprendé, repetí.`, sahi: `Che, contra ${tip[0]} jugá con ${tip[1]}. Es como patear al ángulo, crack.`,
     giuli: `Te vi con ${foe.name}. Contra ${tip[0]}, ${tip[1]}. Queda más prolijo.`, alejo: `Contra ${tip[0]}, ${tip[1]}. Cambiá de plano y vas a ver.`, pimi: `Tranqui. Contra ${tip[0]}, ${tip[1]}. Y listo.`}[id];
   await say(`Te llega un mensaje de ${PEOPLE[id]} por Slack: "${voice}"`);
+  await say('Qué destraba qué está en la guía del pizarrón grande de La Base. Mirala cuando quieras.');
 }

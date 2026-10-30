@@ -700,7 +700,7 @@ async function talkFounders(n){
     else await say('Me gusta. Mi consejo te acompaña en tu próximo desafío. Probalo en tres y volvé a contarme.', 'agus:feliz');
     qOpen('consejo');
     S.buff = c === 1 ? 'atk' : 'def'; m.lastAdviceBattle = b;
-    await say('Ahora la casa es tuya. Bajá a La Base: ahí están Alejo y Giuli, y entre las pilas de pendientes saltan los problemas. ¡Resolvé el primero!', 'agus:feliz');
+    await say('Ahora la casa es tuya. Bajá a La Base: ahí están Alejo y Giuli, y entre las pilas de pendientes saltan los problemas. En el pizarrón grande hay una guía de qué habilidad destraba cada uno. ¡Resolvé el primero!', 'agus:feliz');
     await say('¡Y dos cosas que vas a escuchar mucho! Las tareas te las manda tu Project por Slack, en orden de prioridad. ¡Y el tiempo se trackea en ClickUp, así sabemos cuánto le dedicamos a cada cliente!', 'lia');
     if (qState('bienvenida') === 'open') qDone('bienvenida');
     if (!qState('clientes')){ await say(`¡Y cada problema que resolvés te suma experiencia y te sube de nivel! Los clientes te esperan en la Sala de Clientes, en la planta baja: ¡andá cuando te sientas list{o}! ¡Yo voy midiendo cómo te va!`, 'lia:feliz'); qOpen('clientes'); }

@@ -195,6 +195,7 @@ async function houseThing(ch, tx){
   try {
     if (ch === 'J'){ await liaBoardLook(); return; }
     if (ch === 'base14'){ await valuesLook(); return; }
+    if (ch === 'base11' || ch === 'base12'){ await typeChartLook(); return; }
     if (ch === 'H' && (zoneAt(tx, 2) || {}).n === 'Brasil'){ await statusBoardLook(); return; }
     if (ch === 'c'){ // la cafetera de Agus y Lía convida un café cada tanto
       const m = mem(), b = m.battles || 0;
