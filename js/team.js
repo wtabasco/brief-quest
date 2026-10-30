@@ -345,6 +345,9 @@ async function repasito(n){
   let acc = 0, kind = 'sit'; for (const [k, w] of W){ acc += w; if (r < acc){ kind = k; break; } }
   // lo de contenidos (el AEIOU) lo preguntan los que hacen contenido: Fede, Giuli y Alejo
   if (kind === 'aeiou' && !AEIOU_PRE[who]) kind = 'sit';
+  // cada uno pregunta de lo suyo: Marga, de valores y propósito; Tato, de eso y de tareas y horas (sus números)
+  const ONLY = {marga: ['prop', 'def', 'sit', 'fun'], tato: ['prop', 'def', 'sit', 'fun', 'tareas']}[who];
+  if (ONLY && !ONLY.includes(kind)) kind = ONLY[rnd(ONLY.length)];
   const q = repQuestion(kind);
   await say(pick(who + ':repin', v.in), who);
   if (kind === 'aeiou') await say(AEIOU_PRE[who], who);
@@ -376,12 +379,12 @@ const REPASO_FINAL = () => [
     B_('Cada mes:', '01 Cronograma, 02 Materiales, 03 Editables, 04 Finales y 05 Reporte. Lo que no es Always On, en Extras.'),
     B_('Exclientes:', 'a 01 INACTIVAS después de un mes sin activar. No se borran: se ordenan.'),
     B_('Siempre en orden:', 'las cosas se ordenan al momento de trabajarlas: bien nombradas y en su carpeta correspondiente. Después nunca llega.')], 2.6)},
-  {who: 'alejo', intro: 'Los procesos de todos los meses, y los de las campañas.', title: 'CRONOGRAMA Y CAMPAÑAS', html: H_([
+  {who: 'alejo', intro: 'Los procesos de todos los meses: el cronograma y el reporte.', title: 'CRONOGRAMA Y REPORTE', html: H_([
     B_('Cronograma:', 'se sube a la carpeta del cliente antes del 27 de cada mes, y se manda por mail con el asunto "Cronograma Marca MES".'),
     B_('Cambios:', 'la nueva versión se guarda con _V2. En las dos carpetas quedan todas las versiones.'),
-    B_('Reporte:', 'antes del 15 de cada mes: Paid aporta la pauta y Social, lo orgánico.'),
-    B_('Campañas:', 'brief y coordinación, conceptos, presupuesto, plan de medios, diseño, presentación y aprobación.')], 2.6)},
-  {who: 'sahi', intro: '¡Y quiénes somos en la cancha, che!', title: 'ROLES, EQUIPOS Y RITUALES', html: H_([
+    B_('Reporte:', 'antes del 15 de cada mes: Paid aporta la pauta y Social, lo orgánico.')], 2.6)},
+  {who: 'sahi', intro: '¡Las campañas, como te las conté, y quiénes somos en la cancha, che!', title: 'CAMPAÑAS, ROLES Y RITUALES', html: H_([
+    B_('Campañas:', 'brief y coordinación, conceptos, presupuesto, plan de medios, diseño, presentación y aprobación.'),
     B_('Social Manager:', 'comunicar y gestionar. <b>Graphic Designer:</b> materializar.'),
     B_('Paid Media:', 'planificar y optimizar. <b>Project Leader:</b> liderar y encantar.'),
     B_('Equipos:', 'Tabasco es el soporte estratégico; Putaparió, Peppers y Chili, los equipos ejecutivos.'),

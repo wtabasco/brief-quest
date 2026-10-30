@@ -964,7 +964,7 @@ const PIMI = {
     {d: 5, t: 'Reni me convidó un mate y bajó el costo por clic. No tengo pruebas, pero tampoco dudas.'},
     {d: 4, t: 'Si una campaña no rinde, lo digo el primer día. Con transparencia se arregla más rápido.'},
     {d: 6, t: 'Sofi reinicia el router antes de que yo me entere de que se cayó. Buen equipo.'},
-    {if: () => S.lvl >= 15, t: 'Ahora que quedaste fij{o} te doy acceso a la carpeta compartida de verdad. La otra era de prueba.'},
+    {if: () => S.lvl >= 15, t: 'Ahora que quedaste fij{o} te paso mis automatizaciones de verdad. Las otras eran de prueba.'},
     {d: 4, t: 'Para el after llevo yo la comida. Siempre llevo de más. Siempre sobra poco.'},
     'Archivo_final, archivo_final_ahora_sí... Le puse fecha a todo y se terminó el problema.',
     {d: 3, t: 'Lo técnico es como el surf: si peleás contra la ola, te revuelca. Si la leés, la surfeás.'},
