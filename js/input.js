@@ -115,8 +115,8 @@ padToggle.addEventListener('click', () => { setInfo(!ctrlInfo.classList.contains
 try { if (matchMedia('(pointer: coarse)').matches){ const f = document.querySelector('.tFoot'); if (f) f.textContent = 'Cruceta para moverte · Z: aceptar · X: volver'; } } catch(e){}
 
 
-/* Color de la consola: verde (el de siempre), violeta o celeste. El botoncito muestra el color que sigue. */
-const SHELLS = [['verde', '#004612'], ['violeta', '#4b2154'], ['celeste', '#2a7fb0']];
+/* Color de la consola: verde (el de siempre), violeta, celeste o rosa. El botoncito muestra el color que sigue. */
+const SHELLS = [['verde', '#004612'], ['violeta', '#4b2154'], ['celeste', '#2a7fb0'], ['rosa', '#d97a9c']];
 let shellIx = 0;
 try { shellIx = Math.max(0, SHELLS.findIndex(s => s[0] === localStorage.getItem('briefquest.shell'))); } catch(e){}
 function applyShell(){
