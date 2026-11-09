@@ -1,6 +1,7 @@
-/* Música de fondo: temas originales con osciladores */
+/* Música de fondo: temas orquestales originales (assets/music) y sintetizador de respaldo */
 "use strict";
 /* ================= MÚSICA DE FONDO =================
+   Los temas suenan grabados (orquesta, ver MUSIC_SRC más abajo); este sintetizador queda de respaldo.
    Temas originales hechos con osciladores (WebAudio), bajitos y con filtro para que no cansen.
    Arranca con la primera tecla o toque (los navegadores no dejan sonar antes) y se apaga con SELECT.
    Cada tema: tempo, compases de 8 corcheas, acordes, melodía [nota, duración en corcheas] y estilo de bajo, batería y arpegio.
@@ -153,7 +154,36 @@ function scheduleStep(tr, step, t, e){
     if (i === 0 && bar % 4 === 0) mNoise(t, .5, .03, 4500);
     if (i === 7 && bar % 4 === 3){ mNoise(t, .06, .03, 1400); mNoise(t + e / 2, .06, .035, 1200); } }
 }
+/* ===== Temas orquestales grabados (originales, hechos para el juego) =====
+   Se tocan desde archivos de audio: suenan con orquesta de verdad. Si no se pueden cargar
+   (por ejemplo, abriendo el juego como archivo local), queda el sintetizador de arriba. */
+const MUSIC_SRC = {world: 'assets/music/campo-abierto.mp3', battle: 'assets/music/a-resolver.mp3', special: 'assets/music/la-gran-reunion.mp3'};
+const MUSIC_LOOP = {world: 128 * 60 / 112, battle: 128 * 60 / 150, special: 128 * 60 / 96};
+const MUSIC_VOL = .36;
+MUSIC.buf = {}; MUSIC.loading = {}; MUSIC.node = null; MUSIC.playing = null;
+function loadTrack(id){
+  if (!AC || !MUSIC_SRC[id] || MUSIC.buf[id] || MUSIC.loading[id]) return;
+  MUSIC.loading[id] = fetch(MUSIC_SRC[id]).then(r => r.arrayBuffer()).then(b => new Promise((ok, ko) => AC.decodeAudioData(b, ok, ko)))
+    .then(buf => { MUSIC.buf[id] = buf; }).catch(() => { MUSIC.failed = true; });
+}
+function startTrack(id){
+  const now = AC.currentTime, old = MUSIC.node;
+  if (old){ try { old.g.gain.cancelScheduledValues(now); old.g.gain.setTargetAtTime(0, now, .22); old.s.stop(now + 1.4); } catch(e){} }
+  MUSIC.node = null; MUSIC.playing = id;
+  if (!id) return;
+  const buf = MUSIC.buf[id], s = AC.createBufferSource(), g = AC.createGain();
+  s.buffer = buf; s.loop = true; s.loopStart = 0; s.loopEnd = Math.min(buf.duration, MUSIC_LOOP[id] || buf.duration);
+  g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(MUSIC_VOL, now + .7);
+  s.connect(g).connect(AC.destination); s.start(now + .02); MUSIC.node = {s, g};
+}
+function recordedTick(){
+  for (const k in MUSIC_SRC) loadTrack(k);
+  const want = muted ? null : MUSIC.cur;
+  if (want && !MUSIC.buf[want]) return;          // todavía se está cargando
+  if (MUSIC.playing !== want) startTrack(want);
+}
 function musicTick(){
+  if (AC && AC.state === 'running' && MUSIC_SRC[MUSIC.cur] && !MUSIC.failed){ recordedTick(); return; }
   if (!AC || AC.state !== 'running' || muted || !MUSIC.cur) return;
   const tr = TRACKS[MUSIC.cur], e = 60 / tr.bpm / 2, len = tr.chords.length * 8;
   if (MUSIC.next < AC.currentTime) MUSIC.next = AC.currentTime + .06;
