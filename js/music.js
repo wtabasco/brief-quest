@@ -49,6 +49,7 @@ const TRACKS = {
           [82, 4], [86, 4],                     [89, 6], [_, 2]],
     bass: 'march', drums: 'timpani', drumK: .8, lead: 'brass', leadVol: .085, leadAtt: .06, vib: true, echo: 'string', arp: 'harp', harpVol: .018, pad: .024, padType: 'string', rev: .36},
 };
+TRACKS.day = {base: 'world', bpm: 124}; // de día, la versión grabada más alegre; el sintetizador usa el mismo tema un poco más rápido
 for (const k in TRACKS){ const t = TRACKS[k]; if (t.base) TRACKS[k] = Object.assign({}, TRACKS[t.base], t); }
 const MUSIC = {cur: null, step: 0, next: 0, mel: [], bus: null, timer: null};
 function musicBus(){
@@ -157,8 +158,8 @@ function scheduleStep(tr, step, t, e){
 /* ===== Temas orquestales grabados (originales, hechos para el juego) =====
    Se tocan desde archivos de audio: suenan con orquesta de verdad. Si no se pueden cargar
    (por ejemplo, abriendo el juego como archivo local), queda el sintetizador de arriba. */
-const MUSIC_SRC = {world: 'assets/music/campo-abierto.mp3', battle: 'assets/music/a-resolver.mp3', special: 'assets/music/la-gran-reunion.mp3'};
-const MUSIC_LOOP = {world: 128 * 60 / 112, battle: 128 * 60 / 150, special: 128 * 60 / 96};
+const MUSIC_SRC = {day: 'assets/music/campo-abierto-dia.mp3', world: 'assets/music/campo-abierto.mp3', battle: 'assets/music/a-resolver.mp3', special: 'assets/music/la-gran-reunion.mp3'};
+const MUSIC_LOOP = {day: 128 * 60 / 132, world: 128 * 60 / 112, battle: 128 * 60 / 150, special: 128 * 60 / 96};
 const MUSIC_VOL = .36;
 MUSIC.buf = {}; MUSIC.loading = {}; MUSIC.node = null; MUSIC.playing = null;
 function loadTrack(id){
@@ -203,6 +204,8 @@ function playMusic(id){
 function wantedMusic(){
   if (MUSIC.force) return MUSIC.force;
   if (G.mode === 'battle') return (B && (B.kind === 'boss' || B.kind === 'final')) ? 'special' : 'battle';
+  // "Campo abierto": de día la versión alegre; desde las 16:30 (cuando la luz se pone dorada), la de la tarde
+  if (G.mode === 'world' && S && S.clock && gameMin() < 16 * 60 + 30) return 'day';
   return 'world';
 }
 /* los momentos especiales (ascensos y el final) suenan con su tema mientras duran */
