@@ -10,7 +10,7 @@ const OFFICE_GRID = (() => {
   rows(1, 1, ['BBBBWWMMWWBBBBBBBBBBB','.....k.k.k.k.k.k.....','...NTTTTTTTTTTTT.....','...NTTTTTTTTTTTT.....','.....k.k.k.k.k.k.....','.....................']);
   // La Sala del Directorio (donde antes estaba el estudio): cerrada hasta el nivel 25. Mesa larga de madera oscura,
   // la tele con la presentación, bibliotecas y, en la cabecera, el Cliente del Año esperando la campaña del año.
-  rows(23,1, ['WWBBYYBBWW','n........n','..kkkkkk..','.NTTTTTT..','.NTTTTTT..','..kkkkkk.P']);
+  rows(23,1, ['WWBBIIBBWW','n........n','..kkkkkk..','.NTTTTTT..','.NTTTTTT..','..kkkkkk.P']);
   put(9,7,'..'); put(16,7,'..'); put(23,7,'..');
   // El Baño (donde antes estaba la cocina, más chico): i inodoro, d bidé, z la mesada con la bacha, b el tacho de acero.
   // Debajo, La Base sigue hasta la pared del baño con más pilas de pendientes.

@@ -187,8 +187,8 @@ async function doMove(u, t, m, id){
     }
     if (hits > 1) await bsay(`¡Pegó ${hits} veces!`, 800);
     if (crits) await bsay(pick('b:crit', ['¡En el punto justo!', '¡Justo donde dolía!']), 800);
-    if (eff > 1) await bsay(pick('b:eff', ['¡Le pegó de lleno! Ese tipo es su punto débil.', '¡Justo lo que necesitaba! Le pega fuerte.', '¡Ese tipo lo destraba!']), 900);
-    if (eff < 1) await bsay(pick('b:weak', ['Le hace poco: no es el tipo que lo destraba.', 'Rebotó. Probá con otro tipo.']), 900);
+    if (eff > 1) await bsay(pick('b:eff', ['¡Le pegó de lleno! Ese ataque es su punto débil.', '¡Justo lo que necesitaba! Le pega fuerte.', '¡Ese ataque lo destraba!', '¡Esa habilidad lo destraba!']), 900);
+    if (eff < 1) await bsay(pick('b:weak', ['Le hace poco: no es la habilidad que lo destraba.', 'Rebotó. Probá con otra habilidad.']), 900);
     if (t.hp <= 0) return;
     if (!t.isP && B.kind !== 'wild'){
       const tt = TAUNTS[t.key], r = t.hp / t.max;
