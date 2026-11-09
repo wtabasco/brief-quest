@@ -2285,4 +2285,4 @@ function casaHTML(){
 }
 
 /* los ascensos y el final suenan con el tema de los momentos especiales */
-fijoCeremony = specialMusic(fijoCeremony); seniorCeremony = specialMusic(seniorCeremony); ending = specialMusic(ending);
+fijoCeremony = specialMusic(fijoCeremony); seniorCeremony = specialMusic(seniorCeremony); ending = specialMusic(ending, 'finale');

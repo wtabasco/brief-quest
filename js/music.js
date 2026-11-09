@@ -49,7 +49,8 @@ const TRACKS = {
           [82, 4], [86, 4],                     [89, 6], [_, 2]],
     bass: 'march', drums: 'timpani', drumK: .8, lead: 'brass', leadVol: .085, leadAtt: .06, vib: true, echo: 'string', arp: 'harp', harpVol: .018, pad: .024, padType: 'string', rev: .36},
 };
-TRACKS.day = {base: 'world', bpm: 124}; // de día, la versión grabada más alegre; el sintetizador usa el mismo tema un poco más rápido
+TRACKS.day = {base: 'world', bpm: 124};
+TRACKS.anual = {base: 'battle', bpm: 138}; TRACKS.finale = {base: 'special', bpm: 84}; // de día, la versión grabada más alegre; el sintetizador usa el mismo tema un poco más rápido
 for (const k in TRACKS){ const t = TRACKS[k]; if (t.base) TRACKS[k] = Object.assign({}, TRACKS[t.base], t); }
 const MUSIC = {cur: null, step: 0, next: 0, mel: [], bus: null, timer: null};
 function musicBus(){
@@ -158,8 +159,8 @@ function scheduleStep(tr, step, t, e){
 /* ===== Temas orquestales grabados (originales, hechos para el juego) =====
    Se tocan desde archivos de audio: suenan con orquesta de verdad. Si no se pueden cargar
    (por ejemplo, abriendo el juego como archivo local), queda el sintetizador de arriba. */
-const MUSIC_SRC = {day: 'assets/music/campo-abierto-dia.mp3', world: 'assets/music/campo-abierto.mp3', battle: 'assets/music/a-resolver.mp3', special: 'assets/music/la-gran-reunion.mp3'};
-const MUSIC_LOOP = {day: 128 * 60 / 132, world: 128 * 60 / 112, battle: 128 * 60 / 150, special: 128 * 60 / 96};
+const MUSIC_SRC = {day: 'assets/music/campo-abierto-dia.mp3', world: 'assets/music/campo-abierto.mp3', battle: 'assets/music/a-resolver.mp3', special: 'assets/music/la-gran-reunion.mp3', anual: 'assets/music/cliente-del-ano.mp3', finale: 'assets/music/fin-de-la-induccion.mp3'};
+const MUSIC_LOOP = {anual: 128 * 60 / 138, finale: 128 * 60 / 84, day: 128 * 60 / 132, world: 128 * 60 / 112, battle: 128 * 60 / 150, special: 128 * 60 / 96};
 const MUSIC_VOL = .36;
 MUSIC.buf = {}; MUSIC.loading = {}; MUSIC.node = null; MUSIC.playing = null;
 function loadTrack(id){
@@ -203,13 +204,13 @@ function playMusic(id){
 /* qué tema corresponde a cada momento */
 function wantedMusic(){
   if (MUSIC.force) return MUSIC.force;
-  if (G.mode === 'battle') return (B && (B.kind === 'boss' || B.kind === 'final')) ? 'special' : 'battle';
+  if (G.mode === 'battle') return !B ? 'battle' : B.kind === 'final' ? 'anual' : B.kind === 'boss' ? 'special' : 'battle';
   // "Campo abierto": de día la versión alegre; desde las 16:30 (cuando la luz se pone dorada), la de la tarde
   if (G.mode === 'world' && S && S.clock && gameMin() < 16 * 60 + 30) return 'day';
   return 'world';
 }
 /* los momentos especiales (ascensos y el final) suenan con su tema mientras duran */
-function specialMusic(fn){ return async (...a) => { MUSIC.force = 'special'; try { return await fn(...a); } finally { MUSIC.force = null; } }; }
+function specialMusic(fn, id = 'special'){ return async (...a) => { MUSIC.force = id; try { return await fn(...a); } finally { MUSIC.force = null; } }; }
 /* Lu canta: una frase cortita con vibrato */
 SFX.sing = () => {
   if (muted || !AC) return;
