@@ -2283,3 +2283,6 @@ function casaHTML(){
       '<div class="k">Afuera</div>', row('El Patio', 'Sahi y el ping pong'), row('La Barbacoa', 'la cocina, donde suele estar Marga'),
       '<div class="k">Y por toda la casa</div>', row('Reni', 'grabando contenido')) + '</div>';
 }
+
+/* los ascensos y el final suenan con el tema de los momentos especiales */
+fijoCeremony = specialMusic(fijoCeremony); seniorCeremony = specialMusic(seniorCeremony); ending = specialMusic(ending);

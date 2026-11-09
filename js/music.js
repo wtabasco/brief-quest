@@ -4,37 +4,49 @@
    Temas originales hechos con osciladores (WebAudio), bajitos y con filtro para que no cansen.
    Arranca con la primera tecla o toque (los navegadores no dejan sonar antes) y se apaga con SELECT.
    Cada tema: tempo, compases de 8 corcheas, acordes, melodía [nota, duración en corcheas] y estilo de bajo, batería y arpegio.
-   Todo en tonalidad mayor y con acordes mayores: alegre en la agencia y con más acción (pero siempre positivo) en los desafíos. */
+   Tres temas, todos con acordes mayores: uno tranquilo de fondo, uno con acción para los desafíos y uno solemne y épico para los momentos especiales (clientes, ascensos y el final). */
 const NOTE = n => 440 * Math.pow(2, (n - 69) / 12);
 const _ = null;
 /* acordes (tríadas) para no escribir números a mano */
-const CH = {C: [60, 64, 67], D: [62, 66, 69], E: [59, 64, 68], F: [60, 65, 69], G: [59, 62, 67], A: [61, 64, 69], Ab: [60, 63, 68], Bb: [58, 62, 65],
+const CH = {Eb: [58, 63, 67], C: [60, 64, 67], D: [62, 66, 69], E: [59, 64, 68], F: [60, 65, 69], G: [59, 62, 67], A: [61, 64, 69], Ab: [60, 63, 68], Bb: [58, 62, 65],
   Dd: [62, 66, 69], Ad: [61, 64, 69], Gd: [62, 67, 71], Cd: [60, 64, 67], Ed: [64, 68, 71]};
 const TRACKS = {
-  // "Buen día, agencia": do mayor, alegre y saltarín. Solo acordes mayores (con algún préstamo luminoso: re y mi mayor)
-  world: {bpm: 112, swing: .08, vol: 1,
-    chords: ['C', 'F', 'G', 'C', 'C', 'F', 'D', 'G', 'F', 'G', 'E', 'A', 'D', 'G', 'C', 'C'].map(k => CH[k]),
-    mel: [[72, 1], [_, 1], [72, 1], [74, 1], [76, 2], [79, 2],   [77, 2], [76, 1], [74, 1], [72, 2], [69, 2],
-          [71, 1], [74, 1], [79, 2], [77, 1], [76, 1], [74, 2],   [76, 3], [72, 1], [67, 4],
-          [72, 1], [_, 1], [72, 1], [74, 1], [76, 2], [79, 2],   [81, 2], [79, 1], [77, 1], [76, 2], [72, 2],
-          [74, 1], [78, 1], [81, 2], [78, 1], [76, 1], [74, 2],   [79, 4], [_, 2], [74, 1], [76, 1],
-          [77, 2], [77, 1], [76, 1], [77, 2], [81, 2],            [79, 2], [79, 1], [77, 1], [79, 2], [83, 2],
-          [80, 2], [76, 1], [80, 1], [83, 2], [80, 2],            [81, 3], [76, 1], [73, 2], [76, 2],
-          [78, 2], [81, 1], [78, 1], [74, 2], [78, 2],            [79, 1], [81, 1], [83, 2], [86, 2], [83, 2],
-          [84, 3], [79, 1], [76, 2], [79, 2],                     [72, 4], [_, 4]],
-    bass: 'bounce', drums: 'pop', lead: 'square', leadVol: .045, arp: 'pluck', pad: .010},
-  // "¡A resolver!": re mayor, rápido y con empuje, como una aventura. Siempre mayor: re, la, sol, do, mi
-  battle: {bpm: 150, swing: 0, vol: 1, melShift: -12,
-    chords: ['Dd', 'Ad', 'Gd', 'Ad', 'Dd', 'Cd', 'Gd', 'Ad', 'Gd', 'Ad', 'Dd', 'Dd', 'Gd', 'Ad', 'Ed', 'Ad'].map(k => CH[k]),
-    mel: [[74, 1], [74, 1], [78, 1], [74, 1], [81, 2], [78, 2],   [76, 1], [76, 1], [73, 1], [76, 1], [81, 2], [76, 2],
-          [74, 1], [79, 1], [83, 2], [81, 1], [79, 1], [78, 2],   [76, 3], [78, 1], [76, 2], [73, 2],
-          [74, 1], [74, 1], [78, 1], [81, 1], [86, 2], [81, 2],   [79, 1], [79, 1], [76, 1], [79, 1], [84, 2], [79, 2],
-          [83, 2], [81, 1], [79, 1], [78, 2], [79, 2],            [81, 4], [_, 2], [76, 1], [78, 1],
-          [79, 2], [79, 1], [81, 1], [83, 2], [79, 2],            [81, 2], [81, 1], [83, 1], [85, 2], [81, 2],
-          [86, 3], [85, 1], [83, 2], [81, 2],                     [78, 1], [81, 1], [86, 2], [_, 2], [81, 1], [83, 1],
-          [83, 2], [86, 1], [83, 1], [79, 2], [83, 2],            [85, 2], [88, 1], [85, 1], [81, 2], [85, 2],
-          [83, 2], [80, 1], [83, 1], [88, 2], [83, 2],            [85, 3], [83, 1], [81, 2], [_, 2]],
+  // "Campo abierto" (fondo): fa mayor, tranquilo y con ganas de explorar. Flauta, cuerdas suaves y bajo que camina
+  world: {bpm: 96, swing: 0, vol: 1,
+    chords: ['F', 'F', 'Bb', 'F', 'C', 'C', 'F', 'F', 'Bb', 'Bb', 'F', 'D', 'G', 'G', 'C', 'C'].map(k => CH[k]),
+    mel: [[72, 3], [77, 1], [76, 2], [72, 2],   [69, 6], [72, 2],
+          [74, 3], [77, 1], [81, 2], [79, 2],   [77, 6], [_, 2],
+          [76, 3], [79, 1], [84, 2], [81, 2],   [79, 4], [76, 2], [74, 2],
+          [72, 3], [74, 1], [76, 2], [77, 2],   [77, 6], [_, 2],
+          [74, 2], [77, 2], [82, 3], [81, 1],   [79, 4], [77, 2], [74, 2],
+          [72, 2], [77, 2], [81, 3], [79, 1],   [78, 6], [81, 2],
+          [83, 3], [81, 1], [79, 2], [74, 2],   [79, 6], [_, 2],
+          [76, 2], [79, 2], [84, 2], [82, 2],   [79, 6], [_, 2]],
+    bass: 'walk', drums: 'soft', lead: 'triangle', vib: true, leadVol: .06, arp: 'soft', pad: .012, padType: 'sawtooth'},
+  // "¡A resolver!" (desafíos): la mayor, rápido y heroico. Acordes mayores (la, fa, sol, re, mi)
+  battle: {bpm: 156, swing: 0, vol: 1,
+    chords: ['Ad', 'Ad', 'F', 'G', 'Ad', 'Ad', 'F', 'G', 'Dd', 'Dd', 'Ad', 'Ad', 'F', 'G', 'Ed', 'Ed'].map(k => CH[k]),
+    mel: [[76, 1], [76, 1], [_, 1], [81, 2], [76, 1], [78, 1], [80, 1],   [81, 3], [_, 1], [76, 2], [73, 2],
+          [77, 1], [77, 1], [_, 1], [81, 2], [77, 1], [79, 1], [81, 1],   [83, 3], [_, 1], [79, 2], [74, 2],
+          [76, 1], [76, 1], [_, 1], [81, 2], [76, 1], [78, 1], [80, 1],   [81, 2], [85, 2], [88, 3], [_, 1],
+          [84, 2], [81, 2], [77, 2], [81, 2],                             [83, 4], [_, 2], [79, 1], [83, 1],
+          [81, 3], [78, 1], [74, 2], [78, 2],                             [81, 2], [86, 2], [85, 2], [83, 2],
+          [81, 3], [76, 1], [73, 2], [76, 2],                             [81, 4], [_, 2], [80, 1], [81, 1],
+          [84, 3], [81, 1], [77, 2], [84, 2],                             [86, 3], [83, 1], [79, 2], [86, 2],
+          [88, 3], [86, 1], [83, 2], [80, 2],                             [83, 2], [80, 2], [76, 2], [_, 2]],
     bass: 'gallop', drums: 'action', lead: 'square', leadVol: .05, arp: 'fast', pad: .008},
+  // "La gran reunión" (momentos especiales: clientes, ascensos y el final): si bemol mayor, solemne y épico, con metales y timbales
+  special: {bpm: 108, swing: 0, vol: 1,
+    chords: ['Bb', 'F', 'Eb', 'Bb', 'Eb', 'Bb', 'F', 'F', 'G', 'Eb', 'F', 'Bb', 'Eb', 'F', 'Bb', 'Bb'].map(k => CH[k]),
+    mel: [[70, 2], [74, 2], [77, 4],   [77, 3], [79, 1], [77, 2], [72, 2],
+          [75, 2], [79, 2], [82, 3], [80, 1],   [77, 6], [_, 2],
+          [79, 3], [82, 1], [84, 2], [82, 2],   [82, 2], [77, 2], [74, 2], [77, 2],
+          [72, 2], [77, 2], [81, 3], [79, 1],   [77, 6], [_, 2],
+          [79, 3], [83, 1], [86, 4],            [84, 3], [82, 1], [79, 4],
+          [77, 2], [81, 2], [84, 3], [82, 1],   [82, 6], [_, 2],
+          [79, 2], [82, 2], [87, 4],            [86, 3], [84, 1], [81, 2], [77, 2],
+          [82, 4], [86, 4],                     [89, 6], [_, 2]],
+    bass: 'march', drums: 'timpani', lead: 'sawtooth', leadVol: .032, arp: 'soft', pad: .014, padType: 'sawtooth'},
 };
 for (const k in TRACKS){ const t = TRACKS[k]; if (t.base) TRACKS[k] = Object.assign({}, TRACKS[t.base], t); }
 const MUSIC = {cur: null, step: 0, next: 0, mel: [], bus: null, timer: null};
@@ -44,9 +56,10 @@ function musicBus(){
   const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2600; lp.Q.value = .3;
   g.connect(lp).connect(AC.destination); MUSIC.bus = g; return g;
 }
-function mNote(f, t, d, type, v, att = .01){
+function mNote(f, t, d, type, v, att = .01, vib = 0){
   const o = AC.createOscillator(), g = AC.createGain();
   o.type = type; o.frequency.setValueAtTime(f, t);
+  if (vib && d > .3){ const l = AC.createOscillator(), lg = AC.createGain(); l.frequency.value = 5.2; lg.gain.setValueAtTime(0, t); lg.gain.linearRampToValueAtTime(f * .006, t + .25); l.connect(lg).connect(o.frequency); l.start(t); l.stop(t + d + .05); }
   g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + att); g.gain.exponentialRampToValueAtTime(.0001, t + d);
   o.connect(g).connect(musicBus()); o.start(t); o.stop(t + d + .05);
 }
@@ -65,9 +78,9 @@ function melSteps(tr){ const out = []; let s = 0; for (const [n, d] of tr.mel){ 
 function scheduleStep(tr, step, t, e){
   const bar = Math.floor(step / 8) % tr.chords.length, i = step % 8, ch = tr.chords[bar];
   // melodía (con un eco suave una octava abajo, que la hace más llena)
-  const m = MUSIC.mel[step]; if (m){ mNote(NOTE(m[0]), t, m[1] * e * .92, tr.lead, tr.leadVol, .01); mNote(NOTE(m[0] - 12), t, m[1] * e * .8, 'triangle', tr.leadVol * .45, .01); }
+  const m = MUSIC.mel[step]; if (m){ mNote(NOTE(m[0]), t, m[1] * e * .92, tr.lead, tr.leadVol, tr.vib ? .04 : .01, tr.vib); mNote(NOTE(m[0] - 12), t, m[1] * e * .8, 'triangle', tr.leadVol * .45, .01); }
   // colchón: el acorde entero, bajito, al empezar cada compás
-  if (i === 0 && tr.pad) for (const n of ch) mNote(NOTE(n), t, e * 7.5, 'triangle', tr.pad, .08);
+  if (i === 0 && tr.pad) for (const n of ch) mNote(NOTE(n), t, e * 7.5, tr.padType || 'triangle', tr.pad * (tr.padType === 'sawtooth' ? .55 : 1), tr.padType ? .5 : .08);
   // arpegios
   const up = [0, 1, 2, 1, 0, 2, 1, 2];
   if (tr.arp === 'pluck') mNote(NOTE(ch[up[i]] + 12), t, e * 1.1, 'triangle', .026);
@@ -77,11 +90,17 @@ function scheduleStep(tr, step, t, e){
   const root = NOTE(ch[0] - 24), fifth = NOTE(ch[2] - 24);
   if (tr.bass === 'bounce'){ if (i === 0) mNote(root, t, e * 1.4, 'triangle', .09); if (i === 2) mNote(fifth, t, e * .9, 'triangle', .065); if (i === 3) mNote(root * 2, t, e * .9, 'triangle', .06);
     if (i === 4) mNote(root, t, e * 1.4, 'triangle', .085); if (i === 6) mNote(fifth, t, e * .9, 'triangle', .065); if (i === 7) mNote(root * 2, t, e * .8, 'triangle', .055); }
+  else if (tr.bass === 'walk'){ if (i === 0) mNote(root, t, e * 3.6, 'triangle', .085); if (i === 4) mNote(fifth, t, e * 2.6, 'triangle', .07); if (i === 6) mNote(NOTE(ch[1] - 24), t, e * 1.6, 'triangle', .06); }
+  else if (tr.bass === 'march'){ if (i % 2 === 0) mNote(i === 4 ? fifth : root, t, e * 1.6, 'triangle', .09); }
   else if (tr.bass === 'gallop'){ mNote(i % 2 ? root * 2 : root, t, e * .85, 'triangle', .09); if (i === 7) mNote(fifth * 2, t + e / 2, e * .4, 'triangle', .06); }
   // batería
   if (tr.drums === 'pop'){ if (i === 0 || i === 4) mKick(t, .1); if (i === 7) mKick(t, .05);
     if (i === 2 || i === 6){ mNoise(t, .07, .03, 1500); mNoise(t + .012, .05, .015, 2500); }
     mNoise(t, .025, i % 2 ? .014 : .009, 8000); if (i === 7) mNoise(t, .12, .012, 6000); }
+  else if (tr.drums === 'soft'){ if (i === 0) mKick(t, .05); if (i === 4) mNoise(t, .09, .012, 3000); if (i % 2 === 1) mNoise(t, .03, .006, 9000); }
+  else if (tr.drums === 'timpani'){ if (i === 0) mKick(t, .14); if (i === 4) mKick(t, .08);
+    if (i >= 6 && bar % 2 === 1){ mKick(t, .07); mKick(t + e / 2, .08); }
+    if (i === 0 && bar % 4 === 0) mNoise(t, 1.2, .025, 5000); if (i === 2 || i === 6) mNoise(t, .04, .01, 7000); }
   else if (tr.drums === 'action'){ if (i % 2 === 0) mKick(t, .12);
     if (i === 2 || i === 6) mNoise(t, .09, .045, 1600);
     mNoise(t, .02, .016, 8500); mNoise(t + e / 2, .018, .01, 9000);
@@ -106,9 +125,12 @@ function playMusic(id){
 }
 /* qué tema corresponde a cada momento */
 function wantedMusic(){
-  if (G.mode === 'battle') return 'battle';
+  if (MUSIC.force) return MUSIC.force;
+  if (G.mode === 'battle') return (B && (B.kind === 'boss' || B.kind === 'final')) ? 'special' : 'battle';
   return 'world';
 }
+/* los momentos especiales (ascensos y el final) suenan con su tema mientras duran */
+function specialMusic(fn){ return async (...a) => { MUSIC.force = 'special'; try { return await fn(...a); } finally { MUSIC.force = null; } }; }
 /* Lu canta: una frase cortita con vibrato */
 SFX.sing = () => {
   if (muted || !AC) return;
