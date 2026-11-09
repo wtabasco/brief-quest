@@ -22,7 +22,7 @@ const TRACKS = {
           [72, 2], [77, 2], [81, 3], [79, 1],   [78, 6], [81, 2],
           [83, 3], [81, 1], [79, 2], [74, 2],   [79, 6], [_, 2],
           [76, 2], [79, 2], [84, 2], [82, 2],   [79, 6], [_, 2]],
-    bass: 'walk', drums: 'soft', lead: 'triangle', vib: true, leadVol: .06, arp: 'soft', pad: .012, padType: 'sawtooth'},
+    bass: 'walk', drums: 'soft', drumK: .7, lead: 'flute', vib: true, leadVol: .085, leadAtt: .07, echo: 'string', arp: 'harp', harpVol: .02, pad: .022, padType: 'string', rev: .34},
   // "¡A resolver!" (desafíos): la mayor, rápido y heroico. Acordes mayores (la, fa, sol, re, mi)
   battle: {bpm: 156, swing: 0, vol: 1,
     chords: ['Ad', 'Ad', 'F', 'G', 'Ad', 'Ad', 'F', 'G', 'Dd', 'Dd', 'Ad', 'Ad', 'F', 'G', 'Ed', 'Ed'].map(k => CH[k]),
@@ -34,7 +34,7 @@ const TRACKS = {
           [81, 3], [76, 1], [73, 2], [76, 2],                             [81, 4], [_, 2], [80, 1], [81, 1],
           [84, 3], [81, 1], [77, 2], [84, 2],                             [86, 3], [83, 1], [79, 2], [86, 2],
           [88, 3], [86, 1], [83, 2], [80, 2],                             [83, 2], [80, 2], [76, 2], [_, 2]],
-    bass: 'gallop', drums: 'action', lead: 'square', leadVol: .05, arp: 'fast', pad: .008},
+    bass: 'gallop', drums: 'action', drumK: .7, lead: 'brass', stac: true, leadVol: .13, leadAtt: .02, echo: 'string', arp: 'harp', harpFast: true, harpVol: .02, pad: .022, padType: 'string', rev: .22},
   // "La gran reunión" (momentos especiales: clientes, ascensos y el final): si bemol mayor, solemne y épico, con metales y timbales
   special: {bpm: 108, swing: 0, vol: 1,
     chords: ['Bb', 'F', 'Eb', 'Bb', 'Eb', 'Bb', 'F', 'F', 'G', 'Eb', 'F', 'Bb', 'Eb', 'F', 'Bb', 'Bb'].map(k => CH[k]),
@@ -46,15 +46,50 @@ const TRACKS = {
           [77, 2], [81, 2], [84, 3], [82, 1],   [82, 6], [_, 2],
           [79, 2], [82, 2], [87, 4],            [86, 3], [84, 1], [81, 2], [77, 2],
           [82, 4], [86, 4],                     [89, 6], [_, 2]],
-    bass: 'march', drums: 'timpani', lead: 'sawtooth', leadVol: .032, arp: 'soft', pad: .014, padType: 'sawtooth'},
+    bass: 'march', drums: 'timpani', drumK: .8, lead: 'brass', leadVol: .085, leadAtt: .06, vib: true, echo: 'string', arp: 'harp', harpVol: .018, pad: .024, padType: 'string', rev: .36},
 };
 for (const k in TRACKS){ const t = TRACKS[k]; if (t.base) TRACKS[k] = Object.assign({}, TRACKS[t.base], t); }
 const MUSIC = {cur: null, step: 0, next: 0, mel: [], bus: null, timer: null};
 function musicBus(){
   if (MUSIC.bus || !AC) return MUSIC.bus;
-  const g = AC.createGain(); g.gain.value = .62;
-  const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2600; lp.Q.value = .3;
-  g.connect(lp).connect(AC.destination); MUSIC.bus = g; return g;
+  // sonido cálido: filtro más suave y una sala (reverb) para que no suene a arcade
+  const g = AC.createGain(); g.gain.value = .7;
+  const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2100; lp.Q.value = .2;
+  const out = AC.createGain(); out.gain.value = 1;
+  const len = Math.floor(AC.sampleRate * 2.4), ir = AC.createBuffer(2, len, AC.sampleRate);
+  for (let c = 0; c < 2; c++){ const d = ir.getChannelData(c); for (let i = 0; i < len; i++){ const x = i / len; d[i] = (Math.random() * 2 - 1) * Math.pow(1 - x, 3.2) * (i < 400 ? i / 400 : 1); } }
+  const rv = AC.createConvolver(); rv.buffer = ir; const wet = AC.createGain(); wet.gain.value = .3;
+  const rlp = AC.createBiquadFilter(); rlp.type = 'lowpass'; rlp.frequency.value = 3200;
+  g.connect(lp); lp.connect(out); lp.connect(rlp).connect(rv).connect(wet).connect(out); out.connect(AC.destination);
+  MUSIC.bus = g; MUSIC.wet = wet; MUSIC.waves = null; return g;
+}
+/* instrumentos: formas de onda con pocos armónicos (flauta, caña, metal, cuerda) en vez de las ondas cuadradas de consola */
+const INST = {flute: [0, 1, .14, .06, .025], reed: [0, 1, .42, .26, .14, .08, .04], brass: [0, 1, .72, .5, .34, .22, .14, .08, .05], string: [0, 1, .5, .33, .25, .2, .16, .13, .1, .08], warm: [0, 1, .25, .08]};
+const INST_LP = {flute: 0, reed: 2600, brass: 1900, string: 1700, warm: 0};
+function instWave(k){
+  musicBus(); MUSIC.waves = MUSIC.waves || {};
+  if (!MUSIC.waves[k]){ const im = new Float32Array(INST[k]); MUSIC.waves[k] = AC.createPeriodicWave(new Float32Array(im.length), im); }
+  return MUSIC.waves[k];
+}
+/* una nota con instrumento: ataque suave, se sostiene y se apaga (sus) o se apaga sola (pluck) */
+function mInst(f, t, d, inst, v, o = {}){
+  const att = o.att || .03, n = o.detune ? 2 : 1, g = AC.createGain();
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + att);
+  if (o.sus){ g.gain.setValueAtTime(v, t + Math.max(att, d * .7)); g.gain.linearRampToValueAtTime(0, t + d + (o.rel || .15)); }
+  else g.gain.exponentialRampToValueAtTime(.0001, t + d + (o.rel || .1));
+  let dst = g;
+  const lpf = INST_LP[inst];
+  if (lpf){ const f2 = AC.createBiquadFilter(); f2.type = 'lowpass'; f2.Q.value = .5;
+    if (inst === 'brass'){ f2.frequency.setValueAtTime(lpf * .45, t); f2.frequency.linearRampToValueAtTime(lpf, t + .12); } else f2.frequency.value = lpf;
+    f2.connect(g); dst = f2; }
+  g.connect(musicBus());
+  const end = t + d + (o.rel || .15) + .05;
+  for (let k = 0; k < n; k++){
+    const osc = AC.createOscillator(); osc.setPeriodicWave(instWave(inst)); osc.frequency.setValueAtTime(f, t);
+    if (n > 1) osc.detune.value = k ? 7 : -7;
+    if (o.vib && d > .3){ const l = AC.createOscillator(), lg = AC.createGain(); l.frequency.value = 5; lg.gain.setValueAtTime(0, t); lg.gain.linearRampToValueAtTime(f * .005, t + .35); l.connect(lg).connect(osc.frequency); l.start(t); l.stop(end); }
+    const og = AC.createGain(); og.gain.value = 1 / n; osc.connect(og).connect(dst); osc.start(t); osc.stop(end);
+  }
 }
 function mNote(f, t, d, type, v, att = .01, vib = 0){
   const o = AC.createOscillator(), g = AC.createGain();
@@ -64,28 +99,39 @@ function mNote(f, t, d, type, v, att = .01, vib = 0){
   o.connect(g).connect(musicBus()); o.start(t); o.stop(t + d + .05);
 }
 let NOISE = null;
-function mNoise(t, d, v, hp){
+function mNoise(t, d, v, hp){ v *= (MUSIC.drumK || 1);
   if (!NOISE){ NOISE = AC.createBuffer(1, AC.sampleRate * .3, AC.sampleRate); const ch = NOISE.getChannelData(0); for (let i = 0; i < ch.length; i++) ch[i] = Math.random()*2 - 1; }
   const s = AC.createBufferSource(), f = AC.createBiquadFilter(), g = AC.createGain();
   s.buffer = NOISE; f.type = 'highpass'; f.frequency.value = hp;
   g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(.0001, t + d);
   s.connect(f).connect(g).connect(musicBus()); s.start(t); s.stop(t + d + .02);
 }
-function mKick(t, v){ const o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(130, t); o.frequency.exponentialRampToValueAtTime(45, t + .12);
+function mKick(t, v){ v *= (MUSIC.drumK || 1); const o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(130, t); o.frequency.exponentialRampToValueAtTime(45, t + .12);
   g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(.0001, t + .16); o.connect(g).connect(musicBus()); o.start(t); o.stop(t + .2); }
 /* la melodía se pasa a una lista de pasos: en qué corchea empieza cada nota y cuánto dura */
 function melSteps(tr){ const out = []; let s = 0; for (const [n, d] of tr.mel){ if (n) out[s] = [n + (tr.melShift || 0), d]; s += d; } out.length = Math.max(out.length, tr.chords.length * 8); return out; }
 function scheduleStep(tr, step, t, e){
   const bar = Math.floor(step / 8) % tr.chords.length, i = step % 8, ch = tr.chords[bar];
   // melodía (con un eco suave una octava abajo, que la hace más llena)
-  const m = MUSIC.mel[step]; if (m){ mNote(NOTE(m[0]), t, m[1] * e * .92, tr.lead, tr.leadVol, tr.vib ? .04 : .01, tr.vib); mNote(NOTE(m[0] - 12), t, m[1] * e * .8, 'triangle', tr.leadVol * .45, .01); }
-  // colchón: el acorde entero, bajito, al empezar cada compás
-  if (i === 0 && tr.pad) for (const n of ch) mNote(NOTE(n), t, e * 7.5, tr.padType || 'triangle', tr.pad * (tr.padType === 'sawtooth' ? .55 : 1), tr.padType ? .5 : .08);
+  MUSIC.drumK = tr.drumK || 1;
+  if (i === 0 && MUSIC.wet) MUSIC.wet.gain.setTargetAtTime(tr.rev || .25, t, .3);
+  const m = MUSIC.mel[step];
+  if (m){
+    if (INST[tr.lead]){ mInst(NOTE(m[0]), t, m[1] * e * (tr.stac ? .6 : .95), tr.lead, tr.leadVol, {att: tr.leadAtt || .04, vib: tr.vib, sus: !tr.stac, rel: tr.stac ? .12 : .25});
+      if (tr.echo) mInst(NOTE(m[0] - 12), t, m[1] * e * .95, tr.echo, tr.leadVol * .32, {att: .08, sus: true, rel: .3}); }
+    else { mNote(NOTE(m[0]), t, m[1] * e * .92, tr.lead, tr.leadVol, tr.vib ? .04 : .01, tr.vib); mNote(NOTE(m[0] - 12), t, m[1] * e * .8, 'triangle', tr.leadVol * .45, .01); }
+  }
+  // colchón: el acorde entero, bajito, al empezar cada compás (cuerdas que entran despacio)
+  if (i === 0 && tr.pad){
+    if (INST[tr.padType]) for (const n of ch) mInst(NOTE(n), t, e * 8, tr.padType, tr.pad, {att: .45, sus: true, rel: .5, detune: true});
+    else for (const n of ch) mNote(NOTE(n), t, e * 7.5, tr.padType || 'triangle', tr.pad, .08);
+  }
   // arpegios
   const up = [0, 1, 2, 1, 0, 2, 1, 2];
   if (tr.arp === 'pluck') mNote(NOTE(ch[up[i]] + 12), t, e * 1.1, 'triangle', .026);
   else if (tr.arp === 'fast'){ mNote(NOTE(ch[up[i]] + 12), t, e * .5, 'square', .012); mNote(NOTE(ch[up[(i + 2) % 8]] + 24), t + e / 2, e * .45, 'square', .009); }
   else if (tr.arp === 'soft') mNote(NOTE(ch[[0, 1, 2, 1][i % 4]] + 12), t, e * 1.8, 'triangle', .02);
+  else if (tr.arp === 'harp'){ if (i % 2 === 0 || tr.harpFast) mInst(NOTE(ch[up[i]] + 12), t, e * 2.2, 'warm', tr.harpVol || .022, {att: .005, rel: .4}); }
   // bajo
   const root = NOTE(ch[0] - 24), fifth = NOTE(ch[2] - 24);
   if (tr.bass === 'bounce'){ if (i === 0) mNote(root, t, e * 1.4, 'triangle', .09); if (i === 2) mNote(fifth, t, e * .9, 'triangle', .065); if (i === 3) mNote(root * 2, t, e * .9, 'triangle', .06);
